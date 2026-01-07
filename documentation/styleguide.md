@@ -68,6 +68,19 @@ These colors are **CD elements** (Corporate Design) — their use is **mandatory
   --color-gainsboro: #E5E5E5;        /* $gainsboro - Light borders */
   --color-smoke: #F5F5F5;            /* $smoke - Background */
   --color-white: #FFFFFF;            /* $white */
+
+  /* === GRAY SCALE (Numeric) === */
+  /* Standardized gray scale for component usage */
+  --color-gray-50: #FAFAFA;          /* Lightest - subtle backgrounds */
+  --color-gray-100: #F5F5F5;         /* Same as $smoke */
+  --color-gray-200: #E5E5E5;         /* Same as $gainsboro - borders */
+  --color-gray-300: #D5D5D5;         /* Same as $light-grey */
+  --color-gray-400: #CCCCCC;         /* Same as $silver */
+  --color-gray-500: #757575;         /* Same as $empress - medium */
+  --color-gray-600: #666666;         /* Secondary text */
+  --color-gray-700: #454545;         /* Same as $coal */
+  --color-gray-800: #333333;         /* Same as $night-rider */
+  --color-gray-900: #1A1A1A;         /* Near black - high contrast */
 }
 ```
 
@@ -113,7 +126,8 @@ These colors are **CD elements** (Corporate Design) — their use is **mandatory
   --color-border-light: var(--color-gainsboro);    /* #E5E5E5 */
   
   /* Focus */
-  --color-focus: var(--color-malibu);              /* #66AFE9 */
+  --color-focus: var(--color-malibu);              /* #66AFE9 - Swiss Federal standard */
+  --color-focus-ring: var(--color-malibu);         /* Alias for focus ring color */
 }
 ```
 
@@ -142,6 +156,12 @@ These are **not official CD colors** but are standard for semantic feedback. The
   --color-info: #31708F;              /* Dark blue - accessible */
   --color-info-light: #D9EDF7;
   --color-info-border: #BCE8F1;
+
+  /* Dark variants for badges and high-contrast text */
+  --color-success-dark: #2B5A2C;      /* Darker green for text on light bg */
+  --color-warning-dark: #6B5625;      /* Darker gold for text on light bg */
+  --color-error-dark: #843534;        /* Darker red for text on light bg */
+  --color-info-dark: #245269;         /* Darker blue for text on light bg */
 }
 ```
 
@@ -365,6 +385,7 @@ Use an 8px base unit for consistent spacing:
   --space-4: 1rem;      /* 16px */
   --space-5: 1.5rem;    /* 24px */
   --space-6: 2rem;      /* 32px */
+  --space-7: 2.5rem;    /* 40px */
   --space-8: 3rem;      /* 48px */
   --space-10: 4rem;     /* 64px */
   --space-12: 6rem;     /* 96px */
@@ -379,6 +400,7 @@ Use an 8px base unit for consistent spacing:
 | `--space-4` | 16px | Default padding, between elements |
 | `--space-5` | 24px | Card padding, section spacing |
 | `--space-6` | 32px | Large section spacing |
+| `--space-7` | 40px | Between major elements |
 | `--space-8` | 48px | Page section separation |
 | `--space-10` | 64px | Major page sections |
 
@@ -607,6 +629,43 @@ Based on the Swiss Federal styleguide button patterns:
 .btn .icon {
   margin-right: 4px;
 }
+
+/* Disabled state */
+.btn:disabled,
+.btn--disabled {
+  background: var(--color-gray-200);
+  color: var(--color-gray-500);
+  border-color: var(--color-gray-200);
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Loading state */
+.btn--loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn--loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid var(--color-gray-300);
+  border-top-color: var(--color-gray-600);
+  border-radius: 50%;
+  animation: btn-spinner 0.6s linear infinite;
+}
+
+@keyframes btn-spinner {
+  to { transform: rotate(360deg); }
+}
 ```
 
 > **Note:** Swiss Federal buttons have **no border-radius**. This is a deliberate design choice for a clean, professional appearance.
@@ -749,8 +808,8 @@ Based on the Swiss Federal styleguide button patterns:
 
 .form-input:focus {
   outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-light);
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px var(--color-focus);
 }
 
 .form-input::placeholder {
@@ -804,6 +863,67 @@ Based on the Swiss Federal styleguide button patterns:
   font-size: var(--font-size-base);
   color: var(--color-text-secondary);
   text-align: center;
+}
+
+/* Form field states */
+.form-input:disabled,
+.form-input--disabled {
+  background: var(--color-gray-100);
+  color: var(--color-gray-500);
+  border-color: var(--color-gray-200);
+  cursor: not-allowed;
+}
+
+.form-input--error {
+  border-color: var(--color-error);
+}
+
+.form-input--error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px var(--color-error-light);
+}
+
+.form-input--success {
+  border-color: var(--color-success);
+}
+
+/* Form field loading state */
+.form-field--loading {
+  position: relative;
+}
+
+.form-field--loading::after {
+  content: '';
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  border: 2px solid var(--color-gray-300);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: field-spinner 0.6s linear infinite;
+}
+
+@keyframes field-spinner {
+  to { transform: rotate(360deg); }
+}
+
+/* Form error/help text */
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}
+
+.form-help {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
 }
 ```
 
@@ -876,7 +996,7 @@ Based on the Swiss Federal styleguide button patterns:
       <span class="stepper__indicator">
         <svg><!-- Eye icon --></svg>
       </span>
-      <span class="stepper__label">3. Ergebnise bestätigen</span>
+      <span class="stepper__label">3. Ergebnisse bestätigen</span>
     </li>
     <li class="stepper__item">
       <span class="stepper__indicator">
@@ -1342,7 +1462,7 @@ Use muted, professional colors for pie/donut charts:
 
 .badge--info {
   background: var(--color-info-light);
-  color: var(--color-info);
+  color: var(--color-info-dark);
 }
 
 /* Validation result icon */
@@ -1389,7 +1509,7 @@ All text must meet WCAG 2.1 AA standards:
 ```css
 /* Focus indicator for keyboard navigation */
 :focus-visible {
-  outline: 3px solid var(--color-primary);
+  outline: 3px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -1400,9 +1520,9 @@ All text must meet WCAG 2.1 AA standards:
 
 /* High contrast focus for buttons */
 .btn:focus-visible {
-  outline: 3px solid var(--color-primary);
+  outline: 3px solid var(--color-focus);
   outline-offset: 2px;
-  box-shadow: 0 0 0 6px var(--color-primary-light);
+  box-shadow: 0 0 0 6px rgba(102, 175, 233, 0.3);  /* --color-malibu at 30% */
 }
 ```
 
