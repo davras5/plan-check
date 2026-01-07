@@ -1000,6 +1000,15 @@ function setupEventListeners() {
         });
     }
 
+    // Demo button in header
+    const demoBtn = document.getElementById('demo-btn');
+    if (demoBtn) {
+        demoBtn.addEventListener('click', () => {
+            switchView('projects');
+            renderProjects();
+        });
+    }
+
     // Back to projects from project detail
     const backBtn = document.getElementById('back-to-overview');
     if (backBtn) {

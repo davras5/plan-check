@@ -433,10 +433,21 @@ a:hover {
     margin-bottom: var(--space-6);
 }
 
+.login-logo {
+    max-width: 160px;
+    height: auto;
+}
+
 .login-form {
     background: var(--color-bg-primary);
     padding: var(--space-6);
     border: 1px solid var(--color-border-light);
+}
+
+.login-form .btn {
+    display: block;
+    width: auto;
+    margin: 0 auto;
 }
 
 .login-links {
