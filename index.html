@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBL Prüfplattform Flächenmanagement</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Swiss Federal Header -->
+    <header class="header">
+        <div class="header__bar"></div>
+        <div class="header__content">
+            <div class="header__brand">
+                <svg class="header__logo" width="40" height="40" viewBox="0 0 40 40">
+                    <rect fill="#DC0018" width="40" height="40"/>
+                    <path fill="#FFFFFF" d="M20 8 L20 18 L10 18 L10 22 L20 22 L20 32 L24 32 L24 22 L34 22 L34 18 L24 18 L24 8 Z"/>
+                </svg>
+                <div class="header__titles">
+                    <span class="header__org">Bundesamt für Bauten und Logistik BBL</span>
+                    <span class="header__app">Prüfplattform Flächenmanagement</span>
+                </div>
+            </div>
+            <nav class="header__nav">
+                <a href="#" class="header__link" id="nav-standards">BBL CAD Standards</a>
+                <button class="header__user" aria-label="User menu" id="user-menu-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+        <!-- LOGIN VIEW -->
+        <section id="view-login" class="view view--active">
+            <div class="login-container">
+                <div class="login-form-wrapper">
+                    <div class="login-icon">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="55" fill="#006699" stroke="#DC0018" stroke-width="4"/>
+                            <rect x="40" y="35" width="40" height="50" rx="2" fill="white"/>
+                            <line x1="48" y1="45" x2="72" y2="45" stroke="#DC0018" stroke-width="3"/>
+                            <line x1="48" y1="55" x2="72" y2="55" stroke="#333" stroke-width="2"/>
+                            <line x1="48" y1="62" x2="68" y2="62" stroke="#333" stroke-width="2"/>
+                            <line x1="48" y1="69" x2="70" y2="69" stroke="#333" stroke-width="2"/>
+                            <path d="M85 50 L95 60 L85 70" fill="none" stroke="#DC0018" stroke-width="4" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <form class="login-form">
+                        <div class="form-field">
+                            <div class="form-input-group">
+                                <svg class="form-input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="8" r="4"/>
+                                    <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                                </svg>
+                                <input type="text" class="form-input" placeholder="Benutzername, oder Mail" id="username">
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <div class="form-input-group">
+                                <svg class="form-input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="5" y="11" width="14" height="10" rx="2" ry="2"/>
+                                    <path d="M12 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                                <input type="password" class="form-input" placeholder="Passwort" id="password">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn--primary btn--lg" id="login-btn">Login</button>
+
+                        <div class="login-links">
+                            <a href="#" class="login-link">Zugang anfordern</a>
+                            <a href="#" class="login-link">Passwort vergessen?</a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="login-video">
+                    <h2 class="text-h3">Erklärvideo</h2>
+                    <div class="video-player">
+                        <div class="video-placeholder">
+                            <svg width="80" height="80" viewBox="0 0 80 80">
+                                <circle cx="40" cy="40" r="35" fill="none" stroke="white" stroke-width="3"/>
+                                <path d="M32 25 L32 55 L55 40 Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <div class="video-controls">
+                            <button class="video-play-btn">▶</button>
+                            <div class="video-progress"></div>
+                            <span class="video-time">00:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="login-downloads">
+                    <h2 class="text-h3">Downloads</h2>
+                    <ul class="download-list">
+                        <li><a href="#" class="download-link">BBL CAD Weisung.pdf</a></li>
+                        <li><a href="#" class="download-link">BBL CAD Prüfungskatalog.pdf</a></li>
+                        <li><a href="#" class="download-link">BBL CAD BPMN Prozess.pdf</a></li>
+                        <li><a href="#" class="download-link">BBL CAD Vorlage Raumliste.xlsx</a></li>
+                        <li><a href="#" class="download-link">BBL CAD Beispiel Dateien.zip</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECT OVERVIEW -->
+        <section id="view-projects" class="view">
+            <div class="container">
+                <div class="page-header">
+                    <div class="search-bar">
+                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input type="text" class="search-input" placeholder="Projektname, ID, Auftrag" id="project-search">
+                    </div>
+                    <div class="view-toggle">
+                        <button class="view-toggle-btn view-toggle-btn--active" data-view="grid">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                            </svg>
+                        </button>
+                        <button class="view-toggle-btn" data-view="list">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="8" y1="6" x2="21" y2="6"/>
+                                <line x1="8" y1="12" x2="21" y2="12"/>
+                                <line x1="8" y1="18" x2="21" y2="18"/>
+                                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                                <line x1="3" y1="18" x2="3.01" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-grid" id="project-grid">
+                    <!-- Projects will be rendered here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECT DETAIL (Document List) -->
+        <section id="view-project-detail" class="view">
+            <div class="container">
+                <nav class="breadcrumb">
+                    <a href="#" class="breadcrumb-link" id="breadcrumb-projects">Projekte</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current" id="breadcrumb-project-name">Projekt Name</span>
+                </nav>
+
+                <div class="project-header">
+                    <div class="project-header-image" id="project-detail-image">
+                        <!-- Background image set via JS -->
+                    </div>
+                    <div class="project-header-info">
+                        <h1 class="text-h2" id="project-detail-name">Projekt Name</h1>
+                        <div class="donut-chart-wrapper">
+                            <svg class="donut-chart" width="150" height="150" viewBox="0 0 150 150">
+                                <circle class="donut-chart__background" cx="75" cy="75" r="60" stroke-width="12"/>
+                                <circle class="donut-chart__progress donut-chart__progress--success"
+                                    cx="75" cy="75" r="60" stroke-width="12"
+                                    id="project-donut-progress"
+                                    stroke-dasharray="377" stroke-dashoffset="75"/>
+                            </svg>
+                            <div class="donut-chart__value">
+                                <span class="donut-chart__percentage" id="project-completion">95%</span>
+                                <span class="donut-chart__label">Fortschritt</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn--secondary" id="back-to-overview">Zurück Übersicht</button>
+                </div>
+
+                <div class="tabs">
+                    <ul class="tabs__list">
+                        <li><a href="#" class="tabs__tab tabs__tab--active" data-tab="documents">Abgabe Dokumente</a></li>
+                        <li><a href="#" class="tabs__tab" data-tab="metadata">Stammdaten</a></li>
+                        <li><a href="#" class="tabs__tab" data-tab="areas">Flächenkennzahlen</a></li>
+                    </ul>
+                </div>
+
+                <div class="tab-content">
+                    <div class="tab-pane tab-pane--active" id="tab-documents">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Ersteller</th>
+                                    <th>Letzte Änderung</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="document-table-body">
+                                <!-- Documents rendered by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VALIDATION WORKFLOW -->
+        <section id="view-validation" class="view">
+            <div class="container">
+                <nav class="breadcrumb">
+                    <a href="#" class="breadcrumb-link" id="breadcrumb-val-projects">Projekte</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <a href="#" class="breadcrumb-link" id="breadcrumb-val-project">Projekt</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current" id="breadcrumb-val-document">Dokument</span>
+                </nav>
+
+                <nav class="stepper" aria-label="Validierungs-Workflow">
+                    <ol class="stepper__list">
+                        <li class="stepper__item stepper__item--complete">
+                            <span class="stepper__indicator">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </span>
+                            <span class="stepper__label">1. DWG hochladen</span>
+                        </li>
+                        <li class="stepper__item stepper__item--current">
+                            <span class="stepper__indicator">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                            </span>
+                            <span class="stepper__label">2. Raumliste hochladen</span>
+                        </li>
+                        <li class="stepper__item">
+                            <span class="stepper__indicator">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 16v-4"/>
+                                    <path d="M12 8h.01"/>
+                                </svg>
+                            </span>
+                            <span class="stepper__label">3. Ergebnisse bestätigen</span>
+                        </li>
+                        <li class="stepper__item">
+                            <span class="stepper__indicator">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="16 12 12 8 8 12"/>
+                                    <line x1="12" y1="16" x2="12" y2="8"/>
+                                </svg>
+                            </span>
+                            <span class="stepper__label">4. Auftrag abschliessen</span>
+                        </li>
+                    </ol>
+                </nav>
+
+                <div class="metrics">
+                    <div class="metric-card">
+                        <span class="metric-card__value">22</span>
+                        <span class="metric-card__label">Räume</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-card__value">4'500 m²</span>
+                        <span class="metric-card__label">SIA 416 Geschossfläche GF</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-card__value">4'000 m²</span>
+                        <span class="metric-card__label">SIA 416 Nettogeschossfläche NGF</span>
+                    </div>
+                    <div class="metric-card metric-card--error">
+                        <span class="metric-card__value">13</span>
+                        <span class="metric-card__label">Fehlermeldungen</span>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <ul class="tabs__list">
+                        <li><a href="#" class="tabs__tab tabs__tab--active" data-val-tab="rooms">Räume (22)</a></li>
+                        <li><a href="#" class="tabs__tab" data-val-tab="areas">Flächen</a></li>
+                        <li><a href="#" class="tabs__tab" data-val-tab="errors">Fehlermeldungen (13)</a></li>
+                    </ul>
+                </div>
+
+                <div class="split-view">
+                    <div class="split-view__left">
+                        <!-- Rooms Tab -->
+                        <div class="val-tab-pane val-tab-pane--active" id="val-tab-rooms">
+                            <div class="table-wrapper">
+                                <table class="table table--compact">
+                                    <thead>
+                                        <tr>
+                                            <th>XAO</th>
+                                            <th class="text-right">AREA</th>
+                                            <th class="text-right">AREA_GRO</th>
+                                            <th class="text-right">AREA_RED</th>
+                                            <th>AOFUNCTI</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="room-table-body">
+                                        <!-- Rooms rendered by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Areas Tab -->
+                        <div class="val-tab-pane" id="val-tab-areas">
+                            <h3 class="text-h3">SIA 416 Flächenkennzahlen</h3>
+                            <table class="table">
+                                <tbody>
+                                    <tr><td>Geschossfläche (GF)</td><td class="text-right">4'500 m²</td></tr>
+                                    <tr><td>Nettogeschossfläche (NGF)</td><td class="text-right">4'000 m²</td></tr>
+                                    <tr><td>Hauptnutzfläche (HNF)</td><td class="text-right">3'200 m²</td></tr>
+                                    <tr><td>Nebennutzfläche (NNF)</td><td class="text-right">400 m²</td></tr>
+                                    <tr><td>Verkehrsfläche (VF)</td><td class="text-right">300 m²</td></tr>
+                                    <tr><td>Funktionsfläche (FF)</td><td class="text-right">100 m²</td></tr>
+                                    <tr><td>Konstruktionsfläche (KF)</td><td class="text-right">500 m²</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Errors Tab -->
+                        <div class="val-tab-pane" id="val-tab-errors">
+                            <div class="error-list" id="error-list">
+                                <!-- Errors rendered by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="split-view__right">
+                        <div class="floorplan-viewer">
+                            <svg class="floorplan-viewer__canvas" viewBox="0 0 800 600" id="floorplan-svg">
+                                <!-- Floor plan will be rendered here -->
+                            </svg>
+                            <div class="floorplan-controls">
+                                <button class="floorplan-controls__btn" title="DWG hochladen">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                </button>
+                                <button class="floorplan-controls__btn" title="Zoom In">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <path d="m21 21-4.35-4.35"/>
+                                        <line x1="11" y1="8" x2="11" y2="14"/>
+                                        <line x1="8" y1="11" x2="14" y2="11"/>
+                                    </svg>
+                                </button>
+                                <button class="floorplan-controls__btn" title="Zoom Out">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <path d="m21 21-4.35-4.35"/>
+                                        <line x1="8" y1="11" x2="14" y2="11"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-actions">
+                    <button class="btn btn--secondary" id="prev-step-btn">Vorheriger Schritt</button>
+                    <button class="btn btn--primary" id="next-step-btn">Nächster Schritt</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESULTS SUMMARY -->
+        <section id="view-results" class="view">
+            <div class="container">
+                <nav class="breadcrumb">
+                    <a href="#" class="breadcrumb-link">Projekte</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <a href="#" class="breadcrumb-link">Projekt</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current">Zusammenfassung Ergebnis</span>
+                </nav>
+
+                <h1 class="text-h1">Zusammenfassung Ergebnis</h1>
+
+                <div class="results-grid">
+                    <div class="results-section">
+                        <h2 class="text-h3">Gebäudevolumen</h2>
+                        <table class="table">
+                            <tbody>
+                                <tr><td>GV (Gebäudevolumen)</td><td class="text-right">16'848 m³</td><td class="text-right">100%</td></tr>
+                                <tr><td>GV OG (oberirdisch)</td><td class="text-right">14'500 m³</td><td class="text-right">86%</td></tr>
+                                <tr><td>GV UG (unterirdisch)</td><td class="text-right">2'348 m³</td><td class="text-right">14%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="results-section">
+                        <h2 class="text-h3">Gebäudeflächen SIA 416</h2>
+                        <table class="table">
+                            <tbody>
+                                <tr><td>GF (Geschossfläche)</td><td class="text-right">4'500 m²</td><td class="text-right">100%</td></tr>
+                                <tr><td>KF (Konstruktionsfläche)</td><td class="text-right">500 m²</td><td class="text-right">11%</td></tr>
+                                <tr><td>NGF (Nettogeschossfläche)</td><td class="text-right">4'000 m²</td><td class="text-right">89%</td></tr>
+                                <tr><td>NF (Nutzfläche)</td><td class="text-right">3'900 m²</td><td class="text-right">87%</td></tr>
+                                <tr><td>HNF (Hauptnutzfläche)</td><td class="text-right">3'200 m²</td><td class="text-right">71%</td></tr>
+                                <tr><td>NNF (Nebennutzfläche)</td><td class="text-right">400 m²</td><td class="text-right">9%</td></tr>
+                                <tr><td>VF (Verkehrsfläche)</td><td class="text-right">300 m²</td><td class="text-right">7%</td></tr>
+                                <tr><td>FF (Funktionsfläche)</td><td class="text-right">100 m²</td><td class="text-right">2%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="results-section">
+                        <h2 class="text-h3">Flächen DIN 277</h2>
+                        <table class="table">
+                            <tbody>
+                                <tr><td>HNF 1 - Wohnen und Aufenthalt</td><td class="text-right">850 m²</td><td class="text-right">27%</td></tr>
+                                <tr><td>HNF 2 - Büroarbeit</td><td class="text-right">1'200 m²</td><td class="text-right">38%</td></tr>
+                                <tr><td>HNF 3 - Produktion</td><td class="text-right">0 m²</td><td class="text-right">0%</td></tr>
+                                <tr><td>HNF 4 - Lagern</td><td class="text-right">150 m²</td><td class="text-right">5%</td></tr>
+                                <tr><td>HNF 5 - Verteilen</td><td class="text-right">500 m²</td><td class="text-right">16%</td></tr>
+                                <tr><td>HNF 6 - Unterricht</td><td class="text-right">300 m²</td><td class="text-right">9%</td></tr>
+                                <tr><td>HNF 7 - Heilen/Pflegen</td><td class="text-right">200 m²</td><td class="text-right">6%</td></tr>
+                                <tr><td>FF 8 - Technik</td><td class="text-right">100 m²</td><td class="text-right">3%</td></tr>
+                                <tr><td>VF 9 - Verkehr</td><td class="text-right">300 m²</td><td class="text-right">9%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="results-section">
+                        <h2 class="text-h3">Kennzahlen Wirtschaftlichkeit</h2>
+                        <div class="pie-chart-container">
+                            <svg class="pie-chart" width="300" height="300" viewBox="0 0 300 300">
+                                <!-- Pie chart rendered by JS -->
+                                <g id="pie-chart-slices"></g>
+                            </svg>
+                            <div class="pie-legend" id="pie-legend">
+                                <!-- Legend rendered by JS -->
+                            </div>
+                        </div>
+                        <table class="table">
+                            <tbody>
+                                <tr><td>HNF/GF</td><td class="text-right">71%</td></tr>
+                                <tr><td>NNF/GF</td><td class="text-right">9%</td></tr>
+                                <tr><td>VF/GF</td><td class="text-right">7%</td></tr>
+                                <tr><td>VMF/GF (VF+NNF)</td><td class="text-right">16%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="workflow-actions">
+                    <button class="btn btn--secondary">Vorheriger Schritt</button>
+                    <button class="btn btn--primary">Auftrag abschliessen</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+{
+  "version": "2.1",
+  "lastUpdated": "2025-01-07T15:00:00Z",
+  "description": "BBL CAD-Richtlinie Layer Definitions",
+  "layers": [
+    {
+      "name": "Architecture_Wände",
+      "colorIndex": 7,
+      "rgb": "#FFFFFF",
+      "lineWeight": 0.5,
+      "lineType": "CONTINUOUS",
+      "purpose": "Exterior and interior walls, structural elements",
+      "required": true,
+      "entities": ["LINE", "POLYLINE", "LWPOLYLINE"]
+    },
+    {
+      "name": "Architecture_Türen",
+      "colorIndex": 3,
+      "rgb": "#00FF00",
+      "lineWeight": 0.25,
+      "lineType": "CONTINUOUS",
+      "purpose": "Doors and door swings",
+      "required": true,
+      "entities": ["LINE", "POLYLINE", "LWPOLYLINE", "ARC", "INSERT"]
+    },
+    {
+      "name": "Architecture_Fenster",
+      "colorIndex": 5,
+      "rgb": "#0000FF",
+      "lineWeight": 0.25,
+      "lineType": "CONTINUOUS",
+      "purpose": "Windows and glazing",
+      "required": true,
+      "entities": ["LINE", "POLYLINE", "LWPOLYLINE"]
+    },
+    {
+      "name": "Architecture_Treppen",
+      "colorIndex": 4,
+      "rgb": "#00FFFF",
+      "lineWeight": 0.35,
+      "lineType": "CONTINUOUS",
+      "purpose": "Stairs and ramps",
+      "required": false,
+      "entities": ["LINE", "POLYLINE", "LWPOLYLINE"]
+    },
+    {
+      "name": "Raum_Nutzfläche",
+      "colorIndex": 4,
+      "rgb": "#00FFFF",
+      "lineWeight": 0.25,
+      "lineType": "CONTINUOUS",
+      "purpose": "Main usable area room polygons (HNF)",
+      "required": true,
+      "entities": ["POLYLINE", "LWPOLYLINE"]
+    },
+    {
+      "name": "Raum_Verkehrsfläche",
+      "colorIndex": 6,
+      "rgb": "#FF00FF",
+      "lineWeight": 0.25,
+      "lineType": "CONTINUOUS",
+      "purpose": "Circulation area room polygons (VF)",
+      "required": true,
+      "entities": ["POLYLINE", "LWPOLYLINE"]
+    },
+    {
+      "name": "Raum_Technikfläche",
+      "colorIndex": 1,
+      "rgb": "#FF0000",
+      "lineWeight": 0.25,
+      "lineType": "CONTINUOUS",
+      "purpose": "Technical area room polygons (FF)",
+      "required": true,
+      "entities": ["POLYLINE", "LWPOLYLINE"]
+    },
+    {
+      "name": "Raum_Nebennutzfläche",
+      "colorIndex": 2,
+      "rgb": "#FFFF00",
+      "lineWeight": 0.25,
+      "lineType": "CONTINUOUS",
+      "purpose": "Secondary usable area room polygons (NNF)",
+      "required": false,
+      "entities": ["POLYLINE", "LWPOLYLINE"]
+    },
+    {
+      "name": "Raum_Text",
+      "colorIndex": 7,
+      "rgb": "#FFFFFF",
+      "lineWeight": 0.13,
+      "lineType": "CONTINUOUS",
+      "purpose": "Room labels and AOID identifiers",
+      "required": true,
+      "entities": ["TEXT", "MTEXT"]
+    },
+    {
+      "name": "Möblierung",
+      "colorIndex": 8,
+      "rgb": "#808080",
+      "lineWeight": 0.18,
+      "lineType": "CONTINUOUS",
+      "purpose": "Furniture layout",
+      "required": true,
+      "entities": ["LINE", "POLYLINE", "LWPOLYLINE", "INSERT", "CIRCLE"]
+    },
+    {
+      "name": "Equipment",
+      "colorIndex": 9,
+      "rgb": "#C0C0C0",
+      "lineWeight": 0.18,
+      "lineType": "CONTINUOUS",
+      "purpose": "Fixed equipment (sinks, toilets, built-in cabinets)",
+      "required": false,
+      "entities": ["LINE", "POLYLINE", "LWPOLYLINE", "INSERT", "CIRCLE"]
+    },
+    {
+      "name": "Beschriftung",
+      "colorIndex": 7,
+      "rgb": "#FFFFFF",
+      "lineWeight": 0.13,
+      "lineType": "CONTINUOUS",
+      "purpose": "General annotations and labels",
+      "required": true,
+      "entities": ["TEXT", "MTEXT", "LEADER", "MULTILEADER"]
+    },
+    {
+      "name": "Maßlinien",
+      "colorIndex": 7,
+      "rgb": "#FFFFFF",
+      "lineWeight": 0.13,
+      "lineType": "CONTINUOUS",
+      "purpose": "Dimension lines and measurements",
+      "required": true,
+      "entities": ["DIMENSION", "LINE", "TEXT"]
+    },
+    {
+      "name": "Grid",
+      "colorIndex": 8,
+      "rgb": "#808080",
+      "lineWeight": 0.13,
+      "lineType": "DASHED",
+      "purpose": "Structural grid lines",
+      "required": false,
+      "entities": ["LINE", "XLINE"]
+    },
+    {
+      "name": "Konstruktion",
+      "colorIndex": 9,
+      "rgb": "#C0C0C0",
+      "lineWeight": 0.25,
+      "lineType": "CONTINUOUS",
+      "purpose": "Construction elements (columns, beams)",
+      "required": false,
+      "entities": ["LINE", "POLYLINE", "LWPOLYLINE", "CIRCLE"]
+    },
+    {
+      "name": "0",
+      "colorIndex": 7,
+      "rgb": "#FFFFFF",
+      "lineWeight": 0.25,
+      "lineType": "CONTINUOUS",
+      "purpose": "AutoCAD default layer (system layer)",
+      "required": true,
+      "entities": ["*"]
+    },
+    {
+      "name": "Defpoints",
+      "colorIndex": 7,
+      "rgb": "#FFFFFF",
+      "lineWeight": 0.13,
+      "lineType": "CONTINUOUS",
+      "purpose": "AutoCAD dimension points (system layer, non-plotting)",
+      "required": true,
+      "entities": ["POINT"]
+    }
+  ]
+}

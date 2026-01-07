@@ -1,0 +1,298 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-01-07T15:00:00Z",
+  "data": [
+    {
+      "id": "val_001e4567-e89b-12d3-a456-426614174221",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "LAYER_001",
+      "ruleName": "Required Layer Check",
+      "severity": "error",
+      "message": "Required layer \"Architecture_Wände\" is missing",
+      "category": "layer",
+      "location": null,
+      "entityHandle": null,
+      "layerName": null,
+      "createdAt": "2022-06-17T12:35:08Z",
+      "metadata": {
+        "expectedValue": "Architecture_Wände",
+        "actualValue": null,
+        "affectedCount": 1,
+        "autoFixable": false,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#layers"
+      }
+    },
+    {
+      "id": "val_002e4567-e89b-12d3-a456-426614174222",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "POLY_003",
+      "ruleName": "Polyline Closure Check",
+      "severity": "error",
+      "message": "Room polygon is not closed in room 1.04",
+      "category": "geometry",
+      "location": {
+        "x": 125.5,
+        "y": 340.2,
+        "z": 0
+      },
+      "entityHandle": "1A3F",
+      "layerName": "Raum_Nutzfläche",
+      "createdAt": "2022-06-17T12:35:12Z",
+      "metadata": {
+        "expectedValue": "closed",
+        "actualValue": "open (gap: 0.15m)",
+        "affectedCount": 1,
+        "autoFixable": true,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#polylines"
+      }
+    },
+    {
+      "id": "val_003e4567-e89b-12d3-a456-426614174223",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "AOID_002",
+      "ruleName": "AOID Format Validation",
+      "severity": "warning",
+      "message": "AOID format invalid: \"2011DM04045\" (missing dots)",
+      "category": "aoid",
+      "location": {
+        "x": 280.0,
+        "y": 190.0,
+        "z": 0
+      },
+      "entityHandle": "2B5C",
+      "layerName": "Raum_Text",
+      "createdAt": "2022-06-17T12:35:14Z",
+      "metadata": {
+        "expectedValue": "^\\d{4}\\.[A-Z]{2}\\.\\d{2}\\.\\d{3}$",
+        "actualValue": "2011DM04045",
+        "affectedCount": 1,
+        "autoFixable": true,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#aoid"
+      }
+    },
+    {
+      "id": "val_004e4567-e89b-12d3-a456-426614174224",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "TEXT_001",
+      "ruleName": "Font Type Check",
+      "severity": "error",
+      "message": "Text font is not Arial in 3 locations",
+      "category": "text",
+      "location": null,
+      "entityHandle": null,
+      "layerName": "Raum_Text",
+      "createdAt": "2022-06-17T12:35:15Z",
+      "metadata": {
+        "expectedValue": "Arial",
+        "actualValue": "Times New Roman",
+        "affectedCount": 3,
+        "autoFixable": true,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#text"
+      }
+    },
+    {
+      "id": "val_005e4567-e89b-12d3-a456-426614174225",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "GEOM_005",
+      "ruleName": "Polyline Width Check",
+      "severity": "warning",
+      "message": "Polyline has non-zero width (should be 0)",
+      "category": "geometry",
+      "location": {
+        "x": 450.0,
+        "y": 120.0,
+        "z": 0
+      },
+      "entityHandle": "3C7D",
+      "layerName": "Architecture_Wände",
+      "createdAt": "2022-06-17T12:35:16Z",
+      "metadata": {
+        "expectedValue": 0,
+        "actualValue": 0.25,
+        "affectedCount": 8,
+        "autoFixable": true,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#geometry"
+      }
+    },
+    {
+      "id": "val_006e4567-e89b-12d3-a456-426614174226",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "LAYER_002",
+      "ruleName": "Layer Color Check",
+      "severity": "warning",
+      "message": "Layer color mismatch: \"Möblierung\" should be RGB(128,128,128)",
+      "category": "layer",
+      "location": null,
+      "entityHandle": null,
+      "layerName": "Möblierung",
+      "createdAt": "2022-06-17T12:35:17Z",
+      "metadata": {
+        "expectedValue": "RGB(128,128,128)",
+        "actualValue": "RGB(255,0,0)",
+        "affectedCount": 1,
+        "autoFixable": true,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#layers"
+      }
+    },
+    {
+      "id": "val_007e4567-e89b-12d3-a456-426614174227",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "ENTITY_001",
+      "ruleName": "Forbidden Entity Check",
+      "severity": "error",
+      "message": "Forbidden entity type SPLINE found on layer \"Architecture\"",
+      "category": "entity",
+      "location": {
+        "x": 320.0,
+        "y": 410.0,
+        "z": 0
+      },
+      "entityHandle": "4D8E",
+      "layerName": "Architecture",
+      "createdAt": "2022-06-17T12:35:18Z",
+      "metadata": {
+        "expectedValue": "LINE, POLYLINE, LWPOLYLINE",
+        "actualValue": "SPLINE",
+        "affectedCount": 2,
+        "autoFixable": false,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#entities"
+      }
+    },
+    {
+      "id": "val_008e4567-e89b-12d3-a456-426614174228",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "AOID_005",
+      "ruleName": "AOID Excel Cross-Reference",
+      "severity": "warning",
+      "message": "AOID \"2011.DM.04.023\" not found in Excel room list",
+      "category": "aoid",
+      "location": {
+        "x": 195.0,
+        "y": 275.0,
+        "z": 0
+      },
+      "entityHandle": "5E9F",
+      "layerName": "Raum_Text",
+      "createdAt": "2022-06-17T12:35:19Z",
+      "metadata": {
+        "expectedValue": "present in Excel",
+        "actualValue": "not found",
+        "affectedCount": 1,
+        "autoFixable": false,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#aoid"
+      }
+    },
+    {
+      "id": "val_009e4567-e89b-12d3-a456-426614174229",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "GEOM_002",
+      "ruleName": "Self-Intersection Check",
+      "severity": "error",
+      "message": "Self-intersecting polygon detected in room 2.07",
+      "category": "geometry",
+      "location": {
+        "x": 380.0,
+        "y": 220.0,
+        "z": 0
+      },
+      "entityHandle": "6F0A",
+      "layerName": "Raum_Nutzfläche",
+      "createdAt": "2022-06-17T12:35:20Z",
+      "metadata": {
+        "expectedValue": "simple polygon",
+        "actualValue": "self-intersecting",
+        "affectedCount": 1,
+        "autoFixable": false,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#geometry"
+      }
+    },
+    {
+      "id": "val_010e4567-e89b-12d3-a456-426614174230",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "POLY_001",
+      "ruleName": "Minimum Area Check",
+      "severity": "warning",
+      "message": "Room area below minimum threshold (0.18 m²)",
+      "category": "geometry",
+      "location": {
+        "x": 510.0,
+        "y": 305.0,
+        "z": 0
+      },
+      "entityHandle": "7G1B",
+      "layerName": "Raum_Nutzfläche",
+      "createdAt": "2022-06-17T12:35:21Z",
+      "metadata": {
+        "expectedValue": "≥ 0.25 m²",
+        "actualValue": "0.18 m²",
+        "affectedCount": 1,
+        "autoFixable": false,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#areas"
+      }
+    },
+    {
+      "id": "val_011e4567-e89b-12d3-a456-426614174231",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "LAYER_003",
+      "ruleName": "Unexpected Layer Check",
+      "severity": "warning",
+      "message": "Unexpected layer \"Temp_Construction\" found",
+      "category": "layer",
+      "location": null,
+      "entityHandle": null,
+      "layerName": "Temp_Construction",
+      "createdAt": "2022-06-17T12:35:22Z",
+      "metadata": {
+        "expectedValue": "BBL standard layers only",
+        "actualValue": "Temp_Construction",
+        "affectedCount": 1,
+        "autoFixable": false,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#layers"
+      }
+    },
+    {
+      "id": "val_012e4567-e89b-12d3-a456-426614174232",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "GEOM_007",
+      "ruleName": "Z-Coordinate Check",
+      "severity": "error",
+      "message": "Z-coordinate is not 0 in 12 entities",
+      "category": "geometry",
+      "location": null,
+      "entityHandle": null,
+      "layerName": "Architecture_Wände",
+      "createdAt": "2022-06-17T12:35:23Z",
+      "metadata": {
+        "expectedValue": 0,
+        "actualValue": "0.5 to 2.0",
+        "affectedCount": 12,
+        "autoFixable": true,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#geometry"
+      }
+    },
+    {
+      "id": "val_013e4567-e89b-12d3-a456-426614174233",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "ruleCode": "AOID_001",
+      "ruleName": "AOID Uniqueness Check",
+      "severity": "error",
+      "message": "Duplicate AOID found: \"2011.DM.04.015\"",
+      "category": "aoid",
+      "location": {
+        "x": 240.0,
+        "y": 385.0,
+        "z": 0
+      },
+      "entityHandle": "8H2C",
+      "layerName": "Raum_Text",
+      "createdAt": "2022-06-17T12:35:24Z",
+      "metadata": {
+        "expectedValue": "unique",
+        "actualValue": "duplicate (2 occurrences)",
+        "affectedCount": 2,
+        "autoFixable": false,
+        "documentationUrl": "https://bbl.admin.ch/cad-richtlinie#aoid"
+      }
+    }
+  ]
+}

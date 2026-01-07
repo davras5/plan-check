@@ -1,0 +1,276 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-01-07T15:00:00Z",
+  "data": [
+    {
+      "id": "room_001e4567-e89b-12d3-a456-426614174301",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "aoid": "2011.DM.04.001",
+      "xao": "1.01",
+      "area": 24.45,
+      "areaGross": 25.00,
+      "areaReduced": 23.90,
+      "functionCode": "1.2",
+      "functionName": "Büroraum Einzelbüro",
+      "comment": "Einzelbüro mit Fenster",
+      "polygon": {
+        "type": "Polygon",
+        "coordinates": [[[50.0, 50.0], [75.0, 50.0], [75.0, 60.0], [50.0, 60.0], [50.0, 50.0]]]
+      },
+      "validationStatus": "valid",
+      "metadata": {
+        "layerName": "Raum_Nutzfläche",
+        "boundingBox": { "minX": 50.0, "minY": 50.0, "maxX": 75.0, "maxY": 60.0 },
+        "centroid": { "x": 62.5, "y": 55.0 },
+        "perimeter": 50.0,
+        "height": 2.8,
+        "volume": 68.46,
+        "occupancy": 1,
+        "equipment": ["desk", "chair", "cabinet"]
+      }
+    },
+    {
+      "id": "room_002e4567-e89b-12d3-a456-426614174302",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "aoid": "2011.DM.04.002",
+      "xao": "1.02",
+      "area": 18.32,
+      "areaGross": 19.00,
+      "areaReduced": 17.64,
+      "functionCode": "1.2",
+      "functionName": "Büroraum Einzelbüro",
+      "comment": null,
+      "polygon": {
+        "type": "Polygon",
+        "coordinates": [[[80.0, 50.0], [100.0, 50.0], [100.0, 59.16, [80.0, 59.16], [80.0, 50.0]]]
+      },
+      "validationStatus": "valid",
+      "metadata": {
+        "layerName": "Raum_Nutzfläche",
+        "boundingBox": { "minX": 80.0, "minY": 50.0, "maxX": 100.0, "maxY": 59.16 },
+        "centroid": { "x": 90.0, "y": 54.58 },
+        "perimeter": 44.32,
+        "height": 2.8,
+        "volume": 51.30,
+        "occupancy": 1,
+        "equipment": ["desk", "chair"]
+      }
+    },
+    {
+      "id": "room_003e4567-e89b-12d3-a456-426614174303",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "aoid": "2011.DM.04.003",
+      "xao": "1.03",
+      "area": 22.10,
+      "areaGross": 23.00,
+      "areaReduced": 21.20,
+      "functionCode": "1.2",
+      "functionName": "Büroraum Einzelbüro",
+      "comment": "Eckbüro",
+      "polygon": {
+        "type": "Polygon",
+        "coordinates": [[[110.0, 50.0], [132.1, 50.0], [132.1, 60.0], [110.0, 60.0], [110.0, 50.0]]]
+      },
+      "validationStatus": "valid",
+      "metadata": {
+        "layerName": "Raum_Nutzfläche",
+        "boundingBox": { "minX": 110.0, "minY": 50.0, "maxX": 132.1, "maxY": 60.0 },
+        "centroid": { "x": 121.05, "y": 55.0 },
+        "perimeter": 48.2,
+        "height": 2.8,
+        "volume": 61.88,
+        "occupancy": 1,
+        "equipment": ["desk", "chair", "cabinet", "bookshelf"]
+      }
+    },
+    {
+      "id": "room_004e4567-e89b-12d3-a456-426614174304",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "aoid": "2011.DM.04.004",
+      "xao": "1.04",
+      "area": 15.67,
+      "areaGross": 16.50,
+      "areaReduced": 14.84,
+      "functionCode": "2.4",
+      "functionName": "Lager",
+      "comment": "Büromaterial",
+      "polygon": {
+        "type": "Polygon",
+        "coordinates": [[[140.0, 50.0], [150.0, 50.0], [150.0, 65.67], [140.0, 65.67], [140.0, 50.0]]]
+      },
+      "validationStatus": "error",
+      "metadata": {
+        "layerName": "Raum_Nutzfläche",
+        "boundingBox": { "minX": 140.0, "minY": 50.0, "maxX": 150.0, "maxY": 65.67 },
+        "centroid": { "x": 145.0, "y": 57.84 },
+        "perimeter": 41.34,
+        "height": 2.8,
+        "volume": 43.88,
+        "occupancy": 0,
+        "equipment": ["shelving"]
+      }
+    },
+    {
+      "id": "room_005e4567-e89b-12d3-a456-426614174305",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "aoid": "2011.DM.04.005",
+      "xao": "1.05",
+      "area": 28.90,
+      "areaGross": 30.00,
+      "areaReduced": 27.80,
+      "functionCode": "1.3",
+      "functionName": "Sitzungszimmer",
+      "comment": "Konferenzraum klein",
+      "polygon": {
+        "type": "Polygon",
+        "coordinates": [[[50.0, 70.0], [78.9, 70.0], [78.9, 80.0], [50.0, 80.0], [50.0, 70.0]]]
+      },
+      "validationStatus": "valid",
+      "metadata": {
+        "layerName": "Raum_Nutzfläche",
+        "boundingBox": { "minX": 50.0, "minY": 70.0, "maxX": 78.9, "maxY": 80.0 },
+        "centroid": { "x": 64.45, "y": 75.0 },
+        "perimeter": 57.8,
+        "height": 2.8,
+        "volume": 80.92,
+        "occupancy": 6,
+        "equipment": ["conference_table", "chairs_6", "screen"]
+      }
+    },
+    {
+      "id": "room_006e4567-e89b-12d3-a456-426614174306",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "aoid": "2011.DM.04.006",
+      "xao": "1.06",
+      "area": 12.45,
+      "areaGross": 13.00,
+      "areaReduced": 11.90,
+      "functionCode": "2.1",
+      "functionName": "WC",
+      "comment": "Sanitärraum Damen",
+      "polygon": {
+        "type": "Polygon",
+        "coordinates": [[[85.0, 70.0], [100.0, 70.0], [100.0, 78.3], [85.0, 78.3], [85.0, 70.0]]]
+      },
+      "validationStatus": "valid",
+      "metadata": {
+        "layerName": "Raum_Nutzfläche",
+        "boundingBox": { "minX": 85.0, "minY": 70.0, "maxX": 100.0, "maxY": 78.3 },
+        "centroid": { "x": 92.5, "y": 74.15 },
+        "perimeter": 38.6,
+        "height": 2.8,
+        "volume": 34.86,
+        "occupancy": 2,
+        "equipment": ["toilet_2", "sink_2"]
+      }
+    },
+    {
+      "id": "room_007e4567-e89b-12d3-a456-426614174307",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "aoid": "2011.DM.04.007",
+      "xao": "1.07",
+      "area": 45.22,
+      "areaGross": 47.00,
+      "areaReduced": 43.44,
+      "functionCode": "3.1",
+      "functionName": "Flur",
+      "comment": "Hauptflur",
+      "polygon": {
+        "type": "Polygon",
+        "coordinates": [[[110.0, 70.0], [155.22, 70.0], [155.22, 80.0], [110.0, 80.0], [110.0, 70.0]]]
+      },
+      "validationStatus": "valid",
+      "metadata": {
+        "layerName": "Raum_Verkehrsfläche",
+        "boundingBox": { "minX": 110.0, "minY": 70.0, "maxX": 155.22, "maxY": 80.0 },
+        "centroid": { "x": 132.61, "y": 75.0 },
+        "perimeter": 100.44,
+        "height": 2.8,
+        "volume": 126.62,
+        "occupancy": 0,
+        "equipment": []
+      }
+    },
+    {
+      "id": "room_008e4567-e89b-12d3-a456-426614174308",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "aoid": "2011.DM.04.008",
+      "xao": "1.08",
+      "area": 19.78,
+      "areaGross": 21.00,
+      "areaReduced": 18.56,
+      "functionCode": "1.2",
+      "functionName": "Büroraum Einzelbüro",
+      "comment": null,
+      "polygon": {
+        "type": "Polygon",
+        "coordinates": [[[50.0, 85.0], [69.78, 85.0], [69.78, 95.0], [50.0, 95.0], [50.0, 85.0]]]
+      },
+      "validationStatus": "valid",
+      "metadata": {
+        "layerName": "Raum_Nutzfläche",
+        "boundingBox": { "minX": 50.0, "minY": 85.0, "maxX": 69.78, "maxY": 95.0 },
+        "centroid": { "x": 59.89, "y": 90.0 },
+        "perimeter": 49.56,
+        "height": 2.8,
+        "volume": 55.38,
+        "occupancy": 1,
+        "equipment": ["desk", "chair"]
+      }
+    },
+    {
+      "id": "room_009e4567-e89b-12d3-a456-426614174309",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "aoid": "2011.DM.04.009",
+      "xao": "1.09",
+      "area": 16.33,
+      "areaGross": 17.50,
+      "areaReduced": 15.11,
+      "functionCode": "1.2",
+      "functionName": "Büroraum Einzelbüro",
+      "comment": null,
+      "polygon": {
+        "type": "Polygon",
+        "coordinates": [[[75.0, 85.0], [91.33, 85.0], [91.33, 95.0], [75.0, 95.0], [75.0, 85.0]]]
+      },
+      "validationStatus": "valid",
+      "metadata": {
+        "layerName": "Raum_Nutzfläche",
+        "boundingBox": { "minX": 75.0, "minY": 85.0, "maxX": 91.33, "maxY": 95.0 },
+        "centroid": { "x": 83.17, "y": 90.0 },
+        "perimeter": 42.66,
+        "height": 2.8,
+        "volume": 45.72,
+        "occupancy": 1,
+        "equipment": ["desk", "chair", "cabinet"]
+      }
+    },
+    {
+      "id": "room_010e4567-e89b-12d3-a456-426614174310",
+      "documentId": "doc_789e4567-e89b-12d3-a456-426614174111",
+      "aoid": "2011.DM.04.010",
+      "xao": "1.10",
+      "area": 21.55,
+      "areaGross": 23.00,
+      "areaReduced": 20.33,
+      "functionCode": "1.2",
+      "functionName": "Büroraum Einzelbüro",
+      "comment": null,
+      "polygon": {
+        "type": "Polygon",
+        "coordinates": [[[97.0, 85.0], [118.55, 85.0], [118.55, 95.0], [97.0, 95.0], [97.0, 85.0]]]
+      },
+      "validationStatus": "valid",
+      "metadata": {
+        "layerName": "Raum_Nutzfläche",
+        "boundingBox": { "minX": 97.0, "minY": 85.0, "maxX": 118.55, "maxY": 95.0 },
+        "centroid": { "x": 107.78, "y": 90.0 },
+        "perimeter": 53.1,
+        "height": 2.8,
+        "volume": 60.34,
+        "occupancy": 1,
+        "equipment": ["desk", "chair", "cabinet"]
+      }
+    }
+  ]
+}

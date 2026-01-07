@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-01-07T15:00:00Z",
+  "data": [
+    {
+      "id": "usr_550e8400-e29b-41d4-a716-446655440000",
+      "email": "max.muster@bbl.admin.ch",
+      "name": "Max Muster",
+      "role": "staff",
+      "organization": "BBL Flächenmanagement",
+      "createdAt": "2022-01-15T09:30:00Z",
+      "lastLoginAt": "2025-01-07T14:22:00Z"
+    },
+    {
+      "id": "usr_660e8400-e29b-41d4-a716-446655440001",
+      "email": "anna.mueller@bbl.admin.ch",
+      "name": "Anna Müller",
+      "role": "admin",
+      "organization": "BBL Flächenmanagement",
+      "createdAt": "2021-11-20T08:00:00Z",
+      "lastLoginAt": "2025-01-07T09:15:00Z"
+    },
+    {
+      "id": "usr_770e8400-e29b-41d4-a716-446655440002",
+      "email": "peter.schmid@beispiel.ch",
+      "name": "Peter Schmid",
+      "role": "external",
+      "organization": "Beispiel Architekten AG",
+      "createdAt": "2022-03-10T10:00:00Z",
+      "lastLoginAt": "2025-01-06T16:45:00Z"
+    },
+    {
+      "id": "usr_880e8400-e29b-41d4-a716-446655440003",
+      "email": "lisa.weber@bbl.admin.ch",
+      "name": "Lisa Weber",
+      "role": "staff",
+      "organization": "BBL Flächenmanagement",
+      "createdAt": "2022-05-22T11:30:00Z",
+      "lastLoginAt": "2025-01-07T13:00:00Z"
+    },
+    {
+      "id": "usr_990e8400-e29b-41d4-a716-446655440004",
+      "email": "thomas.keller@planungsburo.ch",
+      "name": "Thomas Keller",
+      "role": "external",
+      "organization": "Planungsbüro Keller & Partner",
+      "createdAt": "2022-02-18T14:00:00Z",
+      "lastLoginAt": "2025-01-05T10:30:00Z"
+    }
+  ]
+}

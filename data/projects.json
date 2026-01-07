@@ -1,0 +1,126 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-01-07T15:00:00Z",
+  "data": [
+    {
+      "id": "prj_123e4567-e89b-12d3-a456-426614174000",
+      "projectNumber": "1234/AA.001",
+      "name": "Bern, Verwaltungsgebäude Liebefeld",
+      "location": "Bern",
+      "siaPhase": "53",
+      "status": "active",
+      "createdAt": "2022-04-14T08:00:00Z",
+      "completedAt": null,
+      "createdBy": "usr_550e8400-e29b-41d4-a716-446655440000",
+      "buildingImageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop",
+      "completionPercentage": 95,
+      "documentCount": 14,
+      "metadata": {
+        "address": "Ostermundigenstrasse 51, 3003 Bern",
+        "buildingType": "office",
+        "totalFloors": 6,
+        "constructionYear": 2019,
+        "architectFirm": "Beispiel Architekten AG",
+        "contactEmail": "projekt@beispiel.ch",
+        "contactPhone": "+41 31 123 45 67",
+        "notes": "Phase 53 - Ausführungsprojekt"
+      }
+    },
+    {
+      "id": "prj_223e4567-e89b-12d3-a456-426614174001",
+      "projectNumber": "2345/BB.002",
+      "name": "Genf, Dienstleistungszentrum Montbrillant",
+      "location": "Genf",
+      "siaPhase": "52",
+      "status": "active",
+      "createdAt": "2022-03-22T10:30:00Z",
+      "completedAt": null,
+      "createdBy": "usr_770e8400-e29b-41d4-a716-446655440002",
+      "buildingImageUrl": "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&auto=format&fit=crop",
+      "completionPercentage": 75,
+      "documentCount": 8,
+      "metadata": {
+        "address": "Rue de Montbrillant 40, 1201 Genève",
+        "buildingType": "mixed_use",
+        "totalFloors": 8,
+        "constructionYear": 2020,
+        "architectFirm": "Atelier d'Architecture Genève SA",
+        "contactEmail": "info@atelier-geneve.ch",
+        "contactPhone": "+41 22 987 65 43",
+        "notes": "Phase 52 - Bauprojekt"
+      }
+    },
+    {
+      "id": "prj_323e4567-e89b-12d3-a456-426614174002",
+      "projectNumber": "3456/CC.003",
+      "name": "Magglingen, BAZG, Hochschule Hauptgebäude",
+      "location": "Magglingen",
+      "siaPhase": "51",
+      "status": "active",
+      "createdAt": "2022-02-10T09:00:00Z",
+      "completedAt": null,
+      "createdBy": "usr_880e8400-e29b-41d4-a716-446655440003",
+      "buildingImageUrl": "https://images.unsplash.com/photo-1502101872923-d48509bff386?w=800&auto=format&fit=crop",
+      "completionPercentage": 65,
+      "documentCount": 22,
+      "metadata": {
+        "address": "Hauptstrasse 247, 2532 Magglingen",
+        "buildingType": "education",
+        "totalFloors": 5,
+        "constructionYear": 2021,
+        "architectFirm": "Planungsbüro Keller & Partner",
+        "contactEmail": "thomas.keller@planungsburo.ch",
+        "contactPhone": "+41 32 555 44 33",
+        "notes": "Phase 51 - Vorprojekt, Hochschule für Sport"
+      }
+    },
+    {
+      "id": "prj_423e4567-e89b-12d3-a456-426614174003",
+      "projectNumber": "4567/DD.004",
+      "name": "Zollikofen, Forschung 3",
+      "location": "Zollikofen",
+      "siaPhase": "53",
+      "status": "completed",
+      "createdAt": "2022-01-18T11:15:00Z",
+      "completedAt": "2022-12-20T16:00:00Z",
+      "createdBy": "usr_550e8400-e29b-41d4-a716-446655440000",
+      "buildingImageUrl": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop",
+      "completionPercentage": 100,
+      "documentCount": 12,
+      "metadata": {
+        "address": "Schwarzenburgstrasse 161, 3052 Zollikofen",
+        "buildingType": "research",
+        "totalFloors": 4,
+        "constructionYear": 2018,
+        "architectFirm": "Beispiel Architekten AG",
+        "contactEmail": "projekt@beispiel.ch",
+        "contactPhone": "+41 31 456 78 90",
+        "notes": "Abgeschlossen - Forschungsgebäude Agroscope"
+      }
+    },
+    {
+      "id": "prj_523e4567-e89b-12d3-a456-426614174004",
+      "projectNumber": "5678/EE.005",
+      "name": "Magglingen, BAZG, Hochschule Neubau",
+      "location": "Magglingen",
+      "siaPhase": "52",
+      "status": "completed",
+      "createdAt": "2021-12-05T13:45:00Z",
+      "completedAt": "2022-11-30T14:30:00Z",
+      "createdBy": "usr_990e8400-e29b-41d4-a716-446655440004",
+      "buildingImageUrl": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop",
+      "completionPercentage": 99,
+      "documentCount": 16,
+      "metadata": {
+        "address": "Hauptstrasse 250, 2532 Magglingen",
+        "buildingType": "education",
+        "totalFloors": 3,
+        "constructionYear": 2020,
+        "architectFirm": "Planungsbüro Keller & Partner",
+        "contactEmail": "thomas.keller@planungsburo.ch",
+        "contactPhone": "+41 32 555 44 33",
+        "notes": "Erweiterungsbau Hochschule für Sport"
+      }
+    }
+  ]
+}
