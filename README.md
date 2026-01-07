@@ -2,13 +2,13 @@
 
 **BBL Prüfplattform Flächenmanagement** - A validation tool for floor plan drawings following Swiss Federal BBL CAD standards.
 
-## 🚀 Live Demo
+## Live Demo
 
 Visit the interactive prototype: **[https://davidrasner.github.io/plan-check/](https://davidrasner.github.io/plan-check/)**
 
 > The demo is a static HTML/CSS/JavaScript prototype showcasing the user interface and workflow. Upload, check, and ensure data quality for DWG/DXF floor plans.
 
-## 📋 Project Overview
+## Project Overview
 
 This project aims to replace/modernize the existing BBL floor plan validation platform with an open-source solution that validates DWG/DXF files against BBL CAD-Richtlinie standards before CAFM import.
 
@@ -17,26 +17,26 @@ This project aims to replace/modernize the existing BBL floor plan validation pl
 - External planners/architects submitting floor plans
 - Project managers reviewing submissions
 
-## ✨ Features
+## Features
 
 ### Frontend Prototype (Live Demo)
-- ✅ **Swiss Federal Design System** - Official colors, typography, and layouts
-- ✅ **Project Dashboard** - Grid view with filterable project cards
-- ✅ **Document Management** - Upload and track DWG/DXF/XLSX files
-- ✅ **4-Step Validation Workflow** - Upload → Room List → Review → Submit
-- ✅ **Interactive Floor Plan Viewer** - Visual error markers on plans
-- ✅ **SIA 416 Area Calculations** - Complete area breakdowns and ratios
-- ✅ **Validation Results** - Detailed error/warning list with severity levels
+- **Swiss Federal Design System** - Official colors, typography, and layouts
+- **Project Dashboard** - Grid view with filterable project cards
+- **Document Management** - Upload and track DWG/DXF/XLSX files
+- **4-Step Validation Workflow** - Upload → Room List → Review → Submit
+- **Interactive Floor Plan Viewer** - Visual error markers on plans
+- **SIA 416 Area Calculations** - Complete area breakdowns and ratios
+- **Validation Results** - Detailed error/warning list with severity levels
 
 ### Planned Backend Features
-- 🔲 DWG/DXF file processing (Speckle or LibreDWG)
-- 🔲 25+ validation rules from BBL CAD-Richtlinie
-- 🔲 Excel room list cross-validation
-- 🔲 Real-time validation progress
-- 🔲 PDF report generation
-- 🔲 Swiss eIAM authentication
+- DWG/DXF file processing (Speckle or LibreDWG)
+- 25+ validation rules from BBL CAD-Richtlinie
+- Excel room list cross-validation
+- Real-time validation progress
+- PDF report generation
+- Swiss eIAM authentication
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 plan-check/
@@ -60,7 +60,7 @@ plan-check/
     └── bbl-layers.json
 ```
 
-## 🎨 Design System
+## Design System
 
 The prototype follows the **Swiss Federal Corporate Design** guidelines:
 - **Colors:** Venetian Red (#DC0018), Cerulean Blue (#006699)
@@ -70,14 +70,14 @@ The prototype follows the **Swiss Federal Corporate Design** guidelines:
 
 See [documentation/styleguide.md](documentation/styleguide.md) for complete design specifications.
 
-## 🗂️ Data Model
+## Data Model
 
 The application uses a normalized data structure:
 - **User** → **Project** → **Document** → **ValidationResult**, **Room**, **AreaSummary**
 
 Sample data is provided in JSON format in the `data/` directory. See [documentation/data-model.md](documentation/data-model.md) for complete schema definitions.
 
-## 🏗️ Technology Stack
+## Technology Stack
 
 ### Frontend (Current)
 - HTML5, CSS3, Vanilla JavaScript
@@ -93,7 +93,7 @@ Sample data is provided in JSON format in the `data/` directory. See [documentat
 - **Database:** PostgreSQL + PostGIS
 - **Authentication:** Swiss eIAM integration
 
-## 🚀 Getting Started
+## Getting Started
 
 ### View the Demo
 Simply visit: **[https://davidrasner.github.io/plan-check/](https://davidrasner.github.io/plan-check/)**
@@ -122,14 +122,14 @@ cat data/validation-results.json
 cat documentation/data-model.md
 ```
 
-## 📖 Documentation
+## Documentation
 
 - **[requirements.md](documentation/requirements.md)** - Complete functional requirements (FR-1 to FR-10)
 - **[styleguide.md](documentation/styleguide.md)** - Swiss Federal Design System guide
 - **[data-model.md](documentation/data-model.md)** - Database schema and API contracts
 - **[README_PROTOTYPE.md](README_PROTOTYPE.md)** - Detailed prototype documentation
 
-## 🎯 Demo Workflow
+## Demo Workflow
 
 The live demo demonstrates the complete validation workflow:
 
@@ -143,7 +143,7 @@ The live demo demonstrates the complete validation workflow:
    - View SIA 416 area summary
 5. **Results** - See detailed error reports with spatial markers
 
-## 🔮 Next Steps
+## Next Steps
 
 ### Phase 1: Backend MVP
 - [ ] Set up FastAPI backend
@@ -166,14 +166,14 @@ The live demo demonstrates the complete validation workflow:
 - [ ] Security hardening
 - [ ] Deployment to Swiss federal infrastructure
 
-## 📚 References
+## References
 
 - [Swiss Federal Design System](https://github.com/swiss/designsystem)
 - [SIA 416 - Areas and Volumes of Buildings](https://www.sia.ch/de/dienstleistungen/sia-norm/sia-416/)
 - [DIN 277 - Floor Areas and Volumes](https://www.din.de/)
 - [WCAG 2.1 Accessibility Guidelines](https://www.w3.org/TR/WCAG21/)
 
-## 📄 License
+## License
 
 This project is a prototype for the BBL Prüfplattform Flächenmanagement.
 
