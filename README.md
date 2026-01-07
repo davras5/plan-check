@@ -9,11 +9,7 @@ Visit the interactive prototype: **[https://davidrasner.github.io/plan-check/](h
 > The demo is a static HTML/CSS/JavaScript prototype showcasing the user interface and workflow. Upload, check, and ensure data quality for DWG/DXF floor plans.
 
 <p align="center">
-  <img src="assets/Preview1.jpg" width="90%"/>
-</p>
-
-<p align="center">
-  <img src="assets/Preview2.jpg" width="45%" style="vertical-align: top;"/>
+  <img src="assets/Preview1.jpg" width="45%" style="vertical-align: top;"/>
   <img src="assets/Preview3.jpg" width="45%" style="vertical-align: top;"/>
 </p>
 
