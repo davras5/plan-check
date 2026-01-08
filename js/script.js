@@ -355,7 +355,7 @@ function renderProjects() {
             </div>
         `;
         if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
+            lucide.createIcons({ nodes: grid.querySelectorAll('[data-lucide]') });
         }
         return;
     }
@@ -513,6 +513,7 @@ function openValidationView(documentId, skipHashUpdate = false) {
 // === STEPPER NAVIGATION ===
 function updateStepper() {
     const stepItems = document.querySelectorAll('.stepper__item');
+    const stepper = document.querySelector('.stepper');
 
     stepItems.forEach((item, index) => {
         const stepNumber = index + 1;
@@ -530,9 +531,9 @@ function updateStepper() {
         item.style.cursor = 'pointer';
     });
 
-    // Re-initialize Lucide icons
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
+    // Re-initialize Lucide icons only within the stepper for performance
+    if (typeof lucide !== 'undefined' && stepper) {
+        lucide.createIcons({ nodes: stepper.querySelectorAll('[data-lucide]') });
     }
 
     // Update button states
@@ -657,9 +658,9 @@ function renderRooms() {
         `;
     }).join('');
 
-    // Re-initialize Lucide icons
+    // Re-initialize Lucide icons only within the table for performance
     if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
+        lucide.createIcons({ nodes: tbody.querySelectorAll('[data-lucide]') });
     }
 }
 
@@ -710,9 +711,9 @@ function renderAreaPolygons() {
         `;
     }).join('');
 
-    // Re-initialize Lucide icons
+    // Re-initialize Lucide icons only within the table for performance
     if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
+        lucide.createIcons({ nodes: tbody.querySelectorAll('[data-lucide]') });
     }
 }
 
@@ -739,9 +740,9 @@ function renderStep2Rooms() {
         `;
     }).join('');
 
-    // Re-initialize Lucide icons
+    // Re-initialize Lucide icons only within the table for performance
     if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
+        lucide.createIcons({ nodes: tbody.querySelectorAll('[data-lucide]') });
     }
 }
 
@@ -795,7 +796,7 @@ function renderStep2FloorPlan() {
 
     svg.innerHTML = rooms.map((room, i) => `
         <rect x="${room.x}" y="${room.y}" width="${room.width}" height="${room.height}"
-              fill="${room.fill}" stroke="${room.stroke}" stroke-width="2" class="floorplan-room"/>
+              fill="${room.fill}" stroke="${room.stroke}" stroke-width="2" class="floorplan__room"/>
         <text x="${room.x + room.width/2}" y="${room.y + room.height/2}"
               text-anchor="middle" font-size="14" fill="#333">EG-${String(i + 1).padStart(3, '0')}</text>
     `).join('');
@@ -822,7 +823,10 @@ function initSpeckleViewer() {
 // Legacy function kept for compatibility - now handled by Speckle iframe
 function renderFloorPlan() {
     // Speckle viewer is now used instead of SVG rendering
-    initSpeckleViewer();
+    // Use requestAnimationFrame to avoid blocking table rendering
+    requestAnimationFrame(() => {
+        initSpeckleViewer();
+    });
 }
 
 // === PIE CHART RENDERING ===
@@ -872,8 +876,8 @@ function renderPieChart() {
     legend.innerHTML = data.map(item => {
         const percentage = ((item.value / total) * 100).toFixed(1);
         return `
-            <div class="pie-legend-item">
-                <div class="pie-legend-color" style="background: ${item.color}"></div>
+            <div class="pie-chart__legend-item">
+                <div class="pie-chart__legend-color" style="background: ${item.color}"></div>
                 <span>${item.label}: ${percentage}%</span>
             </div>
         `;
@@ -917,11 +921,11 @@ function setupTabs() {
             });
             tab.classList.add('tabs__tab--active');
 
-            // Update active pane
-            document.querySelectorAll('.val-tab-pane').forEach(pane => {
-                pane.classList.remove('val-tab-pane--active');
+            // Update active pane (val-tab-* panes are now unified to .tab-pane)
+            document.querySelectorAll('#val-tab-rooms, #val-tab-areas, #val-tab-errors').forEach(pane => {
+                pane.classList.remove('tab-pane--active');
             });
-            document.getElementById(`val-tab-${tabName}`).classList.add('val-tab-pane--active');
+            document.getElementById(`val-tab-${tabName}`).classList.add('tab-pane--active');
         });
     });
 
@@ -937,11 +941,11 @@ function setupTabs() {
             });
             tab.classList.add('tabs__tab--active');
 
-            // Update active pane
-            document.querySelectorAll('.step2-tab-pane').forEach(pane => {
-                pane.classList.remove('step2-tab-pane--active');
+            // Update active pane (step2-tab-* panes are now unified to .tab-pane)
+            document.querySelectorAll('#step2-tab-rooms, #step2-tab-errors').forEach(pane => {
+                pane.classList.remove('tab-pane--active');
             });
-            document.getElementById(`step2-tab-${tabName}`).classList.add('step2-tab-pane--active');
+            document.getElementById(`step2-tab-${tabName}`).classList.add('tab-pane--active');
         });
     });
 }
@@ -981,7 +985,7 @@ function setupEventListeners() {
     }
 
     // Login form
-    const loginForm = document.querySelector('.login-form');
+    const loginForm = document.querySelector('.login__form');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -1060,12 +1064,12 @@ function setupEventListeners() {
     });
 
     // View toggle
-    document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+    document.querySelectorAll('.view-toggle__btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            document.querySelectorAll('.view-toggle-btn').forEach(b => {
-                b.classList.remove('view-toggle-btn--active');
+            document.querySelectorAll('.view-toggle__btn').forEach(b => {
+                b.classList.remove('view-toggle__btn--active');
             });
-            btn.classList.add('view-toggle-btn--active');
+            btn.classList.add('view-toggle__btn--active');
 
             const viewType = btn.dataset.view;
             const cardGrid = document.getElementById('project-grid');
@@ -1185,15 +1189,15 @@ function enhanceInteractions() {
     document.querySelectorAll('#room-table-body tr').forEach((row, index) => {
         row.addEventListener('mouseenter', () => {
             // Highlight corresponding room on floor plan
-            const rooms = document.querySelectorAll('.floorplan-room');
+            const rooms = document.querySelectorAll('.floorplan__room');
             if (rooms[index]) {
-                rooms[index].classList.add('floorplan-room--selected');
+                rooms[index].classList.add('floorplan__room--selected');
             }
         });
 
         row.addEventListener('mouseleave', () => {
-            document.querySelectorAll('.floorplan-room').forEach(r => {
-                r.classList.remove('floorplan-room--selected');
+            document.querySelectorAll('.floorplan__room').forEach(r => {
+                r.classList.remove('floorplan__room--selected');
             });
         });
     });

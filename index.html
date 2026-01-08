@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BBL Prüfplattform Flächenmanagement</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="enhancements.css">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/styles.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
@@ -37,63 +37,63 @@
 
         <!-- LOGIN VIEW -->
         <section id="view-login" class="view view--active">
-            <div class="login-container">
-                <div class="login-form-wrapper">
-                    <div class="login-icon">
-                        <img src="assets/logo.png" alt="BBL CAD Prüfplattform Logo" class="login-logo">
+            <div class="login">
+                <div class="login__form-wrapper">
+                    <div class="login__icon">
+                        <img src="assets/logo.png" alt="BBL CAD Prüfplattform Logo" class="login__logo">
                     </div>
 
                     <h2 class="text-h2 text-center">Anmelden</h2>
 
-                    <form class="login-form">
-                        <div class="form-field">
-                            <div class="form-input-group">
-                                <i data-lucide="user" class="form-input-icon icon icon-sm"></i>
-                                <input type="text" class="form-input" placeholder="Benutzername oder E-Mail" id="username">
+                    <form class="login__form">
+                        <div class="form__field">
+                            <div class="form__input-group">
+                                <i data-lucide="user" class="form__input-icon icon icon-sm"></i>
+                                <input type="text" class="form__input" placeholder="Benutzername oder E-Mail" id="username">
                             </div>
                         </div>
 
-                        <div class="form-field">
-                            <div class="form-input-group">
-                                <i data-lucide="lock" class="form-input-icon icon icon-sm"></i>
-                                <input type="password" class="form-input" placeholder="Passwort" id="password">
+                        <div class="form__field">
+                            <div class="form__input-group">
+                                <i data-lucide="lock" class="form__input-icon icon icon-sm"></i>
+                                <input type="password" class="form__input" placeholder="Passwort" id="password">
                             </div>
                         </div>
 
                         <button type="submit" class="btn btn--primary btn--lg" id="login-btn">Anmelden / Demo</button>
 
-                        <div class="login-links">
-                            <a href="#" class="login-link">Zugang anfordern</a>
-                            <a href="#" class="login-link">Passwort vergessen?</a>
+                        <div class="login__links">
+                            <a href="#" class="login__link">Zugang anfordern</a>
+                            <a href="#" class="login__link">Passwort vergessen?</a>
                         </div>
                     </form>
                 </div>
 
-                <div class="login-video">
+                <div class="login__video">
                     <h2 class="text-h3">Erklärvideo</h2>
                     <div class="video-player">
-                        <div class="video-placeholder">
+                        <div class="video-player__placeholder">
                             <svg width="80" height="80" viewBox="0 0 80 80">
                                 <circle cx="40" cy="40" r="35" fill="none" stroke="white" stroke-width="3"/>
                                 <path d="M32 25 L32 55 L55 40 Z" fill="white"/>
                             </svg>
                         </div>
-                        <div class="video-controls">
-                            <button class="video-play-btn">▶</button>
-                            <div class="video-progress"></div>
-                            <span class="video-time">00:00</span>
+                        <div class="video-player__controls">
+                            <button class="video-player__play-btn">▶</button>
+                            <div class="video-player__progress"></div>
+                            <span class="video-player__time">00:00</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="login-downloads">
+                <div class="login__downloads">
                     <h2 class="text-h3">Downloads</h2>
                     <ul class="download-list">
-                        <li><a href="#" class="download-link">BBL CAD Weisung.pdf</a></li>
-                        <li><a href="#" class="download-link">BBL CAD Prüfungskatalog.pdf</a></li>
-                        <li><a href="#" class="download-link">BBL CAD BPMN Prozess.pdf</a></li>
-                        <li><a href="#" class="download-link">BBL CAD Vorlage Raumliste.xlsx</a></li>
-                        <li><a href="#" class="download-link">BBL CAD Beispiel Dateien.zip</a></li>
+                        <li><a href="#" class="download-list__link">BBL CAD Weisung.pdf</a></li>
+                        <li><a href="#" class="download-list__link">BBL CAD Prüfungskatalog.pdf</a></li>
+                        <li><a href="#" class="download-list__link">BBL CAD BPMN Prozess.pdf</a></li>
+                        <li><a href="#" class="download-list__link">BBL CAD Vorlage Raumliste.xlsx</a></li>
+                        <li><a href="#" class="download-list__link">BBL CAD Beispiel Dateien.zip</a></li>
                     </ul>
                 </div>
             </div>
@@ -103,16 +103,16 @@
         <section id="view-projects" class="view">
             <div class="container">
                 <div class="page-header">
-                    <div class="search-bar">
-                        <i data-lucide="search" class="search-icon icon icon-md"></i>
-                        <input type="text" class="search-input" placeholder="Projektname, ID, Auftrag" id="project-search">
+                    <div class="search">
+                        <i data-lucide="search" class="search__icon icon icon-md"></i>
+                        <input type="text" class="search__input" placeholder="Projektname, ID, Auftrag" id="project-search">
                     </div>
                     <div class="page-header__actions">
                         <div class="view-toggle">
-                            <button class="view-toggle-btn view-toggle-btn--active" data-view="grid" aria-label="Kachelansicht">
+                            <button class="view-toggle__btn view-toggle__btn--active" data-view="grid" aria-label="Kachelansicht">
                                 <i data-lucide="grid-2x2" class="icon icon-md"></i>
                             </button>
-                            <button class="view-toggle-btn" data-view="list" aria-label="Listenansicht">
+                            <button class="view-toggle__btn" data-view="list" aria-label="Listenansicht">
                                 <i data-lucide="list" class="icon icon-md"></i>
                             </button>
                         </div>
@@ -134,9 +134,9 @@
             <div class="container">
                 <nav class="breadcrumb">
                     <div class="breadcrumb__nav">
-                        <a href="#" class="breadcrumb-link" id="breadcrumb-projects">Projekte</a>
-                        <span class="breadcrumb-separator">/</span>
-                        <span class="breadcrumb-current" id="breadcrumb-project-name">Projekt Name</span>
+                        <a href="#" class="breadcrumb__link" id="breadcrumb-projects">Projekte</a>
+                        <span class="breadcrumb__separator">/</span>
+                        <span class="breadcrumb__current" id="breadcrumb-project-name">Projekt Name</span>
                     </div>
                     <button class="btn btn--secondary" id="back-to-overview">
                         <i data-lucide="arrow-left" class="icon icon-sm"></i>
@@ -145,10 +145,10 @@
                 </nav>
 
                 <div class="project-header">
-                    <div class="project-header-image" id="project-detail-image">
+                    <div class="project-header__image" id="project-detail-image">
                         <!-- Background image set via JS -->
                     </div>
-                    <div class="project-header-info">
+                    <div class="project-header__info">
                         <div class="project-kpi project-kpi--progress">
                             <div class="donut-chart-wrapper">
                                 <svg class="donut-chart" width="100" height="100" viewBox="0 0 100 100">
@@ -260,11 +260,11 @@
             <div class="container">
                 <nav class="breadcrumb">
                     <div class="breadcrumb__nav">
-                        <a href="#" class="breadcrumb-link" id="breadcrumb-val-projects">Projekte</a>
-                        <span class="breadcrumb-separator">/</span>
-                        <a href="#" class="breadcrumb-link" id="breadcrumb-val-project">Projekt</a>
-                        <span class="breadcrumb-separator">/</span>
-                        <span class="breadcrumb-current" id="breadcrumb-val-document">Dokument</span>
+                        <a href="#" class="breadcrumb__link" id="breadcrumb-val-projects">Projekte</a>
+                        <span class="breadcrumb__separator">/</span>
+                        <a href="#" class="breadcrumb__link" id="breadcrumb-val-project">Projekt</a>
+                        <span class="breadcrumb__separator">/</span>
+                        <span class="breadcrumb__current" id="breadcrumb-val-document">Dokument</span>
                     </div>
                     <button class="btn btn--secondary" id="back-to-project">
                         <i data-lucide="arrow-left" class="icon icon-sm"></i>
@@ -302,10 +302,10 @@
                 </nav>
 
                 <!-- STEP 1: DWG Hochladen -->
-                <div id="step-content-1" class="step-content" style="display: none;">
-                    <div class="upload-section">
+                <div id="step-content-1" class="step__content" style="display: none;">
+                    <div class="upload">
                         <h2 class="text-h2">DWG-Datei hochladen</h2>
-                        <div class="upload-zone" id="dwg-upload-zone">
+                        <div class="upload__zone" id="dwg-upload-zone">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="17 8 12 3 7 8"/>
@@ -316,31 +316,31 @@
                             <input type="file" id="dwg-file-input" accept=".dwg,.dxf" hidden>
                             <button class="btn btn--primary" id="dwg-select-btn">Datei auswählen</button>
                         </div>
-                        <div class="uploaded-file" id="dwg-uploaded-file" style="display: none;">
+                        <div class="upload__file" id="dwg-uploaded-file" style="display: none;">
                             <p><strong>Hochgeladen:</strong> <span id="dwg-file-name"></span> (<span id="dwg-file-size"></span>)</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- STEP 2: Raumliste Hochladen -->
-                <div id="step-content-2" class="step-content" style="display: none;">
-                    <div class="upload-section">
+                <div id="step-content-2" class="step__content" style="display: none;">
+                    <div class="upload">
                         <h2 class="text-h2">Excel-Raumliste hochladen</h2>
-                        <div class="upload-zone" id="excel-upload-zone">
+                        <div class="upload__zone" id="excel-upload-zone">
                             <i data-lucide="file-spreadsheet" style="width: 48px; height: 48px; color: var(--color-primary);"></i>
                             <p>Excel-Datei hier ablegen oder klicken zum Auswählen</p>
                             <p class="text-muted">Unterstützte Formate: XLSX, XLS (max. 10 MB)</p>
                             <input type="file" id="excel-file-input" accept=".xlsx,.xls" hidden>
                             <button class="btn btn--primary" id="excel-select-btn">Datei auswählen</button>
                         </div>
-                        <div class="uploaded-file" id="excel-uploaded-file" style="display: none;">
+                        <div class="upload__file" id="excel-uploaded-file" style="display: none;">
                             <p><strong>Hochgeladen:</strong> <span id="excel-file-name"></span> (<span id="excel-file-size"></span>)</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- STEP 2 CONTENT: Room matching validation with tabs -->
-                <div id="step-2-content" class="step-detail-content" style="display: none;">
+                <div id="step-2-content" class="step__detail-content" style="display: none;">
                     <div class="metrics">
                         <div class="metric-card">
                             <span class="metric-card__value">22</span>
@@ -369,7 +369,7 @@
 
                     <div class="step2-content-area">
                         <!-- Rooms Tab -->
-                        <div class="step2-tab-pane step2-tab-pane--active" id="step2-tab-rooms">
+                        <div class="tab-pane tab-pane--active" id="step2-tab-rooms">
                             <div class="table-wrapper">
                                 <table class="table table--compact">
                                     <thead>
@@ -389,7 +389,7 @@
                         </div>
 
                         <!-- Errors Tab -->
-                        <div class="step2-tab-pane" id="step2-tab-errors">
+                        <div class="tab-pane" id="step2-tab-errors">
                             <div class="error-list" id="step2-error-list">
                                 <!-- Errors rendered by JS -->
                             </div>
@@ -398,15 +398,15 @@
                 </div>
 
                 <!-- STEP 3: Ergebnisse Bestätigen -->
-                <div id="step-content-3" class="step-content" style="display: none;">
+                <div id="step-content-3" class="step__content" style="display: none;">
                     <h2 class="text-h2">Zusammenfassung Ergebnisse</h2>
 
-                    <div class="results-layout">
+                    <div class="results__layout">
                         <!-- Left Column: Tables -->
-                        <div class="results-tables">
+                        <div class="results__tables">
                             <!-- Gebäudevolumen -->
-                            <div class="results-section">
-                                <h3 class="results-section__title">Gebäudevolumen</h3>
+                            <div class="results__section">
+                                <h3 class="results__section-title">Gebäudevolumen</h3>
                                 <table class="table table--compact table--no-borders">
                                     <tbody>
                                         <tr><td class="table__abbr">GV</td><td>Gebäudevolumen</td><td class="text-right">74'786 m³</td><td class="text-right">100%</td></tr>
@@ -417,8 +417,8 @@
                             </div>
 
                             <!-- Gebäudeflächen -->
-                            <div class="results-section">
-                                <h3 class="results-section__title">Gebäudeflächen</h3>
+                            <div class="results__section">
+                                <h3 class="results__section-title">Gebäudeflächen</h3>
                                 <table class="table table--compact table--no-borders">
                                     <tbody>
                                         <tr><td class="table__abbr">GF</td><td>Geschossfläche</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
@@ -434,8 +434,8 @@
                             </div>
 
                             <!-- Flächen DIN 277 -->
-                            <div class="results-section">
-                                <h3 class="results-section__title">Flächen DIN 277</h3>
+                            <div class="results__section">
+                                <h3 class="results__section-title">Flächen DIN 277</h3>
                                 <table class="table table--compact table--no-borders">
                                     <tbody>
                                         <tr><td class="table__abbr">HNF 1</td><td>Wohnen und Aufenthalt</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
@@ -454,9 +454,9 @@
                         </div>
 
                         <!-- Right Column: Kennzahlen + Donut Chart -->
-                        <div class="results-sidebar">
-                            <div class="results-section">
-                                <h3 class="results-section__title">Kennzahlen Wirtschaftlichkeit von Grundris</h3>
+                        <div class="results__sidebar">
+                            <div class="results__section">
+                                <h3 class="results__section-title">Kennzahlen Wirtschaftlichkeit von Grundris</h3>
                                 <table class="table table--compact table--no-borders">
                                     <tbody>
                                         <tr><td class="table__abbr">HNF SIA 416 / GF</td><td>Hauptnutzfläche / Geschossfläche</td><td class="text-right">0.40</td></tr>
@@ -466,7 +466,7 @@
                             </div>
 
                             <!-- Multi-segment Donut Chart -->
-                            <div class="results-donut">
+                            <div class="results__donut">
                                 <svg viewBox="0 0 200 200" class="donut-multi">
                                     <!-- Background circle -->
                                     <circle cx="100" cy="100" r="70" fill="none" stroke="#E5E5E5" stroke-width="30"/>
@@ -512,12 +512,12 @@
                 </div>
 
                 <!-- STEP 4: Auftrag Abschliessen -->
-                <div id="step-content-4" class="step-content" style="display: none;">
+                <div id="step-content-4" class="step__content" style="display: none;">
                     <div class="empty-state">
-                        <div class="firework-container">
-                            <div class="firework"></div>
-                            <div class="firework firework--delay-1"></div>
-                            <div class="firework firework--delay-2"></div>
+                        <div class="firework">
+                            <div class="firework__spark"></div>
+                            <div class="firework__spark firework__spark--delay-1"></div>
+                            <div class="firework__spark firework__spark--delay-2"></div>
                         </div>
                         <h2 class="text-h1">Auftrag Abschluss</h2>
                         <p class="empty-state__message">
@@ -528,7 +528,7 @@
                 </div>
 
                 <!-- STEP 1 CONTENT: Floor plan viewer with tabs -->
-                <div id="step-1-content" class="step-detail-content" style="display: none;">
+                <div id="step-1-content" class="step__detail-content" style="display: none;">
                     <div class="metrics">
                         <div class="metric-card">
                             <span class="metric-card__value">22</span>
@@ -559,7 +559,7 @@
                 <div class="split-view">
                     <div class="split-view__left">
                         <!-- Rooms Tab -->
-                        <div class="val-tab-pane val-tab-pane--active" id="val-tab-rooms">
+                        <div class="tab-pane tab-pane--active" id="val-tab-rooms">
                             <div class="table-wrapper">
                                 <table class="table table--compact">
                                     <thead>
@@ -578,7 +578,7 @@
                         </div>
 
                         <!-- Areas Tab -->
-                        <div class="val-tab-pane" id="val-tab-areas">
+                        <div class="tab-pane" id="val-tab-areas">
                             <div class="table-wrapper">
                                 <table class="table table--compact">
                                     <thead>
@@ -597,7 +597,7 @@
                         </div>
 
                         <!-- Errors Tab -->
-                        <div class="val-tab-pane" id="val-tab-errors">
+                        <div class="tab-pane" id="val-tab-errors">
                             <div class="error-list" id="error-list">
                                 <!-- Errors rendered by JS -->
                             </div>
@@ -605,7 +605,7 @@
                     </div>
 
                     <div class="split-view__right">
-                        <div class="floorplan-viewer floorplan-viewer--speckle">
+                        <div class="floorplan floorplan--speckle">
                             <iframe
                                 id="speckle-viewer"
                                 class="speckle-viewer__iframe"
@@ -636,11 +636,11 @@
             <div class="container">
                 <nav class="breadcrumb">
                     <div class="breadcrumb__nav">
-                        <a href="#" class="breadcrumb-link" id="breadcrumb-results-projects">Projekte</a>
-                        <span class="breadcrumb-separator">/</span>
-                        <a href="#" class="breadcrumb-link" id="breadcrumb-results-project">Projekt</a>
-                        <span class="breadcrumb-separator">/</span>
-                        <span class="breadcrumb-current">Zusammenfassung Ergebnis</span>
+                        <a href="#" class="breadcrumb__link" id="breadcrumb-results-projects">Projekte</a>
+                        <span class="breadcrumb__separator">/</span>
+                        <a href="#" class="breadcrumb__link" id="breadcrumb-results-project">Projekt</a>
+                        <span class="breadcrumb__separator">/</span>
+                        <span class="breadcrumb__current">Zusammenfassung Ergebnis</span>
                     </div>
                     <button class="btn btn--secondary" id="back-to-project-results">
                         <i data-lucide="arrow-left" class="icon icon-sm"></i>
@@ -650,8 +650,8 @@
 
                 <h1 class="text-h1">Zusammenfassung Ergebnis</h1>
 
-                <div class="results-grid">
-                    <div class="results-section">
+                <div class="results__grid">
+                    <div class="results__section">
                         <h2 class="text-h3">Gebäudevolumen</h2>
                         <table class="table table--compact table--no-borders">
                             <tbody>
@@ -662,7 +662,7 @@
                         </table>
                     </div>
 
-                    <div class="results-section">
+                    <div class="results__section">
                         <h2 class="text-h3">Gebäudeflächen SIA 416</h2>
                         <table class="table table--compact table--no-borders">
                             <tbody>
@@ -678,7 +678,7 @@
                         </table>
                     </div>
 
-                    <div class="results-section">
+                    <div class="results__section">
                         <h2 class="text-h3">Flächen DIN 277</h2>
                         <table class="table table--compact table--no-borders">
                             <tbody>
@@ -695,14 +695,14 @@
                         </table>
                     </div>
 
-                    <div class="results-section">
+                    <div class="results__section">
                         <h2 class="text-h3">Kennzahlen Wirtschaftlichkeit</h2>
-                        <div class="pie-chart-container">
-                            <svg class="pie-chart" width="300" height="300" viewBox="0 0 300 300">
+                        <div class="pie-chart">
+                            <svg class="pie-chart__svg" width="300" height="300" viewBox="0 0 300 300">
                                 <!-- Pie chart rendered by JS -->
                                 <g id="pie-chart-slices"></g>
                             </svg>
-                            <div class="pie-legend" id="pie-legend">
+                            <div class="pie-chart__legend" id="pie-legend">
                                 <!-- Legend rendered by JS -->
                             </div>
                         </div>
@@ -739,6 +739,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
