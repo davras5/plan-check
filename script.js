@@ -801,38 +801,28 @@ function renderStep2FloorPlan() {
     `).join('');
 }
 
-// === FLOOR PLAN RENDERING ===
+// === SPECKLE VIEWER ===
+function initSpeckleViewer() {
+    const iframe = document.getElementById('speckle-viewer');
+    const loading = document.getElementById('speckle-loading');
+
+    if (!iframe || !loading) return;
+
+    // Hide loading indicator when iframe loads
+    iframe.addEventListener('load', () => {
+        loading.classList.add('is-hidden');
+    });
+
+    // Handle iframe load errors
+    iframe.addEventListener('error', () => {
+        loading.innerHTML = '<span>Fehler beim Laden des 3D-Grundrisses</span>';
+    });
+}
+
+// Legacy function kept for compatibility - now handled by Speckle iframe
 function renderFloorPlan() {
-    const svg = document.getElementById('floorplan-svg');
-    if (!svg) return;
-
-    // Simple floor plan visualization
-    const rooms = [
-        { x: 50, y: 50, width: 150, height: 100, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' },
-        { x: 220, y: 50, width: 120, height: 100, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' },
-        { x: 360, y: 50, width: 180, height: 100, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' },
-        { x: 50, y: 170, width: 100, height: 150, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' },
-        { x: 170, y: 170, width: 170, height: 150, fill: 'rgba(220, 53, 69, 0.3)', stroke: 'var(--color-error-marker)' }, // Error room
-        { x: 360, y: 170, width: 180, height: 150, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' },
-        { x: 50, y: 340, width: 150, height: 120, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' },
-        { x: 220, y: 340, width: 120, height: 120, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' },
-        { x: 360, y: 340, width: 180, height: 120, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' }
-    ];
-
-    svg.innerHTML = rooms.map((room, i) => `
-        <rect x="${room.x}" y="${room.y}" width="${room.width}" height="${room.height}"
-              fill="${room.fill}" stroke="${room.stroke}" stroke-width="2" class="floorplan-room"/>
-        <text x="${room.x + room.width/2}" y="${room.y + room.height/2}"
-              text-anchor="middle" font-size="14" fill="#333">${mockRooms[i]?.aoid || ''}</text>
-    `).join('') +
-    // Add error markers
-    mockErrors.filter(e => e.location).map(error => `
-        <circle cx="${error.location.x}" cy="${error.location.y}" r="8"
-                class="floorplan-marker floorplan-marker--${error.severity}"
-                title="${error.message}"/>
-        <text x="${error.location.x}" y="${error.location.y + 4}"
-              text-anchor="middle" font-size="12" fill="white" font-weight="bold">!</text>
-    `).join('');
+    // Speckle viewer is now used instead of SVG rendering
+    initSpeckleViewer();
 }
 
 // === PIE CHART RENDERING ===
