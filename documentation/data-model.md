@@ -12,8 +12,7 @@ This document defines the data model for the BBL Prüfplattform Flächenmanageme
 erDiagram
     RuleSet ||--o{ Project : "applies to"
     Project ||--o{ Document : "contains"
-    Project ||--o{ ProjectMember : "has"
-    ProjectMember }o--|| User : "references"
+    Project }o--o{ User : "has members"
     User ||--o{ Project : "creates"
     User ||--o{ Document : "creates"
     User ||--o{ Document : "edits"
@@ -24,7 +23,7 @@ erDiagram
         int id PK
         string name
         string description
-        array rules
+        json rules
     }
 
     Project {
@@ -38,12 +37,7 @@ erDiagram
         string status
         int ruleSetId FK
         string imageUrl
-        array members
-    }
-
-    ProjectMember {
-        int userId FK
-        string role
+        json members
     }
 
     Document {
@@ -89,8 +83,7 @@ erDiagram
 |--------------|-------------|-------------|
 | RuleSet → Project | One-to-Many | `project.ruleSetId` |
 | User → Project (creator) | One-to-Many | `project.createdBy` |
-| Project → ProjectMember | One-to-Many | `project.members[]` |
-| ProjectMember → User | Many-to-One | `members[].userId` |
+| Project ↔ User (members) | Many-to-Many | `project.members[].userId` |
 | Project → Document | One-to-Many | `document.projectId` |
 | User → Document (creator) | One-to-Many | `document.createdBy` |
 | User → Document (editor) | One-to-Many | `document.lastEditedBy` |
