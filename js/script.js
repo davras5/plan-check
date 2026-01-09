@@ -614,18 +614,7 @@ function openValidationView(documentId, skipHashUpdate = false) {
     currentStep = 1;
     updateStepper();
 
-    // Render rooms
-    renderRooms();
-
-    // Render area polygons
-    renderAreaPolygons();
-
-    // Render errors
-    renderErrors();
-
-    // Render floor plan
-    renderFloorPlan();
-
+    // Switch view FIRST to make container visible
     if (skipHashUpdate) {
         // Directly switch view without updating hash
         document.querySelectorAll('.view').forEach(view => view.classList.remove('view--active'));
@@ -634,6 +623,12 @@ function openValidationView(documentId, skipHashUpdate = false) {
     } else {
         switchView('validation');
     }
+
+    // Render content AFTER view is visible
+    renderRooms();
+    renderAreaPolygons();
+    renderErrors();
+    renderFloorPlan();
 }
 
 // === STEPPER NAVIGATION ===
