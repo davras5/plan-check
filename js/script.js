@@ -227,6 +227,93 @@ const mockErrors = [
     }
 ];
 
+const mockValidationRules = [
+    {
+        code: 'LAYER_001',
+        name: 'Pflichtlayer vorhanden',
+        category: 'Layer',
+        description: 'Prüft, ob alle 14 vorgeschriebenen Layer gemäss BBL CAD-Richtlinie vorhanden sind'
+    },
+    {
+        code: 'LAYER_002',
+        name: 'Layer-Farben korrekt',
+        category: 'Layer',
+        description: 'Prüft, ob die Layer-Farben den Vorgaben entsprechen (z.B. Layer 7 = weiss)'
+    },
+    {
+        code: 'LAYER_003',
+        name: 'Keine fremden Layer',
+        category: 'Layer',
+        description: 'Prüft, ob keine nicht definierten Layer in der Zeichnung vorhanden sind'
+    },
+    {
+        code: 'GEOM_001',
+        name: 'Polylinien geschlossen',
+        category: 'Geometrie',
+        description: 'Prüft, ob alle Raumpolygone geschlossen sind (Start- und Endpunkt identisch)'
+    },
+    {
+        code: 'GEOM_002',
+        name: 'Polylinien planar',
+        category: 'Geometrie',
+        description: 'Prüft, ob alle Polylinien auf Z=0 liegen (2D-Konformität)'
+    },
+    {
+        code: 'GEOM_003',
+        name: 'Keine Selbstüberschneidungen',
+        category: 'Geometrie',
+        description: 'Prüft, ob Raumpolygone sich nicht selbst überschneiden'
+    },
+    {
+        code: 'GEOM_004',
+        name: 'Minimale Raumgrösse',
+        category: 'Geometrie',
+        description: 'Prüft, ob alle Räume eine Mindestfläche von 1 m² haben'
+    },
+    {
+        code: 'ENTITY_001',
+        name: 'Erlaubte Entitätstypen',
+        category: 'Entität',
+        description: 'Prüft, ob nur erlaubte Entitätstypen verwendet werden (LINE, POLYLINE, TEXT, etc.)'
+    },
+    {
+        code: 'ENTITY_002',
+        name: 'Keine OLE-Objekte',
+        category: 'Entität',
+        description: 'Prüft, ob keine eingebetteten OLE-Objekte vorhanden sind'
+    },
+    {
+        code: 'TEXT_001',
+        name: 'Schriftart korrekt',
+        category: 'Text',
+        description: 'Prüft, ob nur die vorgeschriebene Schriftart "Arial" verwendet wird'
+    },
+    {
+        code: 'TEXT_002',
+        name: 'Textgrösse korrekt',
+        category: 'Text',
+        description: 'Prüft, ob die Texthöhe den Vorgaben entspricht (min. 2.5mm)'
+    },
+    {
+        code: 'AOID_001',
+        name: 'AOID-Format gültig',
+        category: 'AOID',
+        description: 'Prüft, ob alle AOIDs dem BBL-Format entsprechen (z.B. "2011.DM.04.015")'
+    },
+    {
+        code: 'AOID_002',
+        name: 'AOID eindeutig',
+        category: 'AOID',
+        description: 'Prüft, ob jede AOID nur einmal in der Zeichnung vorkommt'
+    },
+    {
+        code: 'AOID_003',
+        name: 'AOID in Raumliste',
+        category: 'AOID',
+        description: 'Prüft, ob alle AOIDs in der hochgeladenen Excel-Raumliste vorhanden sind'
+    }
+];
+
 // === STATE MANAGEMENT ===
 let currentView = 'login';
 let currentProject = null;
@@ -443,8 +530,9 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
     // Mock area values (in real app would come from project data)
     document.getElementById('project-gf').textContent = "4'500 m²";
 
-    // Render documents
+    // Render documents and rules
     renderDocuments();
+    renderRules();
 
     if (skipHashUpdate) {
         // Directly switch view without updating hash
@@ -482,6 +570,23 @@ function renderDocuments() {
             openValidationView(docId);
         });
     });
+}
+
+// === RULES RENDERING ===
+function renderRules() {
+    const tbody = document.getElementById('rules-table-body');
+    if (!tbody) return;
+
+    tbody.innerHTML = mockValidationRules.map(rule => {
+        return `
+            <tr>
+                <td><code>${rule.code}</code></td>
+                <td>${rule.name}</td>
+                <td><span class="badge badge--secondary">${rule.category}</span></td>
+                <td>${rule.description}</td>
+            </tr>
+        `;
+    }).join('');
 }
 
 // === VALIDATION VIEW ===
