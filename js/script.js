@@ -155,6 +155,265 @@ function setupTabGroup(tabAttribute, paneIdPrefix, paneIds = null) {
     });
 }
 
+// === MODAL UTILITIES ===
+
+/**
+ * Opens a modal by ID
+ * @param {string} modalId - The modal element ID
+ */
+function openModal(modalId) {
+    const modal = safeGetElementById(modalId);
+    if (!modal) return;
+
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+
+    // Initialize Lucide icons in modal
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Focus first input or close button
+    const firstInput = modal.querySelector('input, select, textarea');
+    const closeBtn = modal.querySelector('[data-modal-close]');
+    if (firstInput) {
+        firstInput.focus();
+    } else if (closeBtn) {
+        closeBtn.focus();
+    }
+
+    // Trap focus within modal
+    modal.addEventListener('keydown', trapFocus);
+}
+
+/**
+ * Closes a modal by ID
+ * @param {string} modalId - The modal element ID
+ */
+function closeModal(modalId) {
+    const modal = safeGetElementById(modalId);
+    if (!modal) return;
+
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    modal.removeEventListener('keydown', trapFocus);
+}
+
+/**
+ * Traps focus within a modal for accessibility
+ * @param {KeyboardEvent} e - The keyboard event
+ */
+function trapFocus(e) {
+    if (e.key !== 'Tab') return;
+
+    const modal = e.currentTarget;
+    const focusable = modal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstEl = focusable[0];
+    const lastEl = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === firstEl) {
+        lastEl.focus();
+        e.preventDefault();
+    } else if (!e.shiftKey && document.activeElement === lastEl) {
+        firstEl.focus();
+        e.preventDefault();
+    }
+}
+
+/**
+ * Sets up modal event listeners
+ */
+function setupModals() {
+    // New Project button opens modal
+    const newProjectBtn = safeGetElementById('new-project-btn');
+    if (newProjectBtn) {
+        newProjectBtn.addEventListener('click', () => {
+            openModal('new-project-modal');
+        });
+    }
+
+    // Close modal on backdrop click or close button
+    document.querySelectorAll('[data-modal-close]').forEach(el => {
+        el.addEventListener('click', (e) => {
+            const modal = e.target.closest('.modal');
+            if (modal) {
+                closeModal(modal.id);
+            }
+        });
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const openModal = document.querySelector('.modal:not([hidden])');
+            if (openModal) {
+                closeModal(openModal.id);
+            }
+        }
+    });
+
+    // Setup New Project form
+    setupNewProjectForm();
+}
+
+/**
+ * Sets up the New Project form handling
+ */
+function setupNewProjectForm() {
+    const form = safeGetElementById('new-project-form');
+    const imageInput = safeGetElementById('project-image');
+    const imagePreview = safeGetElementById('project-image-preview');
+    const imagePreviewImg = safeGetElementById('project-image-preview-img');
+    const imageRemoveBtn = safeGetElementById('project-image-remove');
+    const imagePlaceholder = document.querySelector('.form__file-placeholder');
+    const imageUpload = safeGetElementById('project-image-upload');
+
+    // Store image data URL
+    let selectedImageUrl = '';
+
+    // Image preview on file select
+    if (imageInput) {
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    selectedImageUrl = event.target.result;
+                    if (imagePreviewImg) {
+                        imagePreviewImg.src = selectedImageUrl;
+                    }
+                    if (imagePreview) {
+                        imagePreview.hidden = false;
+                    }
+                    if (imagePlaceholder) {
+                        imagePlaceholder.hidden = true;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Remove image
+    if (imageRemoveBtn) {
+        imageRemoveBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            selectedImageUrl = '';
+            if (imageInput) {
+                imageInput.value = '';
+            }
+            if (imagePreview) {
+                imagePreview.hidden = true;
+            }
+            if (imagePlaceholder) {
+                imagePlaceholder.hidden = false;
+            }
+        });
+    }
+
+    // Drag and drop support
+    if (imageUpload) {
+        imageUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            imageUpload.classList.add('is-dragover');
+        });
+
+        imageUpload.addEventListener('dragleave', () => {
+            imageUpload.classList.remove('is-dragover');
+        });
+
+        imageUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageUpload.classList.remove('is-dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                // Trigger the change event by setting files
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                if (imageInput) {
+                    imageInput.files = dataTransfer.files;
+                    imageInput.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+    }
+
+    // Form submission
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const projectNumber = formData.get('projectNumber');
+            const name = formData.get('name');
+            const siaPhase = formData.get('siaPhase');
+
+            // Generate new project ID
+            const newId = mockProjects.length > 0
+                ? Math.max(...mockProjects.map(p => p.id)) + 1
+                : 1;
+
+            // Create new project object
+            const newProject = {
+                id: newId,
+                name: escapeHtml(name),
+                location: extractLocation(name),
+                siaPhase: escapeHtml(siaPhase),
+                createdDate: formatDate(new Date()),
+                documentCount: 0,
+                completionPercentage: 0,
+                status: 'active',
+                imageUrl: selectedImageUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop',
+                projectNumber: escapeHtml(projectNumber)
+            };
+
+            // Add to mockProjects array
+            mockProjects.unshift(newProject);
+
+            // Close modal and reset form
+            closeModal('new-project-modal');
+            form.reset();
+            selectedImageUrl = '';
+            if (imagePreview) {
+                imagePreview.hidden = true;
+            }
+            if (imagePlaceholder) {
+                imagePlaceholder.hidden = false;
+            }
+
+            // Re-render projects and show success message
+            renderProjects();
+            showToast(`Projekt "${name}" wurde erstellt`, 'success');
+        });
+    }
+}
+
+/**
+ * Extracts location from project name (assumes format "Location, Building Name")
+ * @param {string} name - The project name
+ * @returns {string} The extracted location or the full name
+ */
+function extractLocation(name) {
+    if (!name) return '';
+    const parts = name.split(',');
+    return parts[0].trim();
+}
+
+/**
+ * Formats a date to DD/MM/YYYY format
+ * @param {Date} date - The date to format
+ * @returns {string} The formatted date string
+ */
+function formatDate(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
 /**
  * Generates the Speckle viewer URL
  * @returns {string} The Speckle viewer URL
@@ -370,6 +629,49 @@ const mockDocuments = [
         lastChange: 'max.muster@bbl.admin.ch on 17/06/2022 15:00',
         status: 'validated',
         score: 100
+    }
+];
+
+const mockUsers = [
+    {
+        id: 1,
+        name: 'Max Muster',
+        email: 'max.muster@bbl.admin.ch',
+        role: 'Admin',
+        roleClass: 'info',
+        lastActivity: '27/06/2022 12:30'
+    },
+    {
+        id: 2,
+        name: 'Anna Beispiel',
+        email: 'anna.beispiel@bbl.admin.ch',
+        role: 'Editor',
+        roleClass: 'secondary',
+        lastActivity: '27/06/2022 10:45'
+    },
+    {
+        id: 3,
+        name: 'John Doe',
+        email: 'john.doe@bbl.admin.ch',
+        role: 'Viewer',
+        roleClass: 'muted',
+        lastActivity: '26/06/2022 09:15'
+    },
+    {
+        id: 4,
+        name: 'Lisa Weber',
+        email: 'lisa.weber@bbl.admin.ch',
+        role: 'Editor',
+        roleClass: 'secondary',
+        lastActivity: '27/06/2022 12:30'
+    },
+    {
+        id: 5,
+        name: 'Peter Schmidt',
+        email: 'peter.schmidt@bbl.admin.ch',
+        role: 'Viewer',
+        roleClass: 'muted',
+        lastActivity: '26/06/2022 09:15'
     }
 ];
 
@@ -796,13 +1098,14 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
     // Mock area values (in real app would come from project data)
     document.getElementById('project-gf').textContent = "4'500 m²";
 
-    // Render documents and rules
+    // Render documents, users, and rules
     renderDocuments();
+    renderUsers();
     renderRules();
 
     // Update tab counts
     document.getElementById('tab-documents-count').textContent = mockDocuments.length;
-    document.getElementById('tab-users-count').textContent = document.querySelectorAll('#user-table-body tr').length;
+    document.getElementById('tab-users-count').textContent = mockUsers.length;
     document.getElementById('tab-rules-count').textContent = mockValidationRules.length;
 
     if (skipHashUpdate) {
@@ -815,10 +1118,89 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
     }
 }
 
+// === DOCUMENT SELECTION STATE ===
+const DocumentSelection = {
+    selectedIds: new Set(),
+
+    toggle(id) {
+        if (this.selectedIds.has(id)) {
+            this.selectedIds.delete(id);
+        } else {
+            this.selectedIds.add(id);
+        }
+        this.updateUI();
+    },
+
+    selectAll() {
+        mockDocuments.forEach(doc => this.selectedIds.add(doc.id));
+        this.updateUI();
+    },
+
+    deselectAll() {
+        this.selectedIds.clear();
+        this.updateUI();
+    },
+
+    isSelected(id) {
+        return this.selectedIds.has(id);
+    },
+
+    getSelectedCount() {
+        return this.selectedIds.size;
+    },
+
+    updateUI() {
+        const count = this.getSelectedCount();
+        const total = mockDocuments.length;
+
+        // Update selected count text
+        const countEl = safeGetElementById('documents-selected-count');
+        if (countEl) {
+            countEl.textContent = `${count} ausgewählt`;
+        }
+
+        // Update select all checkbox state
+        const selectAllCheckbox = safeGetElementById('select-all-documents');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = count === total && total > 0;
+            selectAllCheckbox.indeterminate = count > 0 && count < total;
+        }
+
+        // Update row checkboxes and styles
+        const tbody = safeGetElementById('document-table-body');
+        if (tbody) {
+            tbody.querySelectorAll('tr').forEach(row => {
+                const docId = safeParseInt(row.dataset.documentId);
+                const checkbox = row.querySelector('.document-checkbox');
+                const isSelected = this.isSelected(docId);
+
+                if (checkbox) {
+                    checkbox.checked = isSelected;
+                }
+                row.classList.toggle('is-selected', isSelected);
+            });
+        }
+
+        // Update action buttons
+        const editBtn = safeGetElementById('edit-document-btn');
+        const deleteBtn = safeGetElementById('delete-documents-btn');
+
+        if (editBtn) {
+            editBtn.disabled = count !== 1;
+        }
+        if (deleteBtn) {
+            deleteBtn.disabled = count === 0;
+        }
+    }
+};
+
 // === DOCUMENT RENDERING ===
 function renderDocuments() {
     const tbody = document.getElementById('document-table-body');
     if (!tbody) return;
+
+    // Reset selection when re-rendering
+    DocumentSelection.deselectAll();
 
     tbody.innerHTML = mockDocuments.map(doc => {
         const scoreClass = doc.score >= 90 ? 'success' :
@@ -826,6 +1208,12 @@ function renderDocuments() {
 
         return `
             <tr data-document-id="${safeParseInt(doc.id)}">
+                <td class="table__checkbox-col">
+                    <label class="checkbox" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="document-checkbox" data-doc-id="${safeParseInt(doc.id)}" aria-label="Dokument ${escapeHtml(doc.name)} auswählen">
+                        <span class="checkbox__mark"></span>
+                    </label>
+                </td>
                 <td>${escapeHtml(doc.name)}</td>
                 <td>${escapeHtml(doc.creator)}</td>
                 <td>${escapeHtml(doc.lastChange)}</td>
@@ -834,15 +1222,299 @@ function renderDocuments() {
         `;
     }).join('');
 
-    // Add click handlers
+    // Add click handlers for row selection (not on checkbox)
     tbody.querySelectorAll('tr').forEach(row => {
-        row.addEventListener('click', () => {
+        row.addEventListener('click', (e) => {
+            // If clicking on checkbox label/input, don't open document
+            if (e.target.closest('.checkbox')) {
+                return;
+            }
             const docId = safeParseInt(row.dataset.documentId);
             if (docId > 0) {
                 openValidationView(docId);
             }
         });
     });
+
+    // Add checkbox change handlers
+    tbody.querySelectorAll('.document-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const docId = safeParseInt(e.target.dataset.docId);
+            DocumentSelection.toggle(docId);
+        });
+    });
+
+    // Setup select all checkbox
+    setupSelectAllDocuments();
+}
+
+/**
+ * Sets up the select all checkbox functionality
+ */
+function setupSelectAllDocuments() {
+    const selectAllCheckbox = safeGetElementById('select-all-documents');
+    if (!selectAllCheckbox) return;
+
+    // Remove existing listener to prevent duplicates
+    selectAllCheckbox.replaceWith(selectAllCheckbox.cloneNode(true));
+    const newCheckbox = safeGetElementById('select-all-documents');
+
+    if (newCheckbox) {
+        newCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                DocumentSelection.selectAll();
+            } else {
+                DocumentSelection.deselectAll();
+            }
+        });
+    }
+}
+
+/**
+ * Sets up document action buttons
+ */
+function setupDocumentActions() {
+    const newBtn = safeGetElementById('new-document-btn');
+    const editBtn = safeGetElementById('edit-document-btn');
+    const deleteBtn = safeGetElementById('delete-documents-btn');
+
+    if (newBtn) {
+        newBtn.addEventListener('click', () => {
+            showToast('Neues Dokument erstellen - Funktion kommt bald', 'info');
+        });
+    }
+
+    if (editBtn) {
+        editBtn.addEventListener('click', () => {
+            const selectedIds = Array.from(DocumentSelection.selectedIds);
+            if (selectedIds.length === 1) {
+                const doc = mockDocuments.find(d => d.id === selectedIds[0]);
+                if (doc) {
+                    showToast(`Dokument "${doc.name}" bearbeiten - Funktion kommt bald`, 'info');
+                }
+            }
+        });
+    }
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            const count = DocumentSelection.getSelectedCount();
+            if (count > 0) {
+                const confirmed = confirm(`Möchten Sie ${count} Dokument(e) wirklich löschen?`);
+                if (confirmed) {
+                    // Remove selected documents from mockDocuments
+                    const selectedIds = Array.from(DocumentSelection.selectedIds);
+                    selectedIds.forEach(id => {
+                        const index = mockDocuments.findIndex(d => d.id === id);
+                        if (index !== -1) {
+                            mockDocuments.splice(index, 1);
+                        }
+                    });
+
+                    // Update document count in tab
+                    const countEl = safeGetElementById('tab-documents-count');
+                    if (countEl) {
+                        countEl.textContent = mockDocuments.length;
+                    }
+
+                    // Re-render and show toast
+                    renderDocuments();
+                    showToast(`${count} Dokument(e) gelöscht`, 'success');
+                }
+            }
+        });
+    }
+}
+
+// === USER SELECTION STATE ===
+const UserSelection = {
+    selectedIds: new Set(),
+
+    toggle(id) {
+        if (this.selectedIds.has(id)) {
+            this.selectedIds.delete(id);
+        } else {
+            this.selectedIds.add(id);
+        }
+        this.updateUI();
+    },
+
+    selectAll() {
+        mockUsers.forEach(user => this.selectedIds.add(user.id));
+        this.updateUI();
+    },
+
+    deselectAll() {
+        this.selectedIds.clear();
+        this.updateUI();
+    },
+
+    isSelected(id) {
+        return this.selectedIds.has(id);
+    },
+
+    getSelectedCount() {
+        return this.selectedIds.size;
+    },
+
+    updateUI() {
+        const count = this.getSelectedCount();
+        const total = mockUsers.length;
+
+        // Update selected count text
+        const countEl = safeGetElementById('users-selected-count');
+        if (countEl) {
+            countEl.textContent = `${count} ausgewählt`;
+        }
+
+        // Update select all checkbox state
+        const selectAllCheckbox = safeGetElementById('select-all-users');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = count === total && total > 0;
+            selectAllCheckbox.indeterminate = count > 0 && count < total;
+        }
+
+        // Update row checkboxes and styles
+        const tbody = safeGetElementById('user-table-body');
+        if (tbody) {
+            tbody.querySelectorAll('tr').forEach(row => {
+                const userId = safeParseInt(row.dataset.userId);
+                const checkbox = row.querySelector('.user-checkbox');
+                const isSelected = this.isSelected(userId);
+
+                if (checkbox) {
+                    checkbox.checked = isSelected;
+                }
+                row.classList.toggle('is-selected', isSelected);
+            });
+        }
+
+        // Update action buttons
+        const editBtn = safeGetElementById('edit-user-btn');
+        const deleteBtn = safeGetElementById('delete-users-btn');
+
+        if (editBtn) {
+            editBtn.disabled = count !== 1;
+        }
+        if (deleteBtn) {
+            deleteBtn.disabled = count === 0;
+        }
+    }
+};
+
+// === USER RENDERING ===
+function renderUsers() {
+    const tbody = safeGetElementById('user-table-body');
+    if (!tbody) return;
+
+    // Reset selection when re-rendering
+    UserSelection.deselectAll();
+
+    tbody.innerHTML = mockUsers.map(user => {
+        return `
+            <tr data-user-id="${safeParseInt(user.id)}">
+                <td class="table__checkbox-col">
+                    <label class="checkbox" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="user-checkbox" data-user-id="${safeParseInt(user.id)}" aria-label="Benutzer ${escapeHtml(user.name)} auswählen">
+                        <span class="checkbox__mark"></span>
+                    </label>
+                </td>
+                <td>${escapeHtml(user.name)}</td>
+                <td>${escapeHtml(user.email)}</td>
+                <td><span class="badge badge--${escapeHtml(user.roleClass)}">${escapeHtml(user.role)}</span></td>
+                <td>${escapeHtml(user.lastActivity)}</td>
+            </tr>
+        `;
+    }).join('');
+
+    // Add checkbox change handlers
+    tbody.querySelectorAll('.user-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const userId = safeParseInt(e.target.dataset.userId);
+            UserSelection.toggle(userId);
+        });
+    });
+
+    // Setup select all checkbox
+    setupSelectAllUsers();
+
+    // Update tab count
+    const tabCountEl = safeGetElementById('tab-users-count');
+    if (tabCountEl) {
+        tabCountEl.textContent = mockUsers.length;
+    }
+}
+
+/**
+ * Sets up the select all checkbox functionality for users
+ */
+function setupSelectAllUsers() {
+    const selectAllCheckbox = safeGetElementById('select-all-users');
+    if (!selectAllCheckbox) return;
+
+    // Remove existing listener to prevent duplicates
+    selectAllCheckbox.replaceWith(selectAllCheckbox.cloneNode(true));
+    const newCheckbox = safeGetElementById('select-all-users');
+
+    if (newCheckbox) {
+        newCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                UserSelection.selectAll();
+            } else {
+                UserSelection.deselectAll();
+            }
+        });
+    }
+}
+
+/**
+ * Sets up user action buttons
+ */
+function setupUserActions() {
+    const inviteBtn = safeGetElementById('invite-user-btn');
+    const editBtn = safeGetElementById('edit-user-btn');
+    const deleteBtn = safeGetElementById('delete-users-btn');
+
+    if (inviteBtn) {
+        inviteBtn.addEventListener('click', () => {
+            showToast('Benutzer einladen - Funktion kommt bald', 'info');
+        });
+    }
+
+    if (editBtn) {
+        editBtn.addEventListener('click', () => {
+            const selectedIds = Array.from(UserSelection.selectedIds);
+            if (selectedIds.length === 1) {
+                const user = mockUsers.find(u => u.id === selectedIds[0]);
+                if (user) {
+                    showToast(`Benutzer "${user.name}" bearbeiten - Funktion kommt bald`, 'info');
+                }
+            }
+        });
+    }
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            const count = UserSelection.getSelectedCount();
+            if (count > 0) {
+                const confirmed = confirm(`Möchten Sie ${count} Benutzer wirklich entfernen?`);
+                if (confirmed) {
+                    // Remove selected users from mockUsers
+                    const selectedIds = Array.from(UserSelection.selectedIds);
+                    selectedIds.forEach(id => {
+                        const index = mockUsers.findIndex(u => u.id === id);
+                        if (index !== -1) {
+                            mockUsers.splice(index, 1);
+                        }
+                    });
+
+                    // Re-render and show toast
+                    renderUsers();
+                    showToast(`${count} Benutzer entfernt`, 'success');
+                }
+            }
+        });
+    }
 }
 
 // === RULES RENDERING ===
@@ -1591,6 +2263,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSearch();
     setupKeyboardShortcuts();
     setupRouting();
+    setupModals();
+    setupDocumentActions();
+    setupUserActions();
 
     // Initialize Lucide icons
     if (typeof lucide !== 'undefined') {

@@ -195,9 +195,34 @@
 
                 <div class="tab-content">
                     <div class="tab-pane tab-pane--active" id="tab-documents">
-                        <table class="table table--compact">
+                        <div class="table-actions">
+                            <div class="table-actions__left">
+                                <span class="table-actions__selected" id="documents-selected-count">0 ausgewählt</span>
+                            </div>
+                            <div class="table-actions__right">
+                                <button class="btn btn--secondary btn--sm" id="edit-document-btn" disabled>
+                                    <i data-lucide="pencil" class="icon icon-sm" aria-hidden="true"></i>
+                                    Bearbeiten
+                                </button>
+                                <button class="btn btn--secondary btn--sm" id="delete-documents-btn" disabled>
+                                    <i data-lucide="trash-2" class="icon icon-sm" aria-hidden="true"></i>
+                                    Löschen
+                                </button>
+                                <button class="btn btn--primary btn--sm" id="new-document-btn">
+                                    <i data-lucide="plus" class="icon icon-sm" aria-hidden="true"></i>
+                                    Neues Dokument
+                                </button>
+                            </div>
+                        </div>
+                        <table class="table table--compact table--selectable">
                             <thead>
                                 <tr>
+                                    <th scope="col" class="table__checkbox-col">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="select-all-documents" aria-label="Alle Dokumente auswählen">
+                                            <span class="checkbox__mark"></span>
+                                        </label>
+                                    </th>
                                     <th scope="col">NAME</th>
                                     <th scope="col">ERSTELLER</th>
                                     <th scope="col">LETZTE ÄNDERUNG</th>
@@ -211,46 +236,42 @@
                     </div>
 
                     <div class="tab-pane" id="tab-users">
-                        <table class="table table--compact">
+                        <div class="table-actions">
+                            <div class="table-actions__left">
+                                <span class="table-actions__selected" id="users-selected-count">0 ausgewählt</span>
+                            </div>
+                            <div class="table-actions__right">
+                                <button class="btn btn--secondary btn--sm" id="edit-user-btn" disabled>
+                                    <i data-lucide="pencil" class="icon icon-sm" aria-hidden="true"></i>
+                                    Bearbeiten
+                                </button>
+                                <button class="btn btn--secondary btn--sm" id="delete-users-btn" disabled>
+                                    <i data-lucide="trash-2" class="icon icon-sm" aria-hidden="true"></i>
+                                    Löschen
+                                </button>
+                                <button class="btn btn--primary btn--sm" id="invite-user-btn">
+                                    <i data-lucide="user-plus" class="icon icon-sm" aria-hidden="true"></i>
+                                    Benutzer einladen
+                                </button>
+                            </div>
+                        </div>
+                        <table class="table table--compact table--selectable">
                             <thead>
                                 <tr>
+                                    <th scope="col" class="table__checkbox-col">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="select-all-users" aria-label="Alle Benutzer auswählen">
+                                            <span class="checkbox__mark"></span>
+                                        </label>
+                                    </th>
                                     <th scope="col">NAME</th>
                                     <th scope="col">E-MAIL</th>
                                     <th scope="col">ROLLE</th>
-                                    <th scope="col">HINZUGEFÜGT</th>
+                                    <th scope="col">LETZTE AKTIVITÄT</th>
                                 </tr>
                             </thead>
                             <tbody id="user-table-body">
-                                <tr>
-                                    <td>Max Mustermann</td>
-                                    <td>max.mustermann@example.ch</td>
-                                    <td><span class="badge badge--info">Projektleiter</span></td>
-                                    <td>15.03.2024</td>
-                                </tr>
-                                <tr>
-                                    <td>Anna Schmidt</td>
-                                    <td>anna.schmidt@example.ch</td>
-                                    <td><span class="badge badge--secondary">Architekt</span></td>
-                                    <td>20.03.2024</td>
-                                </tr>
-                                <tr>
-                                    <td>Peter Weber</td>
-                                    <td>peter.weber@example.ch</td>
-                                    <td><span class="badge badge--secondary">Planer</span></td>
-                                    <td>22.03.2024</td>
-                                </tr>
-                                <tr>
-                                    <td>Lisa Müller</td>
-                                    <td>lisa.mueller@example.ch</td>
-                                    <td><span class="badge badge--secondary">Prüfer</span></td>
-                                    <td>01.04.2024</td>
-                                </tr>
-                                <tr>
-                                    <td>Thomas Keller</td>
-                                    <td>thomas.keller@example.ch</td>
-                                    <td><span class="badge badge--muted">Beobachter</span></td>
-                                    <td>05.04.2024</td>
-                                </tr>
+                                <!-- Users rendered by JS -->
                             </tbody>
                         </table>
                     </div>
@@ -759,6 +780,62 @@
             <span class="footer__version">v1.0.0</span>
         </div>
     </footer>
+
+    <!-- New Project Modal -->
+    <div class="modal" id="new-project-modal" role="dialog" aria-labelledby="modal-title" aria-modal="true" hidden>
+        <div class="modal__backdrop" data-modal-close></div>
+        <div class="modal__content">
+            <div class="modal__header">
+                <h2 class="modal__title" id="modal-title">Neues Projekt erstellen</h2>
+                <button class="modal__close" data-modal-close aria-label="Schliessen">
+                    <i data-lucide="x" class="icon icon-md" aria-hidden="true"></i>
+                </button>
+            </div>
+            <form class="modal__body" id="new-project-form">
+                <div class="form__field">
+                    <label for="project-number" class="form__label">Projektnummer</label>
+                    <input type="text" class="form__input" id="project-number" name="projectNumber" placeholder="z.B. 2024-001" required>
+                </div>
+                <div class="form__field">
+                    <label for="project-name" class="form__label">Projektname</label>
+                    <input type="text" class="form__input" id="project-name" name="name" placeholder="z.B. Bundeshaus Renovation" required>
+                </div>
+                <div class="form__field">
+                    <label for="project-sia-phase" class="form__label">SIA Phase</label>
+                    <select class="form__input form__select" id="project-sia-phase" name="siaPhase" required>
+                        <option value="">Bitte wählen...</option>
+                        <option value="31">31 - Vorprojekt</option>
+                        <option value="32">32 - Bauprojekt</option>
+                        <option value="33">33 - Bewilligungsverfahren</option>
+                        <option value="41">41 - Ausschreibung</option>
+                        <option value="51">51 - Ausführungsprojekt</option>
+                        <option value="52">52 - Ausführung</option>
+                        <option value="53">53 - Inbetriebnahme</option>
+                    </select>
+                </div>
+                <div class="form__field">
+                    <label for="project-image" class="form__label">Projektbild</label>
+                    <div class="form__file-upload" id="project-image-upload">
+                        <input type="file" class="form__file-input" id="project-image" name="image" accept="image/*">
+                        <div class="form__file-placeholder">
+                            <i data-lucide="image" class="icon icon-md" aria-hidden="true"></i>
+                            <span>Bild auswählen oder hierher ziehen</span>
+                        </div>
+                        <div class="form__file-preview" id="project-image-preview" hidden>
+                            <img src="" alt="Projektbild Vorschau" id="project-image-preview-img">
+                            <button type="button" class="form__file-remove" id="project-image-remove" aria-label="Bild entfernen">
+                                <i data-lucide="x" class="icon icon-sm" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--secondary" data-modal-close>Abbrechen</button>
+                <button type="submit" class="btn btn--primary" form="new-project-form">Projekt erstellen</button>
+            </div>
+        </div>
+    </div>
 
     <script src="js/script.js"></script>
 </body>
