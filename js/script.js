@@ -522,7 +522,7 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
 
     // Update KPIs
     document.getElementById('project-sia-phase').textContent = currentProject.siaPhase;
-    document.getElementById('project-document-count').textContent = currentProject.documentCount;
+    document.getElementById('project-document-count').textContent = mockDocuments.length;
 
     // Calculate room count from mockRooms (in real app would come from project data)
     document.getElementById('project-room-count').textContent = mockRooms.length;
