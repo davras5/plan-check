@@ -400,16 +400,11 @@ a:hover {
     box-shadow: 0 0 0 3px var(--color-malibu);
 }
 
-.btn .icon {
-    margin-right: var(--space-2);
-}
-
 /* === PAGE HEADER === */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-height: 50px;
     margin-bottom: var(--space-6);
     gap: var(--space-4);
 }
@@ -417,7 +412,7 @@ a:hover {
 .page-header__actions {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-5);
 }
 
 /* === SEARCH === */
@@ -655,7 +650,6 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 50px;
     gap: var(--space-4);
     margin-bottom: var(--space-6);
     font-size: var(--font-size-lg);
@@ -700,7 +694,6 @@ a:hover {
 /* === PROJECT HEADER === */
 .project-header {
     display: flex;
-    gap: var(--space-6);
     align-items: stretch;
     margin-bottom: var(--space-6);
     background: var(--color-bg-primary);
@@ -726,24 +719,21 @@ a:hover {
     flex: 1;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-6);
-    padding: var(--space-5);
-    padding-left: 0;
+    padding: var(--space-5) var(--space-5) var(--space-5) 0;
 }
 
 /* === PROJECT KPI === */
 .project-kpi {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     text-align: center;
-    padding-left: var(--space-5);
     border-left: 1px solid var(--color-border-light);
 }
 
 .project-kpi:first-child {
-    padding-left: 0;
     border-left: none;
 }
 
@@ -819,12 +809,18 @@ a:hover {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    flex-wrap: nowrap;
     border-bottom: 1px solid var(--color-border-light);
     margin-bottom: var(--space-4);
 }
 
+.tabs--with-actions {
+    min-height: 52px;
+}
+
 .tabs__list {
     display: flex;
+    flex-wrap: nowrap;
     gap: var(--space-6);
     list-style: none;
 }
@@ -1004,9 +1000,7 @@ a:hover {
     background: var(--color-primary-light);
 }
 
-.table--compact th,
 .table--compact td {
-    padding: var(--space-3) var(--space-4);
     font-size: var(--font-size-sm);
 }
 
@@ -2063,7 +2057,6 @@ a:hover {
 }
 
 .form__file-remove:hover {
-    background: var(--color-error);
     transform: scale(1.1);
 }
 
