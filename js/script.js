@@ -991,6 +991,11 @@ function switchView(viewName) {
 
     // Update URL hash
     updateUrlHash();
+
+    // Re-initialize Lucide icons in the visible view
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 }
 
 // === PROJECT RENDERING ===
@@ -1113,6 +1118,10 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
         document.querySelectorAll('.view').forEach(view => view.classList.remove('view--active'));
         document.getElementById('view-project-detail')?.classList.add('view--active');
         currentView = 'project-detail';
+        // Re-initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     } else {
         switchView('project-detail');
     }
@@ -1560,6 +1569,10 @@ function openValidationView(documentId, skipHashUpdate = false) {
         document.querySelectorAll('.view').forEach(view => view.classList.remove('view--active'));
         document.getElementById('view-validation')?.classList.add('view--active');
         currentView = 'validation';
+        // Re-initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     } else {
         switchView('validation');
     }
