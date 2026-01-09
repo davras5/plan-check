@@ -155,6 +155,265 @@ function setupTabGroup(tabAttribute, paneIdPrefix, paneIds = null) {
     });
 }
 
+// === MODAL UTILITIES ===
+
+/**
+ * Opens a modal by ID
+ * @param {string} modalId - The modal element ID
+ */
+function openModal(modalId) {
+    const modal = safeGetElementById(modalId);
+    if (!modal) return;
+
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+
+    // Initialize Lucide icons in modal
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Focus first input or close button
+    const firstInput = modal.querySelector('input, select, textarea');
+    const closeBtn = modal.querySelector('[data-modal-close]');
+    if (firstInput) {
+        firstInput.focus();
+    } else if (closeBtn) {
+        closeBtn.focus();
+    }
+
+    // Trap focus within modal
+    modal.addEventListener('keydown', trapFocus);
+}
+
+/**
+ * Closes a modal by ID
+ * @param {string} modalId - The modal element ID
+ */
+function closeModal(modalId) {
+    const modal = safeGetElementById(modalId);
+    if (!modal) return;
+
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    modal.removeEventListener('keydown', trapFocus);
+}
+
+/**
+ * Traps focus within a modal for accessibility
+ * @param {KeyboardEvent} e - The keyboard event
+ */
+function trapFocus(e) {
+    if (e.key !== 'Tab') return;
+
+    const modal = e.currentTarget;
+    const focusable = modal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstEl = focusable[0];
+    const lastEl = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === firstEl) {
+        lastEl.focus();
+        e.preventDefault();
+    } else if (!e.shiftKey && document.activeElement === lastEl) {
+        firstEl.focus();
+        e.preventDefault();
+    }
+}
+
+/**
+ * Sets up modal event listeners
+ */
+function setupModals() {
+    // New Project button opens modal
+    const newProjectBtn = safeGetElementById('new-project-btn');
+    if (newProjectBtn) {
+        newProjectBtn.addEventListener('click', () => {
+            openModal('new-project-modal');
+        });
+    }
+
+    // Close modal on backdrop click or close button
+    document.querySelectorAll('[data-modal-close]').forEach(el => {
+        el.addEventListener('click', (e) => {
+            const modal = e.target.closest('.modal');
+            if (modal) {
+                closeModal(modal.id);
+            }
+        });
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const openModal = document.querySelector('.modal:not([hidden])');
+            if (openModal) {
+                closeModal(openModal.id);
+            }
+        }
+    });
+
+    // Setup New Project form
+    setupNewProjectForm();
+}
+
+/**
+ * Sets up the New Project form handling
+ */
+function setupNewProjectForm() {
+    const form = safeGetElementById('new-project-form');
+    const imageInput = safeGetElementById('project-image');
+    const imagePreview = safeGetElementById('project-image-preview');
+    const imagePreviewImg = safeGetElementById('project-image-preview-img');
+    const imageRemoveBtn = safeGetElementById('project-image-remove');
+    const imagePlaceholder = document.querySelector('.form__file-placeholder');
+    const imageUpload = safeGetElementById('project-image-upload');
+
+    // Store image data URL
+    let selectedImageUrl = '';
+
+    // Image preview on file select
+    if (imageInput) {
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    selectedImageUrl = event.target.result;
+                    if (imagePreviewImg) {
+                        imagePreviewImg.src = selectedImageUrl;
+                    }
+                    if (imagePreview) {
+                        imagePreview.hidden = false;
+                    }
+                    if (imagePlaceholder) {
+                        imagePlaceholder.hidden = true;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Remove image
+    if (imageRemoveBtn) {
+        imageRemoveBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            selectedImageUrl = '';
+            if (imageInput) {
+                imageInput.value = '';
+            }
+            if (imagePreview) {
+                imagePreview.hidden = true;
+            }
+            if (imagePlaceholder) {
+                imagePlaceholder.hidden = false;
+            }
+        });
+    }
+
+    // Drag and drop support
+    if (imageUpload) {
+        imageUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            imageUpload.classList.add('is-dragover');
+        });
+
+        imageUpload.addEventListener('dragleave', () => {
+            imageUpload.classList.remove('is-dragover');
+        });
+
+        imageUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageUpload.classList.remove('is-dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                // Trigger the change event by setting files
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                if (imageInput) {
+                    imageInput.files = dataTransfer.files;
+                    imageInput.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+    }
+
+    // Form submission
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const projectNumber = formData.get('projectNumber');
+            const name = formData.get('name');
+            const siaPhase = formData.get('siaPhase');
+
+            // Generate new project ID
+            const newId = mockProjects.length > 0
+                ? Math.max(...mockProjects.map(p => p.id)) + 1
+                : 1;
+
+            // Create new project object
+            const newProject = {
+                id: newId,
+                name: escapeHtml(name),
+                location: extractLocation(name),
+                siaPhase: escapeHtml(siaPhase),
+                createdDate: formatDate(new Date()),
+                documentCount: 0,
+                completionPercentage: 0,
+                status: 'active',
+                imageUrl: selectedImageUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop',
+                projectNumber: escapeHtml(projectNumber)
+            };
+
+            // Add to mockProjects array
+            mockProjects.unshift(newProject);
+
+            // Close modal and reset form
+            closeModal('new-project-modal');
+            form.reset();
+            selectedImageUrl = '';
+            if (imagePreview) {
+                imagePreview.hidden = true;
+            }
+            if (imagePlaceholder) {
+                imagePlaceholder.hidden = false;
+            }
+
+            // Re-render projects and show success message
+            renderProjects();
+            showToast(`Projekt "${name}" wurde erstellt`, 'success');
+        });
+    }
+}
+
+/**
+ * Extracts location from project name (assumes format "Location, Building Name")
+ * @param {string} name - The project name
+ * @returns {string} The extracted location or the full name
+ */
+function extractLocation(name) {
+    if (!name) return '';
+    const parts = name.split(',');
+    return parts[0].trim();
+}
+
+/**
+ * Formats a date to DD/MM/YYYY format
+ * @param {Date} date - The date to format
+ * @returns {string} The formatted date string
+ */
+function formatDate(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
 /**
  * Generates the Speckle viewer URL
  * @returns {string} The Speckle viewer URL
@@ -1591,6 +1850,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSearch();
     setupKeyboardShortcuts();
     setupRouting();
+    setupModals();
 
     // Initialize Lucide icons
     if (typeof lucide !== 'undefined') {
