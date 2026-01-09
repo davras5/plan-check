@@ -195,9 +195,34 @@
 
                 <div class="tab-content">
                     <div class="tab-pane tab-pane--active" id="tab-documents">
-                        <table class="table table--compact">
+                        <div class="table-actions">
+                            <div class="table-actions__left">
+                                <span class="table-actions__selected" id="documents-selected-count">0 ausgewählt</span>
+                            </div>
+                            <div class="table-actions__right">
+                                <button class="btn btn--secondary btn--sm" id="edit-document-btn" disabled>
+                                    <i data-lucide="pencil" class="icon icon-sm" aria-hidden="true"></i>
+                                    Bearbeiten
+                                </button>
+                                <button class="btn btn--secondary btn--sm" id="delete-documents-btn" disabled>
+                                    <i data-lucide="trash-2" class="icon icon-sm" aria-hidden="true"></i>
+                                    Löschen
+                                </button>
+                                <button class="btn btn--primary btn--sm" id="new-document-btn">
+                                    <i data-lucide="plus" class="icon icon-sm" aria-hidden="true"></i>
+                                    Neues Dokument
+                                </button>
+                            </div>
+                        </div>
+                        <table class="table table--compact table--selectable">
                             <thead>
                                 <tr>
+                                    <th scope="col" class="table__checkbox-col">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="select-all-documents" aria-label="Alle Dokumente auswählen">
+                                            <span class="checkbox__mark"></span>
+                                        </label>
+                                    </th>
                                     <th scope="col">NAME</th>
                                     <th scope="col">ERSTELLER</th>
                                     <th scope="col">LETZTE ÄNDERUNG</th>

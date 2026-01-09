@@ -1074,10 +1074,89 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
     }
 }
 
+// === DOCUMENT SELECTION STATE ===
+const DocumentSelection = {
+    selectedIds: new Set(),
+
+    toggle(id) {
+        if (this.selectedIds.has(id)) {
+            this.selectedIds.delete(id);
+        } else {
+            this.selectedIds.add(id);
+        }
+        this.updateUI();
+    },
+
+    selectAll() {
+        mockDocuments.forEach(doc => this.selectedIds.add(doc.id));
+        this.updateUI();
+    },
+
+    deselectAll() {
+        this.selectedIds.clear();
+        this.updateUI();
+    },
+
+    isSelected(id) {
+        return this.selectedIds.has(id);
+    },
+
+    getSelectedCount() {
+        return this.selectedIds.size;
+    },
+
+    updateUI() {
+        const count = this.getSelectedCount();
+        const total = mockDocuments.length;
+
+        // Update selected count text
+        const countEl = safeGetElementById('documents-selected-count');
+        if (countEl) {
+            countEl.textContent = `${count} ausgewählt`;
+        }
+
+        // Update select all checkbox state
+        const selectAllCheckbox = safeGetElementById('select-all-documents');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = count === total && total > 0;
+            selectAllCheckbox.indeterminate = count > 0 && count < total;
+        }
+
+        // Update row checkboxes and styles
+        const tbody = safeGetElementById('document-table-body');
+        if (tbody) {
+            tbody.querySelectorAll('tr').forEach(row => {
+                const docId = safeParseInt(row.dataset.documentId);
+                const checkbox = row.querySelector('.document-checkbox');
+                const isSelected = this.isSelected(docId);
+
+                if (checkbox) {
+                    checkbox.checked = isSelected;
+                }
+                row.classList.toggle('is-selected', isSelected);
+            });
+        }
+
+        // Update action buttons
+        const editBtn = safeGetElementById('edit-document-btn');
+        const deleteBtn = safeGetElementById('delete-documents-btn');
+
+        if (editBtn) {
+            editBtn.disabled = count !== 1;
+        }
+        if (deleteBtn) {
+            deleteBtn.disabled = count === 0;
+        }
+    }
+};
+
 // === DOCUMENT RENDERING ===
 function renderDocuments() {
     const tbody = document.getElementById('document-table-body');
     if (!tbody) return;
+
+    // Reset selection when re-rendering
+    DocumentSelection.deselectAll();
 
     tbody.innerHTML = mockDocuments.map(doc => {
         const scoreClass = doc.score >= 90 ? 'success' :
@@ -1085,6 +1164,12 @@ function renderDocuments() {
 
         return `
             <tr data-document-id="${safeParseInt(doc.id)}">
+                <td class="table__checkbox-col">
+                    <label class="checkbox" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="document-checkbox" data-doc-id="${safeParseInt(doc.id)}" aria-label="Dokument ${escapeHtml(doc.name)} auswählen">
+                        <span class="checkbox__mark"></span>
+                    </label>
+                </td>
                 <td>${escapeHtml(doc.name)}</td>
                 <td>${escapeHtml(doc.creator)}</td>
                 <td>${escapeHtml(doc.lastChange)}</td>
@@ -1093,15 +1178,108 @@ function renderDocuments() {
         `;
     }).join('');
 
-    // Add click handlers
+    // Add click handlers for row selection (not on checkbox)
     tbody.querySelectorAll('tr').forEach(row => {
-        row.addEventListener('click', () => {
+        row.addEventListener('click', (e) => {
+            // If clicking on checkbox label/input, don't open document
+            if (e.target.closest('.checkbox')) {
+                return;
+            }
             const docId = safeParseInt(row.dataset.documentId);
             if (docId > 0) {
                 openValidationView(docId);
             }
         });
     });
+
+    // Add checkbox change handlers
+    tbody.querySelectorAll('.document-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const docId = safeParseInt(e.target.dataset.docId);
+            DocumentSelection.toggle(docId);
+        });
+    });
+
+    // Setup select all checkbox
+    setupSelectAllDocuments();
+}
+
+/**
+ * Sets up the select all checkbox functionality
+ */
+function setupSelectAllDocuments() {
+    const selectAllCheckbox = safeGetElementById('select-all-documents');
+    if (!selectAllCheckbox) return;
+
+    // Remove existing listener to prevent duplicates
+    selectAllCheckbox.replaceWith(selectAllCheckbox.cloneNode(true));
+    const newCheckbox = safeGetElementById('select-all-documents');
+
+    if (newCheckbox) {
+        newCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                DocumentSelection.selectAll();
+            } else {
+                DocumentSelection.deselectAll();
+            }
+        });
+    }
+}
+
+/**
+ * Sets up document action buttons
+ */
+function setupDocumentActions() {
+    const newBtn = safeGetElementById('new-document-btn');
+    const editBtn = safeGetElementById('edit-document-btn');
+    const deleteBtn = safeGetElementById('delete-documents-btn');
+
+    if (newBtn) {
+        newBtn.addEventListener('click', () => {
+            showToast('Neues Dokument erstellen - Funktion kommt bald', 'info');
+        });
+    }
+
+    if (editBtn) {
+        editBtn.addEventListener('click', () => {
+            const selectedIds = Array.from(DocumentSelection.selectedIds);
+            if (selectedIds.length === 1) {
+                const doc = mockDocuments.find(d => d.id === selectedIds[0]);
+                if (doc) {
+                    showToast(`Dokument "${doc.name}" bearbeiten - Funktion kommt bald`, 'info');
+                }
+            }
+        });
+    }
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            const count = DocumentSelection.getSelectedCount();
+            if (count > 0) {
+                const confirmed = confirm(`Möchten Sie ${count} Dokument(e) wirklich löschen?`);
+                if (confirmed) {
+                    // Remove selected documents from mockDocuments
+                    const selectedIds = Array.from(DocumentSelection.selectedIds);
+                    selectedIds.forEach(id => {
+                        const index = mockDocuments.findIndex(d => d.id === id);
+                        if (index !== -1) {
+                            mockDocuments.splice(index, 1);
+                        }
+                    });
+
+                    // Update document count in tab
+                    const countEl = safeGetElementById('tab-documents-count');
+                    if (countEl) {
+                        countEl.textContent = mockDocuments.length;
+                    }
+
+                    // Re-render and show toast
+                    renderDocuments();
+                    showToast(`${count} Dokument(e) gelöscht`, 'success');
+                }
+            }
+        });
+    }
 }
 
 // === RULES RENDERING ===
@@ -1851,6 +2029,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupKeyboardShortcuts();
     setupRouting();
     setupModals();
+    setupDocumentActions();
 
     // Initialize Lucide icons
     if (typeof lucide !== 'undefined') {

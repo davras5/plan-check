@@ -841,6 +841,105 @@ a:hover {
     display: block;
 }
 
+/* === TABLE ACTIONS === */
+.table-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) 0;
+    margin-bottom: var(--space-3);
+    gap: var(--space-4);
+}
+
+.table-actions__left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.table-actions__right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.table-actions__selected {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+/* === CHECKBOX === */
+.checkbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkbox__mark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--color-border);
+    background: var(--color-bg-primary);
+    transition: all var(--duration-normal) ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox__mark::after {
+    content: '';
+    display: none;
+    width: 5px;
+    height: 9px;
+    border: solid var(--color-white);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-bottom: 2px;
+}
+
+.checkbox input:checked ~ .checkbox__mark {
+    background: var(--color-night-rider);
+    border-color: var(--color-night-rider);
+}
+
+.checkbox input:checked ~ .checkbox__mark::after {
+    display: block;
+}
+
+.checkbox input:indeterminate ~ .checkbox__mark {
+    background: var(--color-night-rider);
+    border-color: var(--color-night-rider);
+}
+
+.checkbox input:indeterminate ~ .checkbox__mark::after {
+    display: block;
+    width: 8px;
+    height: 0;
+    border-width: 0 0 2px 0;
+    transform: none;
+    margin-bottom: 0;
+}
+
+.checkbox:hover .checkbox__mark {
+    border-color: var(--color-coal);
+}
+
+.checkbox input:focus-visible ~ .checkbox__mark {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
 /* === TABLE === */
 .table {
     width: 100%;
@@ -887,6 +986,29 @@ a:hover {
 .table--no-borders th,
 .table--no-borders td {
     border: none;
+}
+
+.table--selectable tbody tr {
+    transition: background var(--duration-normal) ease;
+}
+
+.table--selectable tbody tr.is-selected {
+    background: var(--color-primary-light);
+}
+
+.table--selectable tbody tr.is-selected:hover {
+    background: var(--color-primary-light);
+}
+
+.table__checkbox-col {
+    width: 48px;
+    text-align: center;
+    padding-left: var(--space-3) !important;
+    padding-right: var(--space-2) !important;
+}
+
+.table__checkbox-col .checkbox {
+    vertical-align: middle;
 }
 
 .table__abbr {
