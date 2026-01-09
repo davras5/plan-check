@@ -8,12 +8,76 @@ This document defines the data model for the BBL Prüfplattform Flächenmanageme
 
 ## Entity Relationship Diagram
 
+```mermaid
+erDiagram
+    RuleSet ||--o{ Project : "applies to"
+    Project ||--o{ Document : "contains"
+    Document ||--o{ Geometry : "has"
+    Document ||--o{ Result : "has"
+
+    RuleSet {
+        int id PK
+        string name
+        string description
+        array rules
+    }
+
+    Project {
+        int id PK
+        string name
+        string location
+        string siaPhase
+        string createdDate
+        int documentCount
+        int resultPercentage
+        string status
+        int ruleSetId FK
+        string imageUrl
+    }
+
+    Document {
+        int id PK
+        int projectId FK
+        string name
+        string creator
+        string lastChange
+        string status
+        int score
+    }
+
+    Geometry {
+        int documentId FK
+        string type
+        string aoid
+        float area
+        string aofunction
+        string status
+    }
+
+    Result {
+        int documentId FK
+        string ruleCode
+        string severity
+        string message
+    }
+
+    User {
+        int id PK
+        string name
+        string email
+        string role
+        string lastActivity
+    }
 ```
-RuleSet (1) ←── Project (many)        [via project.ruleSetId]
-Project (1) ──→ Documents (many)      [via document.projectId]
-Document (1) ──→ Geometry (many)      [via geometry.documentId]
-Document (1) ──→ Results (many)       [via result.documentId]
-```
+
+### Relationships Summary
+
+| Relationship | Cardinality | Foreign Key |
+|--------------|-------------|-------------|
+| RuleSet → Project | One-to-Many | `project.ruleSetId` |
+| Project → Document | One-to-Many | `document.projectId` |
+| Document → Geometry | One-to-Many | `geometry.documentId` |
+| Document → Result | One-to-Many | `result.documentId` |
 
 ---
 
