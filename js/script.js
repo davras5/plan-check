@@ -48,8 +48,12 @@ function escapeHtml(str) {
  */
 function sanitizeFilename(filename) {
     if (!filename) return '';
-    // Remove path traversal and dangerous characters
-    return escapeHtml(filename.replace(/[<>:"/\\|?*]/g, '_'));
+    // Remove path traversal sequences and dangerous characters
+    return escapeHtml(
+        filename
+            .replace(/\.{2,}/g, '_')        // Replace .. sequences (path traversal)
+            .replace(/[<>:"/\\|?*]/g, '_')  // Replace dangerous characters
+    );
 }
 
 // === ERROR HANDLING UTILITIES ===
