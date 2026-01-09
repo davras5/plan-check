@@ -1212,8 +1212,8 @@ function renderDocuments() {
     DocumentSelection.deselectAll();
 
     tbody.innerHTML = mockDocuments.map(doc => {
-        const scoreClass = doc.score >= 90 ? 'success' :
-                          doc.score >= 60 ? 'warning' : 'error';
+        const scoreStatus = doc.score >= 90 ? 'ok' :
+                           doc.score >= 60 ? 'warning' : 'error';
 
         return `
             <tr data-document-id="${safeParseInt(doc.id)}">
@@ -1226,10 +1226,15 @@ function renderDocuments() {
                 <td>${escapeHtml(doc.name)}</td>
                 <td>${escapeHtml(doc.creator)}</td>
                 <td>${escapeHtml(doc.lastChange)}</td>
-                <td class="text-right"><span class="card__percentage card__percentage--${scoreClass}">${safeParseInt(doc.score)}%</span></td>
+                <td class="text-right">${renderStatusIcon(scoreStatus)} ${safeParseInt(doc.score)}%</td>
             </tr>
         `;
     }).join('');
+
+    // Re-initialize Lucide icons for status icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons({ nodes: tbody.querySelectorAll('[data-lucide]') });
+    }
 
     // Add click handlers for row selection (not on checkbox)
     tbody.querySelectorAll('tr').forEach(row => {
