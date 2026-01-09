@@ -223,6 +223,19 @@ const ConfigTests = {
             TestRunner.assertNotNull(CONFIG.BYTES_PER_KB, 'Should have bytes per KB');
         },
 
+        'CONFIG should have file size limits': () => {
+            TestRunner.assertNotNull(CONFIG.MAX_IMAGE_SIZE, 'Should have max image size');
+            TestRunner.assertNotNull(CONFIG.MAX_DWG_SIZE, 'Should have max DWG size');
+            TestRunner.assertNotNull(CONFIG.MAX_EXCEL_SIZE, 'Should have max Excel size');
+            TestRunner.assert(CONFIG.MAX_DWG_SIZE > CONFIG.MAX_IMAGE_SIZE, 'DWG limit should be larger than image limit');
+        },
+
+        'CONFIG should have score thresholds': () => {
+            TestRunner.assertNotNull(CONFIG.SCORE_SUCCESS_THRESHOLD, 'Should have success threshold');
+            TestRunner.assertNotNull(CONFIG.SCORE_WARNING_THRESHOLD, 'Should have warning threshold');
+            TestRunner.assert(CONFIG.SCORE_SUCCESS_THRESHOLD > CONFIG.SCORE_WARNING_THRESHOLD, 'Success threshold should be higher than warning');
+        },
+
         'CONFIG.STEP_COUNT should be 4': () => {
             TestRunner.assertEqual(CONFIG.STEP_COUNT, 4, 'Should have 4 steps');
         },
@@ -240,6 +253,81 @@ const ConfigTests = {
     }
 };
 
+// === SCORE STATUS TESTS ===
+const ScoreStatusTests = {
+    name: 'Score Status Utilities',
+    tests: {
+        'getScoreStatus should return success for high scores': () => {
+            TestRunner.assertEqual(getScoreStatus(100), 'success', '100 should be success');
+            TestRunner.assertEqual(getScoreStatus(95), 'success', '95 should be success');
+            TestRunner.assertEqual(getScoreStatus(90), 'success', '90 should be success');
+        },
+
+        'getScoreStatus should return warning for medium scores': () => {
+            TestRunner.assertEqual(getScoreStatus(89), 'warning', '89 should be warning');
+            TestRunner.assertEqual(getScoreStatus(75), 'warning', '75 should be warning');
+            TestRunner.assertEqual(getScoreStatus(60), 'warning', '60 should be warning');
+        },
+
+        'getScoreStatus should return error for low scores': () => {
+            TestRunner.assertEqual(getScoreStatus(59), 'error', '59 should be error');
+            TestRunner.assertEqual(getScoreStatus(30), 'error', '30 should be error');
+            TestRunner.assertEqual(getScoreStatus(0), 'error', '0 should be error');
+        },
+
+        'getScoreIconStatus should return ok for high scores': () => {
+            TestRunner.assertEqual(getScoreIconStatus(90), 'ok', '90 should be ok');
+        },
+
+        'getScoreIconStatus should return warning for medium scores': () => {
+            TestRunner.assertEqual(getScoreIconStatus(75), 'warning', '75 should be warning');
+        },
+
+        'getScoreIconStatus should return error for low scores': () => {
+            TestRunner.assertEqual(getScoreIconStatus(50), 'error', '50 should be error');
+        }
+    }
+};
+
+// === DEBOUNCE TESTS ===
+const DebounceTests = {
+    name: 'Debounce Utility',
+    tests: {
+        'debounce should return a function': () => {
+            const debouncedFn = debounce(() => {}, 100);
+            TestRunner.assertEqual(typeof debouncedFn, 'function', 'Should return a function');
+        },
+
+        'debounce should be defined': () => {
+            TestRunner.assertNotNull(debounce, 'debounce function should exist');
+        }
+    }
+};
+
+// === EVENT LISTENER MANAGEMENT TESTS ===
+const EventListenerTests = {
+    name: 'Event Listener Management',
+    tests: {
+        'eventListenerControllers should exist': () => {
+            TestRunner.assertNotNull(eventListenerControllers, 'Should have eventListenerControllers object');
+        },
+
+        'getListenerController should return AbortController': () => {
+            const controller = getListenerController('tabs');
+            TestRunner.assertNotNull(controller, 'Should return a controller');
+            TestRunner.assertNotNull(controller.signal, 'Controller should have a signal');
+        },
+
+        'getListenerController should abort previous controller': () => {
+            const controller1 = getListenerController('tabs');
+            const signal1 = controller1.signal;
+            const controller2 = getListenerController('tabs');
+            TestRunner.assert(signal1.aborted, 'Previous signal should be aborted');
+            TestRunner.assert(!controller2.signal.aborted, 'New signal should not be aborted');
+        }
+    }
+};
+
 // === RUN ALL TESTS ===
 function runAllTests() {
     console.log('========================================');
@@ -251,6 +339,9 @@ function runAllTests() {
     TestRunner.run(UITests);
     TestRunner.run(StateTests);
     TestRunner.run(ConfigTests);
+    TestRunner.run(ScoreStatusTests);
+    TestRunner.run(DebounceTests);
+    TestRunner.run(EventListenerTests);
 
     const success = TestRunner.summary();
 

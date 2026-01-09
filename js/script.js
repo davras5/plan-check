@@ -11,7 +11,20 @@ const CONFIG = {
     SPECKLE_EMBED_TOKEN: 'cd8278c08caa75725d392d5b5ecb650b579db274a1',
     TOAST_DURATION_MS: 3000,
     STEP_COUNT: 4,
-    BYTES_PER_KB: 1024
+    BYTES_PER_KB: 1024,
+    // File size limits in bytes
+    MAX_IMAGE_SIZE: 10 * 1024 * 1024,      // 10 MB for project images
+    MAX_DWG_SIZE: 50 * 1024 * 1024,        // 50 MB for DWG files
+    MAX_EXCEL_SIZE: 10 * 1024 * 1024,      // 10 MB for Excel files
+    // UI constants
+    DONUT_CHART_RADIUS: 40,
+    SEARCH_DEBOUNCE_MS: 300,
+    RIPPLE_ANIMATION_MS: 600,
+    // Score thresholds for status colors
+    SCORE_SUCCESS_THRESHOLD: 90,
+    SCORE_WARNING_THRESHOLD: 60,
+    // Step 2 simulated Excel errors (for mock data)
+    MAX_EXCEL_ERRORS_SHOWN: 3
 };
 
 // === SECURITY UTILITIES ===
@@ -97,7 +110,65 @@ function safeParseInt(value, fallback = 0) {
     return isNaN(parsed) ? fallback : parsed;
 }
 
+/**
+ * Creates a debounced version of a function
+ * @param {Function} fn - The function to debounce
+ * @param {number} delay - Delay in milliseconds
+ * @returns {Function} The debounced function
+ */
+function debounce(fn, delay) {
+    let timeoutId = null;
+    return function(...args) {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(() => {
+            fn.apply(this, args);
+            timeoutId = null;
+        }, delay);
+    };
+}
+
 // === UI UTILITIES ===
+
+/**
+ * Initializes Lucide icons within a specific container or the entire document
+ * @param {Element|null} [container=null] - Optional container to scope icon initialization
+ */
+function initLucideIcons(container = null) {
+    if (typeof lucide === 'undefined') return;
+
+    if (container) {
+        const nodes = container.querySelectorAll('[data-lucide]');
+        if (nodes.length > 0) {
+            lucide.createIcons({ nodes: Array.from(nodes) });
+        }
+    } else {
+        lucide.createIcons();
+    }
+}
+
+/**
+ * Gets the score status class based on score value
+ * @param {number} score - The score value (0-100)
+ * @returns {string} The status class ('success', 'warning', or 'error')
+ */
+function getScoreStatus(score) {
+    if (score >= CONFIG.SCORE_SUCCESS_THRESHOLD) return 'success';
+    if (score >= CONFIG.SCORE_WARNING_THRESHOLD) return 'warning';
+    return 'error';
+}
+
+/**
+ * Gets the score status for status icons ('ok', 'warning', 'error')
+ * @param {number} score - The score value (0-100)
+ * @returns {string} The status ('ok', 'warning', or 'error')
+ */
+function getScoreIconStatus(score) {
+    if (score >= CONFIG.SCORE_SUCCESS_THRESHOLD) return 'ok';
+    if (score >= CONFIG.SCORE_WARNING_THRESHOLD) return 'warning';
+    return 'error';
+}
 
 /**
  * Renders a status icon pill based on status
@@ -119,8 +190,11 @@ function renderStatusIcon(status) {
  * @param {string} tabAttribute - The data attribute name for tabs (e.g., 'data-tab')
  * @param {string} paneIdPrefix - The prefix for pane IDs (e.g., 'tab-')
  * @param {string[]} [paneIds] - Optional specific pane IDs to target
+ * @param {AbortSignal} [signal] - Optional AbortSignal for cleanup
  */
-function setupTabGroup(tabAttribute, paneIdPrefix, paneIds = null) {
+function setupTabGroup(tabAttribute, paneIdPrefix, paneIds = null, signal = null) {
+    const options = signal ? { signal } : {};
+
     document.querySelectorAll(`.tabs__tab[${tabAttribute}]`).forEach(tab => {
         tab.addEventListener('click', (e) => {
             e.preventDefault();
@@ -163,7 +237,7 @@ function setupTabGroup(tabAttribute, paneIdPrefix, paneIds = null) {
             if (targetPane) {
                 targetPane.classList.add('tab-pane--active');
             }
-        });
+        }, options);
     });
 }
 
@@ -181,9 +255,7 @@ function openModal(modalId) {
     document.body.style.overflow = 'hidden';
 
     // Initialize Lucide icons in modal
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
+    initLucideIcons(modal);
 
     // Focus first input or close button
     const firstInput = modal.querySelector('input, select, textarea');
@@ -238,13 +310,17 @@ function trapFocus(e) {
  * Sets up modal event listeners
  */
 function setupModals() {
+    // Get AbortController for cleanup on re-initialization
+    const controller = getListenerController('modals');
+    const signal = controller.signal;
+
     // New Project button opens modal
     const newProjectBtn = safeGetElementById('new-project-btn');
     if (newProjectBtn) {
         newProjectBtn.addEventListener('click', () => {
             populateRuleSetDropdown();
             openModal('new-project-modal');
-        });
+        }, { signal });
     }
 
     // Close modal on backdrop click or close button
@@ -254,7 +330,7 @@ function setupModals() {
             if (modal) {
                 closeModal(modal.id);
             }
-        });
+        }, { signal });
     });
 
     // Close modal on Escape key
@@ -265,7 +341,7 @@ function setupModals() {
                 closeModal(openModal.id);
             }
         }
-    });
+    }, { signal });
 
     // Setup New Project form
     setupNewProjectForm();
@@ -305,11 +381,18 @@ function setupNewProjectForm() {
     // Store image data URL
     let selectedImageUrl = '';
 
-    // Image preview on file select
+    // Image preview on file select with size validation
     if (imageInput) {
         imageInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file && file.type.startsWith('image/')) {
+                // Validate file size
+                if (file.size > CONFIG.MAX_IMAGE_SIZE) {
+                    showToast(`Bild zu gross. Maximale Grösse: ${formatFileSize(CONFIG.MAX_IMAGE_SIZE)}`, 'error');
+                    e.target.value = '';
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     selectedImageUrl = event.target.result;
@@ -522,7 +605,7 @@ const AppState = {
 };
 
 // Legacy compatibility - use getters/setters to sync with AppState
-let _navigationTimeoutId = null; // Track pending navigation timeout
+let _navigationTimeoutId = null; // Track pending navigation (requestAnimationFrame ID)
 
 // Define getters/setters for legacy global compatibility
 Object.defineProperty(window, 'currentView', {
@@ -546,6 +629,30 @@ Object.defineProperty(window, 'isNavigatingFromHash', {
     set: (v) => { AppState.isNavigatingFromHash = v; }
 });
 
+// === EVENT LISTENER MANAGEMENT ===
+// Store AbortControllers for cleanup of event listener groups
+const eventListenerControllers = {
+    tabs: null,
+    modals: null,
+    documentActions: null,
+    userActions: null
+};
+
+/**
+ * Gets or creates an AbortController for a specific listener group
+ * @param {string} group - The listener group name
+ * @returns {AbortController} The AbortController for this group
+ */
+function getListenerController(group) {
+    // Abort previous listeners in this group
+    if (eventListenerControllers[group]) {
+        eventListenerControllers[group].abort();
+    }
+    // Create new controller
+    eventListenerControllers[group] = new AbortController();
+    return eventListenerControllers[group];
+}
+
 // === DATA STORAGE ===
 // These arrays are populated from JSON files on initialization
 let mockProjects = [];
@@ -556,48 +663,73 @@ let mockCheckingResults = [];
 let mockUsers = [];
 
 /**
- * Loads data from JSON files
+ * Loads data from JSON files with detailed error reporting
  * @returns {Promise<boolean>} True if data loaded successfully
  */
 async function loadData() {
-    try {
-        const [projectsRes, documentsRes, geometryRes, rulesRes, resultsRes, usersRes] = await Promise.all([
-            fetch('data/projects.json'),
-            fetch('data/documents.json'),
-            fetch('data/geometry.json'),
-            fetch('data/rules.json'),
-            fetch('data/results.json'),
-            fetch('data/users.json')
-        ]);
+    const endpoints = [
+        { name: 'projects', url: 'data/projects.json', target: 'mockProjects' },
+        { name: 'documents', url: 'data/documents.json', target: 'mockDocuments' },
+        { name: 'geometry', url: 'data/geometry.json', target: 'mockGeometry' },
+        { name: 'rules', url: 'data/rules.json', target: 'mockRuleSets' },
+        { name: 'results', url: 'data/results.json', target: 'mockCheckingResults' },
+        { name: 'users', url: 'data/users.json', target: 'mockUsers' }
+    ];
 
-        if (!projectsRes.ok || !documentsRes.ok || !geometryRes.ok || !rulesRes.ok || !resultsRes.ok || !usersRes.ok) {
-            throw new Error('Failed to load data files');
+    try {
+        const results = await Promise.allSettled(
+            endpoints.map(async (endpoint) => {
+                const response = await fetch(endpoint.url);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return { name: endpoint.name, target: endpoint.target, data: await response.json() };
+            })
+        );
+
+        // Check for failures and collect error details
+        const failures = [];
+        results.forEach((result, index) => {
+            if (result.status === 'rejected') {
+                failures.push(`${endpoints[index].name}: ${result.reason.message}`);
+            }
+        });
+
+        if (failures.length > 0) {
+            console.error('[Data] Failed to load:', failures.join(', '));
+            showToast(`Fehler beim Laden: ${failures.join(', ')}`, 'error');
+            return false;
         }
 
-        mockProjects = await projectsRes.json();
-        mockDocuments = await documentsRes.json();
-        mockGeometry = await geometryRes.json();
-        mockRuleSets = await rulesRes.json();
-        mockCheckingResults = await resultsRes.json();
-        mockUsers = await usersRes.json();
+        // Assign successful results to their targets
+        results.forEach((result) => {
+            if (result.status === 'fulfilled') {
+                const { target, data } = result.value;
+                switch (target) {
+                    case 'mockProjects': mockProjects = data; break;
+                    case 'mockDocuments': mockDocuments = data; break;
+                    case 'mockGeometry': mockGeometry = data; break;
+                    case 'mockRuleSets': mockRuleSets = data; break;
+                    case 'mockCheckingResults': mockCheckingResults = data; break;
+                    case 'mockUsers': mockUsers = data; break;
+                }
+            }
+        });
 
         const roomCount = mockGeometry.filter(g => g.type === 'room').length;
         const areaCount = mockGeometry.filter(g => g.type === 'area').length;
         console.log(`[Data] Loaded ${mockProjects.length} projects, ${mockDocuments.length} documents, ${roomCount} rooms, ${areaCount} areas, ${mockRuleSets.length} rule sets, ${mockCheckingResults.length} results, ${mockUsers.length} users`);
         return true;
     } catch (error) {
-        console.error('[Data] Error loading data:', error);
-        showToast('Fehler beim Laden der Daten', 'error');
+        console.error('[Data] Unexpected error loading data:', error);
+        showToast('Unerwarteter Fehler beim Laden der Daten', 'error');
         return false;
     }
 }
 
-// === STATE MANAGEMENT ===
-let currentView = 'login';
-let currentProject = null;
-let currentDocument = null;
-let currentStep = 1; // Current step in validation workflow (1-4)
-let isNavigatingFromHash = false; // Prevent hash update during popstate handling
+// NOTE: State variables (currentView, currentProject, currentDocument, currentStep, isNavigatingFromHash)
+// are managed by AppState (lines 472-522) and exposed via window properties (lines 528-547).
+// Do not declare duplicate let variables here.
 
 // === URL ROUTING ===
 function updateUrlHash() {
@@ -640,9 +772,9 @@ function parseUrlHash() {
 }
 
 function navigateFromHash() {
-    // Cancel any pending navigation timeout to prevent race conditions
+    // Cancel any pending navigation to prevent race conditions
     if (_navigationTimeoutId) {
-        clearTimeout(_navigationTimeoutId);
+        cancelAnimationFrame(_navigationTimeoutId);
         _navigationTimeoutId = null;
     }
 
@@ -667,8 +799,8 @@ function navigateFromHash() {
             // First open project, then document
             openProjectDetail(projectId, true); // true = skip hash update
 
-            // Use tracked timeout to allow cancellation on rapid navigation
-            _navigationTimeoutId = setTimeout(() => {
+            // Use requestAnimationFrame for reliable timing after DOM updates
+            _navigationTimeoutId = requestAnimationFrame(() => {
                 _navigationTimeoutId = null;
                 openValidationView(documentId, true);
                 if (isResults) {
@@ -676,7 +808,7 @@ function navigateFromHash() {
                     renderPieChart();
                 }
                 isNavigatingFromHash = false;
-            }, 50);
+            });
             return;
         } else {
             openProjectDetail(projectId, true);
@@ -717,9 +849,7 @@ function switchView(viewName) {
     updateUrlHash();
 
     // Re-initialize Lucide icons in the visible view
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
+    initLucideIcons(targetView);
 }
 
 // === PROJECT RENDERING ===
@@ -736,9 +866,7 @@ function renderProjects() {
                 <p class="empty-state__message">Es sind noch keine Projekte vorhanden. Erstellen Sie ein neues Projekt, um zu beginnen.</p>
             </div>
         `;
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons({ nodes: grid.querySelectorAll('[data-lucide]') });
-        }
+        initLucideIcons(grid);
         return;
     }
 
@@ -754,8 +882,7 @@ function renderProjects() {
             ? Math.round(validatedDwgDocs.reduce((sum, doc) => sum + doc.score, 0) / validatedDwgDocs.length)
             : 0;
 
-        const scoreClass = averageScore >= 90 ? 'success' :
-                          averageScore >= 60 ? 'warning' : 'error';
+        const scoreClass = getScoreStatus(averageScore);
 
         const overlayHtml = project.status === 'completed'
             ? '<div class="card__overlay">Auftrag Abgeschlossen<br>(Wird in 30 Tagen gelöscht)</div>'
@@ -820,15 +947,14 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
     const imageElement = document.getElementById('project-detail-image');
     imageElement.style.backgroundImage = `url(${currentProject.imageUrl})`;
 
-    // Update donut chart (r=40, circumference = 2 * π * 40 ≈ 251)
-    const circumference = 2 * Math.PI * 40;
+    // Update donut chart using CONFIG.DONUT_CHART_RADIUS
+    const circumference = 2 * Math.PI * CONFIG.DONUT_CHART_RADIUS;
     const offset = circumference - (averageScore / 100) * circumference;
     const donutProgress = document.getElementById('project-donut-progress');
     donutProgress.setAttribute('stroke-dasharray', circumference);
     donutProgress.setAttribute('stroke-dashoffset', offset);
 
-    const scoreClass = averageScore >= 90 ? 'success' :
-                      averageScore >= 60 ? 'warning' : 'error';
+    const scoreClass = getScoreStatus(averageScore);
     donutProgress.setAttribute('class', `donut-chart__progress donut-chart__progress--${scoreClass}`);
 
     // Update KPIs
@@ -867,9 +993,7 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
         document.getElementById('view-project-detail')?.classList.add('view--active');
         currentView = 'project-detail';
         // Re-initialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
+        initLucideIcons(document.getElementById('view-project-detail'));
     } else {
         switchView('project-detail');
     }
@@ -971,13 +1095,12 @@ function renderDocuments() {
         : mockDocuments;
 
     tbody.innerHTML = projectDocuments.map(doc => {
-        const scoreStatus = doc.score >= 90 ? 'ok' :
-                           doc.score >= 60 ? 'warning' : 'error';
+        const scoreStatus = getScoreIconStatus(doc.score);
 
         return `
             <tr data-document-id="${safeParseInt(doc.id)}">
                 <td class="table__checkbox-col">
-                    <label class="checkbox" onclick="event.stopPropagation()">
+                    <label class="checkbox">
                         <input type="checkbox" class="document-checkbox" data-doc-id="${safeParseInt(doc.id)}" aria-label="Dokument ${escapeHtml(doc.name)} auswählen">
                         <span class="checkbox__mark"></span>
                     </label>
@@ -992,9 +1115,12 @@ function renderDocuments() {
     }).join('');
 
     // Re-initialize Lucide icons for status icons
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons({ nodes: tbody.querySelectorAll('[data-lucide]') });
-    }
+    initLucideIcons(tbody);
+
+    // Add click handlers for checkbox labels to stop propagation (replaces inline onclick)
+    tbody.querySelectorAll('.checkbox').forEach(label => {
+        label.addEventListener('click', (e) => e.stopPropagation());
+    });
 
     // Add click handlers for row selection (not on checkbox)
     tbody.querySelectorAll('tr').forEach(row => {
@@ -1201,7 +1327,7 @@ function renderUsers() {
         return `
             <tr data-user-id="${safeParseInt(user.id)}">
                 <td class="table__checkbox-col">
-                    <label class="checkbox" onclick="event.stopPropagation()">
+                    <label class="checkbox">
                         <input type="checkbox" class="user-checkbox" data-user-id="${safeParseInt(user.id)}" aria-label="Benutzer ${escapeHtml(user.name)} auswählen">
                         <span class="checkbox__mark"></span>
                     </label>
@@ -1213,6 +1339,11 @@ function renderUsers() {
             </tr>
         `;
     }).join('');
+
+    // Add click handlers for checkbox labels to stop propagation (replaces inline onclick)
+    tbody.querySelectorAll('.checkbox').forEach(label => {
+        label.addEventListener('click', (e) => e.stopPropagation());
+    });
 
     // Add checkbox change handlers
     tbody.querySelectorAll('.user-checkbox').forEach(checkbox => {
@@ -1339,7 +1470,7 @@ function openValidationView(documentId, skipHashUpdate = false) {
     const scoreValue = currentDocument.score;
     document.getElementById('step1-score-value').textContent = `${scoreValue}%`;
     const scoreCard = document.getElementById('step1-score-card');
-    const scoreClass = scoreValue >= 90 ? 'success' : scoreValue >= 60 ? 'warning' : 'error';
+    const scoreClass = getScoreStatus(scoreValue);
     scoreCard.className = `metric-card metric-card--${scoreClass}`;
 
     // Update step 1 metrics from geometry data
@@ -1371,8 +1502,8 @@ function openValidationView(documentId, skipHashUpdate = false) {
         ? `${totalNGF.toLocaleString('de-CH')} m²`
         : '0 m²';
 
-    // Step 2 errors are Excel matching errors (simulated: last 3 rooms don't match)
-    const step2ExcelErrors = Math.min(3, docRooms.length);
+    // Step 2 errors are Excel matching errors (simulated: last N rooms don't match)
+    const step2ExcelErrors = Math.min(CONFIG.MAX_EXCEL_ERRORS_SHOWN, docRooms.length);
     document.getElementById('step2-error-count').textContent = step2ExcelErrors;
 
     // Update error card styling based on error count
@@ -1392,9 +1523,7 @@ function openValidationView(documentId, skipHashUpdate = false) {
         document.getElementById('view-validation')?.classList.add('view--active');
         currentView = 'validation';
         // Re-initialize Lucide icons
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
+        initLucideIcons(document.getElementById('view-validation'));
     } else {
         switchView('validation');
     }
@@ -1429,9 +1558,7 @@ function updateStepper() {
     });
 
     // Re-initialize Lucide icons only within the stepper for performance
-    if (typeof lucide !== 'undefined' && stepper) {
-        lucide.createIcons({ nodes: stepper.querySelectorAll('[data-lucide]') });
-    }
+    initLucideIcons(stepper);
 
     // Update button states
     updateStepButtons();
@@ -1554,9 +1681,7 @@ function renderRooms() {
     }).join('');
 
     // Re-initialize Lucide icons only within the table for performance
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons({ nodes: tbody.querySelectorAll('[data-lucide]') });
-    }
+    initLucideIcons(tbody);
 }
 
 // === ERROR RENDERING ===
@@ -1606,9 +1731,7 @@ function renderAreaPolygons() {
     }).join('');
 
     // Re-initialize Lucide icons only within the table for performance
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons({ nodes: tbody.querySelectorAll('[data-lucide]') });
-    }
+    initLucideIcons(tbody);
 }
 
 // === TAB COUNT UPDATES ===
@@ -1640,8 +1763,8 @@ function updateValidationTabCounts() {
     if (valErrorsCount) valErrorsCount.textContent = errorCount;
 
     // Update Step 2 tab counts
-    // Step 2 errors are simulated Excel matching errors (last 3 rooms don't match)
-    const step2ExcelErrorCount = Math.min(3, roomCount);
+    // Step 2 errors are simulated Excel matching errors (last N rooms don't match)
+    const step2ExcelErrorCount = Math.min(CONFIG.MAX_EXCEL_ERRORS_SHOWN, roomCount);
     const step2RoomsCount = document.getElementById('step2-tab-rooms-count');
     const step2ErrorsCount = document.getElementById('step2-tab-errors-count');
 
@@ -1660,8 +1783,8 @@ function renderStep2Rooms() {
         : mockGeometry.filter(g => g.type === 'room');
 
     tbody.innerHTML = rooms.map((room, index) => {
-        // Simulate Excel matching - 3 rooms don't match
-        const hasExcelMatch = index < rooms.length - 3; // Last 3 don't match
+        // Simulate Excel matching - last N rooms don't match
+        const hasExcelMatch = index < rooms.length - CONFIG.MAX_EXCEL_ERRORS_SHOWN;
         const matchStatus = hasExcelMatch ? 'ok' : 'error';
 
         return `
@@ -1676,9 +1799,7 @@ function renderStep2Rooms() {
     }).join('');
 
     // Re-initialize Lucide icons only within the table for performance
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons({ nodes: tbody.querySelectorAll('[data-lucide]') });
-    }
+    initLucideIcons(tbody);
 }
 
 function renderStep2Errors() {
@@ -1816,34 +1937,45 @@ function renderPieChart() {
 
 // === TAB SWITCHING ===
 function setupTabs() {
+    // Get AbortController for cleanup on re-initialization
+    const controller = getListenerController('tabs');
+    const signal = controller.signal;
+
     // Project detail tabs (documents, users, rules)
-    setupTabGroup('data-tab', 'tab-', ['tab-documents', 'tab-users', 'tab-rules']);
+    setupTabGroup('data-tab', 'tab-', ['tab-documents', 'tab-users', 'tab-rules'], signal);
 
     // Validation view tabs - Step 1 (rooms, areas, errors)
-    setupTabGroup('data-val-tab', 'val-tab-', ['val-tab-rooms', 'val-tab-areas', 'val-tab-errors']);
+    setupTabGroup('data-val-tab', 'val-tab-', ['val-tab-rooms', 'val-tab-areas', 'val-tab-errors'], signal);
 
     // Step 2 tabs (rooms, errors)
-    setupTabGroup('data-step2-tab', 'step2-tab-', ['step2-tab-rooms', 'step2-tab-errors']);
+    setupTabGroup('data-step2-tab', 'step2-tab-', ['step2-tab-rooms', 'step2-tab-errors'], signal);
 
     // Step 3 tabs (kennzahlen, viewer)
-    setupTabGroup('data-step3-tab', 'step3-tab-', ['step3-tab-kennzahlen', 'step3-tab-viewer']);
+    setupTabGroup('data-step3-tab', 'step3-tab-', ['step3-tab-kennzahlen', 'step3-tab-viewer'], signal);
 }
 
 // === PROJECT SEARCH ===
 function setupSearch() {
     const searchInput = document.getElementById('project-search');
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
+        // Debounce search to avoid excessive DOM queries on every keystroke
+        const handleSearch = debounce((query) => {
+            const lowerQuery = query.toLowerCase();
             document.querySelectorAll('.card').forEach(card => {
-                const title = card.querySelector('.card__title').textContent.toLowerCase();
-                const meta = card.querySelector('.card__meta').textContent.toLowerCase();
-                if (title.includes(query) || meta.includes(query)) {
+                const titleEl = card.querySelector('.card__title');
+                const metaEl = card.querySelector('.card__meta');
+                const title = titleEl ? titleEl.textContent.toLowerCase() : '';
+                const meta = metaEl ? metaEl.textContent.toLowerCase() : '';
+                if (title.includes(lowerQuery) || meta.includes(lowerQuery)) {
                     card.style.display = '';
                 } else {
                     card.style.display = 'none';
                 }
             });
+        }, 300);
+
+        searchInput.addEventListener('input', (e) => {
+            handleSearch(e.target.value);
         });
     }
 }
@@ -2004,6 +2136,15 @@ function handleFileSelect(event, type) {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Validate file size based on type
+    const maxSize = type === 'dwg' ? CONFIG.MAX_DWG_SIZE : CONFIG.MAX_EXCEL_SIZE;
+    if (file.size > maxSize) {
+        const typeName = type === 'dwg' ? 'DWG' : 'Excel';
+        showToast(`${typeName}-Datei zu gross. Maximale Grösse: ${formatFileSize(maxSize)}`, 'error');
+        event.target.value = '';
+        return;
+    }
+
     const fileSize = formatFileSize(file.size);
     const sanitizedName = sanitizeFilename(file.name);
 
@@ -2084,11 +2225,11 @@ function enhanceInteractions() {
             left: ${x}px;
             top: ${y}px;
             pointer-events: none;
-            animation: ripple 0.6s ease-out;
+            animation: ripple ${CONFIG.RIPPLE_ANIMATION_MS / 1000}s ease-out;
         `;
 
         btn.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
+        setTimeout(() => ripple.remove(), CONFIG.RIPPLE_ANIMATION_MS);
     });
 
     // Room table hover using event delegation (works with dynamically rendered rows)
@@ -2158,10 +2299,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupDocumentActions();
     setupUserActions();
 
-    // Initialize Lucide icons
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
+    // Initialize Lucide icons (global initialization on page load)
+    initLucideIcons();
 
     // Default to login view if no valid hash
     // Note: setupRouting() already handles hash-based navigation on page load,
