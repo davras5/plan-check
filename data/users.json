@@ -1,13 +1,13 @@
 [
-  { "id": 1, "name": "Max Muster", "email": "max.muster@bbl.admin.ch", "lastActivity": "27/06/2022 12:30" },
-  { "id": 2, "name": "Anna Müller", "email": "anna.mueller@architekten-zuerich.ch", "lastActivity": "27/06/2022 10:45" },
-  { "id": 3, "name": "Peter Schmidt", "email": "p.schmidt@geometer-bern.ch", "lastActivity": "14/04/2022 16:30" },
-  { "id": 4, "name": "Lisa Weber", "email": "l.weber@bauingenieure-ag.ch", "lastActivity": "28/06/2022 09:45" },
-  { "id": 5, "name": "Maria Keller", "email": "m.keller@elektroplanung-gmbh.ch", "lastActivity": "14/04/2022 10:30" },
-  { "id": 6, "name": "Jean Dupont", "email": "j.dupont@architectes-geneve.ch", "lastActivity": "22/03/2022 11:00" },
-  { "id": 7, "name": "Claire Martin", "email": "c.martin@geometres-romandie.ch", "lastActivity": "21/03/2022 17:30" },
-  { "id": 8, "name": "Thomas Brunner", "email": "t.brunner@hlk-technik.ch", "lastActivity": "18/01/2022 16:00" },
-  { "id": 9, "name": "Sabine Hofer", "email": "s.hofer@statik-partner.ch", "lastActivity": "17/01/2022 11:30" },
-  { "id": 10, "name": "Franz Huber", "email": "f.huber@vermessung-magglingen.ch", "lastActivity": "05/12/2021 11:45" },
-  { "id": 11, "name": "Eva Steiner", "email": "e.steiner@architekturbuero-steiner.ch", "lastActivity": "04/12/2021 16:00" }
+  { "id": 1, "name": "Max Muster", "email": "max.muster@bbl.admin.ch", "lastActivity": "2022-06-27T12:30:00.000Z" },
+  { "id": 2, "name": "Anna Müller", "email": "anna.mueller@architekten-zuerich.ch", "lastActivity": "2022-06-27T10:45:00.000Z" },
+  { "id": 3, "name": "Peter Schmidt", "email": "p.schmidt@geometer-bern.ch", "lastActivity": "2022-04-14T16:30:00.000Z" },
+  { "id": 4, "name": "Lisa Weber", "email": "l.weber@bauingenieure-ag.ch", "lastActivity": "2022-06-28T09:45:00.000Z" },
+  { "id": 5, "name": "Maria Keller", "email": "m.keller@elektroplanung-gmbh.ch", "lastActivity": "2022-04-14T10:30:00.000Z" },
+  { "id": 6, "name": "Jean Dupont", "email": "j.dupont@architectes-geneve.ch", "lastActivity": "2022-03-22T11:00:00.000Z" },
+  { "id": 7, "name": "Claire Martin", "email": "c.martin@geometres-romandie.ch", "lastActivity": "2022-03-21T17:30:00.000Z" },
+  { "id": 8, "name": "Thomas Brunner", "email": "t.brunner@hlk-technik.ch", "lastActivity": "2022-01-18T16:00:00.000Z" },
+  { "id": 9, "name": "Sabine Hofer", "email": "s.hofer@statik-partner.ch", "lastActivity": "2022-01-17T11:30:00.000Z" },
+  { "id": 10, "name": "Franz Huber", "email": "f.huber@vermessung-magglingen.ch", "lastActivity": "2021-12-05T11:45:00.000Z" },
+  { "id": 11, "name": "Eva Steiner", "email": "e.steiner@architekturbuero-steiner.ch", "lastActivity": "2021-12-04T16:00:00.000Z" }
 ]

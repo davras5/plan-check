@@ -13,6 +13,7 @@ erDiagram
     RuleSet ||--o{ Project : "applies to"
     Project ||--o{ Document : "contains"
     Project }o--o{ User : "has"
+    User ||--o{ Document : "creates/edits"
     Document ||--o{ Geometry : "has"
     Document ||--o{ Result : "has"
 
@@ -25,8 +26,10 @@ erDiagram
 
     Project {
         int id PK
+        string number
         string name
-        string siaPhase
+        string phase
+        string language
         int createdBy FK
         string createdDate
         int documentCount
@@ -50,6 +53,7 @@ erDiagram
     }
 
     Geometry {
+        int id PK
         int documentId FK
         string type
         string aoid
@@ -59,6 +63,7 @@ erDiagram
     }
 
     Result {
+        int id PK
         int documentId FK
         string ruleCode
         string severity
@@ -80,6 +85,7 @@ erDiagram
 | RuleSet → Project | One-to-Many | `project.ruleSetId` |
 | Project ↔ User | Many-to-Many | `project.users[].userId` |
 | Project → Document | One-to-Many | `document.projectId` |
+| User → Document | One-to-Many | `document.createdBy`, `document.lastEditedBy` |
 | Document → Geometry | One-to-Many | `geometry.documentId` |
 | Document → Result | One-to-Many | `result.documentId` |
 
@@ -110,12 +116,14 @@ Represents a building project containing floor plan documents.
 ```typescript
 interface Project {
   id: number;                      // Simple numeric ID
+  number: string;                  // Project number (e.g., "2022-0145")
   name: string;                    // Project name (format: "Location, Building Name")
-  siaPhase: '31' | '32' | '33' | '41' | '51' | '52' | '53';  // SIA 112 phase code
+  phase: '31' | '32' | '33' | '41' | '51' | '52' | '53';  // SIA 112 phase code
+  language: 'de' | 'fr' | 'it';    // Project language
   createdBy: number;               // Foreign key to User who created the project
-  createdDate: string;             // Display date (DD/MM/YYYY)
-  documentCount: number;           // Total documents in project
-  resultPercentage: number;        // 0-100, average validation score
+  createdDate: string;             // ISO 8601 date (YYYY-MM-DD)
+  documentCount: number;           // DENORMALIZED: Total documents in project
+  resultPercentage: number;        // DENORMALIZED: 0-100, average validation score
   status: 'active' | 'completed';
   ruleSetId: number;               // Foreign key to RuleSet
   imageUrl: string;                // Building photo URL
@@ -128,16 +136,29 @@ interface ProjectUser {
 }
 ```
 
+### Denormalized Fields
+
+The following fields are denormalized for display performance:
+
+| Field | Description | Calculation |
+|-------|-------------|-------------|
+| `documentCount` | Number of documents in project | `COUNT(documents WHERE projectId = project.id)` |
+| `resultPercentage` | Average validation score | `AVG(document.score WHERE projectId = project.id AND status = 'validated')` |
+
+**Note:** In a production system, these would be calculated dynamically or updated via triggers. In the prototype, they may become stale if documents are added/removed.
+
 ### Example (data/projects.json)
 
 ```json
 [
   {
     "id": 1,
+    "number": "2022-0145",
     "name": "Bern, Verwaltungsgebäude Liebefeld",
-    "siaPhase": "53",
+    "phase": "53",
+    "language": "de",
     "createdBy": 3,
-    "createdDate": "14/04/2022",
+    "createdDate": "2022-04-14",
     "documentCount": 7,
     "resultPercentage": 91,
     "status": "active",
@@ -180,9 +201,9 @@ interface Document {
   projectId: number;               // Foreign key to Project
   name: string;                    // Filename
   createdBy: number;               // Foreign key to User who uploaded the document
-  createdAt: string;               // Upload timestamp (DD/MM/YYYY HH:mm)
+  createdAt: string;               // ISO 8601 timestamp (YYYY-MM-DDTHH:mm:ss.sssZ)
   lastEditedBy: number;            // Foreign key to User who last edited
-  lastEditedAt: string;            // Last edit timestamp (DD/MM/YYYY HH:mm)
+  lastEditedAt: string;            // ISO 8601 timestamp (YYYY-MM-DDTHH:mm:ss.sssZ)
   status: 'validated' | 'processing' | 'pending';
   score: number;                   // Validation score 0-100
 }
@@ -197,9 +218,9 @@ interface Document {
     "projectId": 1,
     "name": "Erdgeschoss (EG).dwg",
     "createdBy": 3,
-    "createdAt": "10/04/2022 09:30",
+    "createdAt": "2022-04-10T09:30:00.000Z",
     "lastEditedBy": 3,
-    "lastEditedAt": "14/04/2022 14:20",
+    "lastEditedAt": "2022-04-14T14:20:00.000Z",
     "status": "validated",
     "score": 94
   }
@@ -225,6 +246,7 @@ Represents polygon geometries extracted from DWG floor plans. All polygons are s
 
 ```typescript
 interface Geometry {
+  id: number;                      // Simple numeric ID
   documentId: number;              // Foreign key to Document
   type: 'room' | 'area';           // Geometry type for filtering
   aoid: string;                    // Polygon identifier
@@ -238,12 +260,12 @@ interface Geometry {
 
 ```json
 [
-  { "documentId": 1, "type": "room", "aoid": "EG.01", "area": 24.50, "aofunction": "conference", "status": "ok" },
-  { "documentId": 1, "type": "room", "aoid": "EG.02", "area": 18.30, "aofunction": "office", "status": "ok" },
-  { "documentId": 1, "type": "room", "aoid": "EG.03", "area": 22.10, "aofunction": "office", "status": "error" },
-  { "documentId": 1, "type": "room", "aoid": "EG.07", "area": 45.20, "aofunction": "hall", "status": "ok" },
-  { "documentId": 1, "type": "area", "aoid": "BGF-EG-001", "area": 450.00, "aofunction": "Brutto Geschossfläche", "status": "ok" },
-  { "documentId": 1, "type": "area", "aoid": "EBF-EG-001", "area": 280.00, "aofunction": "Energiebezugsfläche", "status": "ok" }
+  { "id": 1, "documentId": 1, "type": "room", "aoid": "EG.01", "area": 24.50, "aofunction": "conference", "status": "ok" },
+  { "id": 2, "documentId": 1, "type": "room", "aoid": "EG.02", "area": 18.30, "aofunction": "office", "status": "ok" },
+  { "id": 3, "documentId": 1, "type": "room", "aoid": "EG.03", "area": 22.10, "aofunction": "office", "status": "error" },
+  { "id": 4, "documentId": 1, "type": "room", "aoid": "EG.07", "area": 45.20, "aofunction": "hall", "status": "ok" },
+  { "id": 5, "documentId": 1, "type": "area", "aoid": "BGF-EG-001", "area": 450.00, "aofunction": "Brutto Geschossfläche", "status": "ok" },
+  { "id": 6, "documentId": 1, "type": "area", "aoid": "EBF-EG-001", "area": 280.00, "aofunction": "Energiebezugsfläche", "status": "ok" }
 ]
 ```
 
@@ -360,6 +382,7 @@ Represents validation results/errors for a document. These appear in the "Fehler
 
 ```typescript
 interface Result {
+  id: number;                      // Simple numeric ID
   documentId: number;              // Foreign key to Document
   ruleCode: string;                // Reference to rule code (e.g., "LAYER_001")
   severity: 'error' | 'warning' | 'info';  // Severity level
@@ -371,9 +394,9 @@ interface Result {
 
 ```json
 [
-  { "documentId": 1, "ruleCode": "LAYER_001", "severity": "error", "message": "Pflichtlayer \"A-WAENDE\" fehlt in der Zeichnung" },
-  { "documentId": 1, "ruleCode": "GEOM_001", "severity": "error", "message": "Raumpolygon EG.03 ist nicht geschlossen (Lücke: 2.3mm)" },
-  { "documentId": 1, "ruleCode": "AOID_001", "severity": "warning", "message": "AOID EG.06 entspricht nicht dem BBL-Format" }
+  { "id": 1, "documentId": 1, "ruleCode": "LAYER_001", "severity": "error", "message": "Pflichtlayer \"A-WAENDE\" fehlt in der Zeichnung" },
+  { "id": 2, "documentId": 1, "ruleCode": "GEOM_001", "severity": "error", "message": "Raumpolygon EG.03 ist nicht geschlossen (Lücke: 2.3mm)" },
+  { "id": 3, "documentId": 1, "ruleCode": "AOID_001", "severity": "warning", "message": "AOID EG.06 entspricht nicht dem BBL-Format" }
 ]
 ```
 
@@ -404,7 +427,7 @@ interface User {
   id: number;                      // Simple numeric ID
   name: string;                    // Display name
   email: string;                   // Email address
-  lastActivity: string;            // Last activity timestamp (DD/MM/YYYY HH:mm)
+  lastActivity: string;            // ISO 8601 timestamp (YYYY-MM-DDTHH:mm:ss.sssZ)
 }
 ```
 
@@ -412,10 +435,10 @@ interface User {
 
 ```json
 [
-  { "id": 1, "name": "Max Muster", "email": "max.muster@bbl.admin.ch", "lastActivity": "27/06/2022 12:30" },
-  { "id": 2, "name": "Anna Müller", "email": "anna.mueller@architekten-zuerich.ch", "lastActivity": "27/06/2022 10:45" },
-  { "id": 3, "name": "Peter Schmidt", "email": "p.schmidt@geometer-bern.ch", "lastActivity": "14/04/2022 16:30" },
-  { "id": 5, "name": "Maria Keller", "email": "m.keller@elektroplanung-gmbh.ch", "lastActivity": "14/04/2022 10:30" }
+  { "id": 1, "name": "Max Muster", "email": "max.muster@bbl.admin.ch", "lastActivity": "2022-06-27T12:30:00.000Z" },
+  { "id": 2, "name": "Anna Müller", "email": "anna.mueller@architekten-zuerich.ch", "lastActivity": "2022-06-27T10:45:00.000Z" },
+  { "id": 3, "name": "Peter Schmidt", "email": "p.schmidt@geometer-bern.ch", "lastActivity": "2022-04-14T16:30:00.000Z" },
+  { "id": 5, "name": "Maria Keller", "email": "m.keller@elektroplanung-gmbh.ch", "lastActivity": "2022-04-14T10:30:00.000Z" }
 ]
 ```
 
@@ -521,6 +544,19 @@ Example: Adding data for document ID 2
 
 ---
 
+## Date Format Convention
+
+All date and timestamp fields use **ISO 8601** format for consistency and interoperability:
+
+| Field Type | Format | Example |
+|------------|--------|---------|
+| Date only | `YYYY-MM-DD` | `2022-04-14` |
+| Timestamp | `YYYY-MM-DDTHH:mm:ss.sssZ` | `2022-04-14T09:30:00.000Z` |
+
+The frontend converts these to localized display format (`DD/MM/YYYY` or `DD/MM/YYYY HH:mm`) using the `formatDateDisplay()` and `formatDateTimeDisplay()` functions.
+
+---
+
 ## Version History
 
 | Version | Date | Changes |
@@ -531,7 +567,9 @@ Example: Adding data for document ID 2
 | 3.0 | 2025-01-09 | Merged rooms.json and areas.json into geometry.json with type field |
 | 3.1 | 2025-01-09 | Added results.json for validation results, users.json for user management |
 | 3.2 | 2025-01-09 | Updated test data with realistic area values (BGF ~300-550 m², room totals 75-85% of BGF) |
-| 4.0 | 2026-01-09 | Added Project-User relationships: createdBy, members[] on projects; createdBy, createdAt, lastEditedBy, lastEditedAt on documents |
+| 4.0 | 2026-01-09 | Added Project-User relationships: createdBy, users[] on projects; createdBy, createdAt, lastEditedBy, lastEditedAt on documents |
+| 4.1 | 2026-01-09 | Added id field to Geometry and Result entities; converted all dates to ISO 8601 format; documented denormalized fields (documentCount, resultPercentage) |
+| 4.2 | 2026-01-09 | Renamed siaPhase to phase; added number and language fields to Project |
 
 ---
 

@@ -199,15 +199,48 @@ function getUserById(userId) {
 }
 
 /**
+ * Formats an ISO 8601 date string to DD/MM/YYYY format
+ * @param {string} isoString - The ISO 8601 date string (e.g., "2022-04-14" or "2022-04-14T09:30:00.000Z")
+ * @returns {string} Formatted date string (DD/MM/YYYY)
+ */
+function formatDateDisplay(isoString) {
+    if (!isoString) return '-';
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return isoString; // Return original if invalid
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
+/**
+ * Formats an ISO 8601 datetime string to DD/MM/YYYY HH:mm format
+ * @param {string} isoString - The ISO 8601 datetime string (e.g., "2022-04-14T09:30:00.000Z")
+ * @returns {string} Formatted datetime string (DD/MM/YYYY HH:mm)
+ */
+function formatDateTimeDisplay(isoString) {
+    if (!isoString) return '-';
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return isoString; // Return original if invalid
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
+/**
  * Formats user and timestamp for display (e.g., "peter.schmidt@bbl.admin.ch on 10/04/2022 09:30")
  * @param {number} userId - The user ID
- * @param {string} timestamp - The timestamp string (DD/MM/YYYY HH:mm)
+ * @param {string} timestamp - The ISO 8601 timestamp string
  * @returns {string} Formatted string with email and timestamp
  */
 function formatUserTimestamp(userId, timestamp) {
     const user = getUserById(userId);
-    if (!user) return timestamp || '-';
-    return `${user.email} on ${timestamp}`;
+    const formattedTime = formatDateTimeDisplay(timestamp);
+    if (!user) return formattedTime;
+    return `${user.email} on ${formattedTime}`;
 }
 
 /**
@@ -489,7 +522,8 @@ function setupNewProjectForm() {
             const formData = new FormData(form);
             const projectNumber = formData.get('projectNumber');
             const name = formData.get('name');
-            const siaPhase = formData.get('siaPhase');
+            const phase = formData.get('phase');
+            const language = formData.get('language');
 
             // Generate new project ID
             const newId = mockProjects.length > 0
@@ -499,8 +533,10 @@ function setupNewProjectForm() {
             // Create new project object
             const newProject = {
                 id: newId,
+                number: escapeHtml(projectNumber),
                 name: escapeHtml(name),
-                siaPhase: escapeHtml(siaPhase),
+                phase: escapeHtml(phase),
+                language: escapeHtml(language),
                 createdBy: 1,  // TODO: Use actual logged-in user ID
                 createdDate: formatDate(new Date()),
                 documentCount: 0,
@@ -533,15 +569,21 @@ function setupNewProjectForm() {
 }
 
 /**
- * Formats a date to DD/MM/YYYY format
+ * Formats a date to ISO 8601 date format (YYYY-MM-DD)
  * @param {Date} date - The date to format
- * @returns {string} The formatted date string
+ * @returns {string} The formatted date string in ISO 8601 format
  */
 function formatDate(date) {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    return date.toISOString().split('T')[0];
+}
+
+/**
+ * Formats a date to ISO 8601 datetime format
+ * @param {Date} date - The date to format
+ * @returns {string} The formatted datetime string in ISO 8601 format
+ */
+function formatDateTime(date) {
+    return date.toISOString();
 }
 
 /**
@@ -913,8 +955,8 @@ function renderProjects() {
                     <h3 class="card__title">${escapeHtml(project.name)}</h3>
                     <dl class="card__meta">
                         <div class="card__meta-left">
-                            <dd>SIA Phase: ${escapeHtml(project.siaPhase)}</dd>
-                            <dd>${escapeHtml(project.createdDate)}</dd>
+                            <dd>SIA Phase: ${escapeHtml(project.phase)}</dd>
+                            <dd>${escapeHtml(formatDateDisplay(project.createdDate))}</dd>
                             <dd>${projectDocuments.length} Dokumente</dd>
                         </div>
                         <div class="card__meta-right">
@@ -973,7 +1015,7 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
     donutProgress.setAttribute('class', `donut-chart__progress donut-chart__progress--${scoreClass}`);
 
     // Update KPIs
-    document.getElementById('project-sia-phase').textContent = currentProject.siaPhase;
+    document.getElementById('project-sia-phase').textContent = currentProject.phase;
     document.getElementById('project-document-count').textContent = projectDocuments.length;
 
     // Calculate room count from geometry for this project's documents
@@ -1339,7 +1381,7 @@ function renderUsers() {
                 </td>
                 <td>${escapeHtml(user.name)}</td>
                 <td>${escapeHtml(user.email)}</td>
-                <td>${escapeHtml(user.lastActivity)}</td>
+                <td>${escapeHtml(formatDateTimeDisplay(user.lastActivity))}</td>
             </tr>
         `;
     }).join('');
