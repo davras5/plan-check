@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBL Prüfplattform - Unit Tests</title>
+    <style>
+        body {
+            font-family: 'Frutiger Neue LT W1G', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #DC0018;
+            padding-bottom: 10px;
+        }
+        #test-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .pass { color: #4ec9b0; }
+        .fail { color: #f14c4c; }
+        .header { color: #569cd6; font-weight: bold; }
+        #summary {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        #summary.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        #summary.failure {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            background: #006699;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background: #005580;
+        }
+    </style>
+</head>
+<body>
+    <h1>BBL Prüfplattform - Unit Tests</h1>
+    <button onclick="runTests()">Run Tests</button>
+    <div id="test-output"></div>
+    <div id="summary"></div>
+
+    <!-- Load main script first (contains functions to test) -->
+    <script src="js/script.js"></script>
+    <!-- Load test script -->
+    <script src="js/script.test.js"></script>
+    <script>
+        const output = document.getElementById('test-output');
+        const summaryEl = document.getElementById('summary');
+
+        // Override console.log to display in page
+        const originalLog = console.log;
+        const originalError = console.error;
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const text = args.join(' ');
+            const span = document.createElement('span');
+            if (text.includes('===')) {
+                span.className = 'header';
+            } else if (text.includes('✓')) {
+                span.className = 'pass';
+            } else if (text.includes('Passed:')) {
+                span.className = 'pass';
+            }
+            span.textContent = text + '\n';
+            output.appendChild(span);
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            const text = args.join(' ');
+            const span = document.createElement('span');
+            span.className = 'fail';
+            span.textContent = text + '\n';
+            output.appendChild(span);
+        };
+
+        function runTests() {
+            output.innerHTML = '';
+            summaryEl.innerHTML = '';
+            summaryEl.className = '';
+
+            // Reset test runner
+            TestRunner.passed = 0;
+            TestRunner.failed = 0;
+            TestRunner.results = [];
+
+            const success = runAllTests();
+
+            summaryEl.className = success ? 'success' : 'failure';
+            summaryEl.textContent = success
+                ? `✓ All ${TestRunner.passed} tests passed!`
+                : `✗ ${TestRunner.failed} of ${TestRunner.passed + TestRunner.failed} tests failed`;
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', runTests);
+    </script>
+</body>
+</html>
