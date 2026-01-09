@@ -125,18 +125,19 @@
 | FR-6.6 | Room type classification | Should | ✅ | From AOFUNCTI code |
 | FR-6.7 | Room status indicators | Should | ✅ | Green/Yellow/Red status pills |
 
-### FR-7: Floor Plan Viewer
+### FR-7: Floor Plan Viewer (SVG-based)
 
 | ID | Requirement | Priority | Status | Notes |
 |----|-------------|----------|--------|-------|
-| FR-7.1 | Display uploaded DWG as interactive floor plan | Must | ✅ | Speckle embed integration |
-| FR-7.2 | Pan and zoom controls | Must | ✅ | Built into Speckle viewer |
-| FR-7.3 | Layer visibility toggle | Should | ⏳ | Speckle capability, not exposed |
+| FR-7.1 | Display 2D room/area polygons as SVG | Must | 🔄 | Extracted from DWG via backend |
+| FR-7.2 | Pan and zoom controls | Must | ⏳ | SVG viewBox manipulation |
+| FR-7.3 | Layer visibility toggle | Should | ⏳ | SVG group show/hide |
 | FR-7.4 | Highlight validation errors on plan | Must | ✅ | Visual markers implemented |
 | FR-7.5 | Click on room to see details | Should | ✅ | Interactive room selection |
 | FR-7.6 | Color-code rooms by validation status | Should | ✅ | Green=OK, Yellow=Warning, Red=Error |
 | FR-7.7 | "DWG Hochladen" button in viewer | Must | ✅ | Quick re-upload available |
-| FR-7.8 | Room polygon rendering | Must | ✅ | Area polygons with colors |
+| FR-7.8 | Room polygon rendering | Must | 🔄 | SVG polygons from geometry data |
+| FR-7.9 | Lightweight polygon extraction | Must | ⏳ | Backend extracts 2D polygons from DWG |
 
 ### FR-8: SIA 416 Area Calculations
 
@@ -200,7 +201,7 @@
 |----|-------------|--------|--------|-------|
 | NFR-1.1 | DWG upload response time | < 5 seconds | ✅ | Client-side validation immediate |
 | NFR-1.2 | Validation processing time | < 30 seconds | ⏳ | Backend requirement |
-| NFR-1.3 | Floor plan viewer load time | < 3 seconds | ✅ | Speckle embed loads quickly |
+| NFR-1.3 | Floor plan viewer load time | < 3 seconds | ⏳ | SVG rendering from polygon data |
 | NFR-1.4 | Dashboard load time | < 2 seconds | ✅ | JSON data loads < 500ms |
 | NFR-1.5 | Support concurrent users | 50+ | ⏳ | Backend requirement |
 
@@ -304,7 +305,7 @@ GET    /api/documents/{id}/report/pdf   # PDF validation report
 | CSS3 | Styling | CSS variables, Grid, Flexbox, responsive |
 | Vanilla JavaScript | Application logic | ~2,366 lines, no build tools required |
 | Lucide Icons | Icon library | MIT-licensed SVG icons (CDN) |
-| Speckle Embed | Floor plan viewer | Interactive CAD visualization |
+| SVG | Floor plan viewer | 2D polygon rendering for rooms/areas |
 
 ### CSS Architecture
 
@@ -322,12 +323,18 @@ GET    /api/documents/{id}/report/pdf   # PDF validation report
 |------------|---------|
 | Python 3.12+ | Runtime |
 | FastAPI | Web framework |
-| Speckle / LibreDWG | DWG file processing |
-| ezdxf | DXF fallback processing |
+| Speckle Python API | DWG polygon extraction (preferred) |
+| ezdxf | DXF processing / alternative to Speckle |
+| LibreDWG | DWG processing alternative |
 | Shapely | Geometry operations |
 | openpyxl | Excel parsing |
 | PostgreSQL + PostGIS | Production database |
 | Swiss eIAM | Authentication (production) |
+
+**DWG Processing Options (under evaluation):**
+- **Speckle Python API** - Cloud-based, extracts geometry as JSON, promising for 2D polygon extraction (requires license)
+- **ezdxf** - Pure Python, MIT license, DXF only (requires DWG→DXF conversion)
+- **LibreDWG** - Open source (GPL), native DWG support, self-hosted
 
 ### Infrastructure (Planned)
 
@@ -349,7 +356,7 @@ GET    /api/documents/{id}/report/pdf   # PDF validation report
 - [x] DWG/DXF upload with drag & drop
 - [x] 14 validation rules defined (layer, geometry, entity, text, AOID)
 - [x] Validation results display with error/warning tabs
-- [x] Floor plan viewer via Speckle embed
+- [x] Floor plan viewer UI (SVG-based, pending backend integration)
 - [x] 4-step validation wizard
 - [x] Swiss Federal design system implementation
 - [x] Accessibility (WCAG 2.1 AA)
@@ -357,7 +364,8 @@ GET    /api/documents/{id}/report/pdf   # PDF validation report
 - [x] Unit tests (75+ test cases)
 
 **Pending (Backend):**
-- [ ] DWG processing via Speckle/LibreDWG
+- [ ] DWG polygon extraction (Speckle API / ezdxf / LibreDWG)
+- [ ] SVG generation from extracted polygons
 - [ ] Validation rule execution engine
 - [ ] Database persistence
 - [ ] User authentication with sessions
@@ -418,7 +426,10 @@ GET    /api/documents/{id}/report/pdf   # PDF validation report
 ## Open Questions
 
 1. **Authentication:** Will prototype use simple auth or mock eIAM integration?
-2. **DWG Processing:** Speckle cloud or self-hosted LibreDWG?
+2. **DWG Processing:** Which approach for polygon extraction?
+   - Speckle Python API (cloud-based, promising)
+   - ezdxf (DXF only, needs conversion)
+   - LibreDWG (self-hosted, native DWG)
 3. **Data Persistence:** How long to retain uploaded files and results?
 4. **Integration:** Any existing systems to integrate with (SAP RE-FX, SUPERB)?
 5. **Validation Rules:** Are the 14 layers in CAD-Richtlinie complete, or are there additional rules?
@@ -434,4 +445,5 @@ GET    /api/documents/{id}/report/pdf   # PDF validation report
 - SIA 416 - Flächen und Volumen von Gebäuden
 - DIN 277 - Grundflächen und Rauminhalte
 - Swiss Federal Design System: https://design.admin.ch/
-- Speckle Documentation: https://docs.speckle.systems/
+- Speckle Python SDK: https://speckle.guide/dev/py.html
+- ezdxf Documentation: https://ezdxf.readthedocs.io/
