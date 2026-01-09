@@ -8,7 +8,7 @@ const CONFIG = {
     SPECKLE_PROJECT_ID: 'fccae9bd00',
     SPECKLE_MODEL_ID: 'e65877a4ee',
     // Token should be loaded from environment/server in production
-    SPECKLE_EMBED_TOKEN: '43151a4cf62e9b9206a741c2c9b1f448762a36fdcd',
+    SPECKLE_EMBED_TOKEN: 'cd8278c08caa75725d392d5b5ecb650b579db274a1',
     TOAST_DURATION_MS: 3000,
     STEP_COUNT: 4,
     BYTES_PER_KB: 1024
