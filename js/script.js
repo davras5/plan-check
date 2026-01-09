@@ -632,6 +632,49 @@ const mockDocuments = [
     }
 ];
 
+const mockUsers = [
+    {
+        id: 1,
+        name: 'Max Muster',
+        email: 'max.muster@bbl.admin.ch',
+        role: 'Admin',
+        roleClass: 'info',
+        lastActivity: '27/06/2022 12:30'
+    },
+    {
+        id: 2,
+        name: 'Anna Beispiel',
+        email: 'anna.beispiel@bbl.admin.ch',
+        role: 'Editor',
+        roleClass: 'secondary',
+        lastActivity: '27/06/2022 10:45'
+    },
+    {
+        id: 3,
+        name: 'John Doe',
+        email: 'john.doe@bbl.admin.ch',
+        role: 'Viewer',
+        roleClass: 'muted',
+        lastActivity: '26/06/2022 09:15'
+    },
+    {
+        id: 4,
+        name: 'Lisa Weber',
+        email: 'lisa.weber@bbl.admin.ch',
+        role: 'Editor',
+        roleClass: 'secondary',
+        lastActivity: '27/06/2022 12:30'
+    },
+    {
+        id: 5,
+        name: 'Peter Schmidt',
+        email: 'peter.schmidt@bbl.admin.ch',
+        role: 'Viewer',
+        roleClass: 'muted',
+        lastActivity: '26/06/2022 09:15'
+    }
+];
+
 const mockRooms = [
     { aoid: '1.01', area: 24.45, aofunction: 'conference', status: 'ok' },
     { aoid: '1.02', area: 18.32, aofunction: 'office', status: 'ok' },
@@ -1055,13 +1098,14 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
     // Mock area values (in real app would come from project data)
     document.getElementById('project-gf').textContent = "4'500 m²";
 
-    // Render documents and rules
+    // Render documents, users, and rules
     renderDocuments();
+    renderUsers();
     renderRules();
 
     // Update tab counts
     document.getElementById('tab-documents-count').textContent = mockDocuments.length;
-    document.getElementById('tab-users-count').textContent = document.querySelectorAll('#user-table-body tr').length;
+    document.getElementById('tab-users-count').textContent = mockUsers.length;
     document.getElementById('tab-rules-count').textContent = mockValidationRules.length;
 
     if (skipHashUpdate) {
@@ -1276,6 +1320,197 @@ function setupDocumentActions() {
                     // Re-render and show toast
                     renderDocuments();
                     showToast(`${count} Dokument(e) gelöscht`, 'success');
+                }
+            }
+        });
+    }
+}
+
+// === USER SELECTION STATE ===
+const UserSelection = {
+    selectedIds: new Set(),
+
+    toggle(id) {
+        if (this.selectedIds.has(id)) {
+            this.selectedIds.delete(id);
+        } else {
+            this.selectedIds.add(id);
+        }
+        this.updateUI();
+    },
+
+    selectAll() {
+        mockUsers.forEach(user => this.selectedIds.add(user.id));
+        this.updateUI();
+    },
+
+    deselectAll() {
+        this.selectedIds.clear();
+        this.updateUI();
+    },
+
+    isSelected(id) {
+        return this.selectedIds.has(id);
+    },
+
+    getSelectedCount() {
+        return this.selectedIds.size;
+    },
+
+    updateUI() {
+        const count = this.getSelectedCount();
+        const total = mockUsers.length;
+
+        // Update selected count text
+        const countEl = safeGetElementById('users-selected-count');
+        if (countEl) {
+            countEl.textContent = `${count} ausgewählt`;
+        }
+
+        // Update select all checkbox state
+        const selectAllCheckbox = safeGetElementById('select-all-users');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = count === total && total > 0;
+            selectAllCheckbox.indeterminate = count > 0 && count < total;
+        }
+
+        // Update row checkboxes and styles
+        const tbody = safeGetElementById('user-table-body');
+        if (tbody) {
+            tbody.querySelectorAll('tr').forEach(row => {
+                const userId = safeParseInt(row.dataset.userId);
+                const checkbox = row.querySelector('.user-checkbox');
+                const isSelected = this.isSelected(userId);
+
+                if (checkbox) {
+                    checkbox.checked = isSelected;
+                }
+                row.classList.toggle('is-selected', isSelected);
+            });
+        }
+
+        // Update action buttons
+        const editBtn = safeGetElementById('edit-user-btn');
+        const deleteBtn = safeGetElementById('delete-users-btn');
+
+        if (editBtn) {
+            editBtn.disabled = count !== 1;
+        }
+        if (deleteBtn) {
+            deleteBtn.disabled = count === 0;
+        }
+    }
+};
+
+// === USER RENDERING ===
+function renderUsers() {
+    const tbody = safeGetElementById('user-table-body');
+    if (!tbody) return;
+
+    // Reset selection when re-rendering
+    UserSelection.deselectAll();
+
+    tbody.innerHTML = mockUsers.map(user => {
+        return `
+            <tr data-user-id="${safeParseInt(user.id)}">
+                <td class="table__checkbox-col">
+                    <label class="checkbox" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="user-checkbox" data-user-id="${safeParseInt(user.id)}" aria-label="Benutzer ${escapeHtml(user.name)} auswählen">
+                        <span class="checkbox__mark"></span>
+                    </label>
+                </td>
+                <td>${escapeHtml(user.name)}</td>
+                <td>${escapeHtml(user.email)}</td>
+                <td><span class="badge badge--${escapeHtml(user.roleClass)}">${escapeHtml(user.role)}</span></td>
+                <td>${escapeHtml(user.lastActivity)}</td>
+            </tr>
+        `;
+    }).join('');
+
+    // Add checkbox change handlers
+    tbody.querySelectorAll('.user-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const userId = safeParseInt(e.target.dataset.userId);
+            UserSelection.toggle(userId);
+        });
+    });
+
+    // Setup select all checkbox
+    setupSelectAllUsers();
+
+    // Update tab count
+    const tabCountEl = safeGetElementById('tab-users-count');
+    if (tabCountEl) {
+        tabCountEl.textContent = mockUsers.length;
+    }
+}
+
+/**
+ * Sets up the select all checkbox functionality for users
+ */
+function setupSelectAllUsers() {
+    const selectAllCheckbox = safeGetElementById('select-all-users');
+    if (!selectAllCheckbox) return;
+
+    // Remove existing listener to prevent duplicates
+    selectAllCheckbox.replaceWith(selectAllCheckbox.cloneNode(true));
+    const newCheckbox = safeGetElementById('select-all-users');
+
+    if (newCheckbox) {
+        newCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                UserSelection.selectAll();
+            } else {
+                UserSelection.deselectAll();
+            }
+        });
+    }
+}
+
+/**
+ * Sets up user action buttons
+ */
+function setupUserActions() {
+    const inviteBtn = safeGetElementById('invite-user-btn');
+    const editBtn = safeGetElementById('edit-user-btn');
+    const deleteBtn = safeGetElementById('delete-users-btn');
+
+    if (inviteBtn) {
+        inviteBtn.addEventListener('click', () => {
+            showToast('Benutzer einladen - Funktion kommt bald', 'info');
+        });
+    }
+
+    if (editBtn) {
+        editBtn.addEventListener('click', () => {
+            const selectedIds = Array.from(UserSelection.selectedIds);
+            if (selectedIds.length === 1) {
+                const user = mockUsers.find(u => u.id === selectedIds[0]);
+                if (user) {
+                    showToast(`Benutzer "${user.name}" bearbeiten - Funktion kommt bald`, 'info');
+                }
+            }
+        });
+    }
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            const count = UserSelection.getSelectedCount();
+            if (count > 0) {
+                const confirmed = confirm(`Möchten Sie ${count} Benutzer wirklich entfernen?`);
+                if (confirmed) {
+                    // Remove selected users from mockUsers
+                    const selectedIds = Array.from(UserSelection.selectedIds);
+                    selectedIds.forEach(id => {
+                        const index = mockUsers.findIndex(u => u.id === id);
+                        if (index !== -1) {
+                            mockUsers.splice(index, 1);
+                        }
+                    });
+
+                    // Re-render and show toast
+                    renderUsers();
+                    showToast(`${count} Benutzer entfernt`, 'success');
                 }
             }
         });
@@ -2030,6 +2265,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupRouting();
     setupModals();
     setupDocumentActions();
+    setupUserActions();
 
     // Initialize Lucide icons
     if (typeof lucide !== 'undefined') {
