@@ -48,18 +48,18 @@
 
     --color-focus: var(--color-malibu);
 
-    /* Semantic Colors */
-    --color-success: #3C763D;
-    --color-success-light: #DFF0D8;
-    --color-success-border: #D6E9C6;
+    /* Semantic Colors - Traffic Light Scheme for Checking Results */
+    --color-success: #2E7D32;
+    --color-success-light: #E8F5E9;
+    --color-success-border: #C8E6C9;
 
-    --color-warning: #8A6D3B;
-    --color-warning-light: #FCF8E3;
-    --color-warning-border: #FAEBCC;
+    --color-warning: #F57C00;
+    --color-warning-light: #FFF3E0;
+    --color-warning-border: #FFE0B2;
 
-    --color-error: #A94442;
-    --color-error-light: #F2DEDE;
-    --color-error-border: #EBCCD1;
+    --color-error: #C62828;
+    --color-error-light: #FFEBEE;
+    --color-error-border: #FFCDD2;
 
     --color-info: #31708F;
     --color-info-light: #D9EDF7;
@@ -70,8 +70,8 @@
     --color-room-stroke: #228B22;
     --color-room-selected: rgba(0, 191, 255, 0.6);
     --color-architecture: #333333;
-    --color-error-marker: #DC3545;
-    --color-warning-marker: #D4A017;
+    --color-error-marker: var(--color-error);
+    --color-warning-marker: var(--color-warning);
     --color-grid: #E0E0E0;
 
     /* Typography */

@@ -1,127 +1,290 @@
-{
-  "version": "1.0",
-  "lastUpdated": "2025-01-07T15:00:00Z",
-  "data": [
-    {
-      "id": "doc_789e4567-e89b-12d3-a456-426614174111",
-      "projectId": "prj_123e4567-e89b-12d3-a456-426614174000",
-      "filename": "Flächenplan_EG_validated.dwg",
-      "fileType": "DWG",
-      "fileSize": 2847392,
-      "filePath": "/uploads/2022/06/doc_789e4567.dwg",
-      "uploadedAt": "2022-06-17T12:30:00Z",
-      "uploadedBy": "usr_550e8400-e29b-41d4-a716-446655440000",
-      "lastModifiedAt": "2022-06-27T10:45:00Z",
-      "lastModifiedBy": "usr_550e8400-e29b-41d4-a716-446655440000",
-      "validationStatus": "completed",
-      "validationScore": 95,
-      "validationCompletedAt": "2022-06-17T12:35:00Z",
-      "metadata": {
-        "originalFilename": "Verwaltungsgebäude_EG_Rev03.dwg",
-        "mimeType": "application/acad",
-        "version": 3,
-        "floor": "EG",
-        "scale": "1:100",
-        "drawingDate": "2022-06-15",
-        "revisionNumber": "Rev03",
-        "checksum": "sha256:a3b2c1d4e5f6g7h8i9j0k1l2m3n4o5p6"
-      }
-    },
-    {
-      "id": "doc_889e4567-e89b-12d3-a456-426614174112",
-      "projectId": "prj_123e4567-e89b-12d3-a456-426614174000",
-      "filename": "Flächenplan_1OG_validated.dwg",
-      "fileType": "DWG",
-      "fileSize": 3124567,
-      "filePath": "/uploads/2022/06/doc_889e4567.dwg",
-      "uploadedAt": "2022-06-17T14:15:00Z",
-      "uploadedBy": "usr_550e8400-e29b-41d4-a716-446655440000",
-      "lastModifiedAt": "2022-06-27T11:00:00Z",
-      "lastModifiedBy": "usr_550e8400-e29b-41d4-a716-446655440000",
-      "validationStatus": "completed",
-      "validationScore": 92,
-      "validationCompletedAt": "2022-06-17T14:20:00Z",
-      "metadata": {
-        "originalFilename": "Verwaltungsgebäude_1OG_Rev03.dwg",
-        "mimeType": "application/acad",
-        "version": 3,
-        "floor": "1.OG",
-        "scale": "1:100",
-        "drawingDate": "2022-06-15",
-        "revisionNumber": "Rev03",
-        "checksum": "sha256:b4c3d2e1f0g9h8i7j6k5l4m3n2o1p0q9"
-      }
-    },
-    {
-      "id": "doc_989e4567-e89b-12d3-a456-426614174113",
-      "projectId": "prj_123e4567-e89b-12d3-a456-426614174000",
-      "filename": "Raumliste_Verwaltung.xlsx",
-      "fileType": "XLSX",
-      "fileSize": 45678,
-      "filePath": "/uploads/2022/06/doc_989e4567.xlsx",
-      "uploadedAt": "2022-06-17T15:00:00Z",
-      "uploadedBy": "usr_550e8400-e29b-41d4-a716-446655440000",
-      "lastModifiedAt": "2022-06-17T15:00:00Z",
-      "lastModifiedBy": "usr_550e8400-e29b-41d4-a716-446655440000",
-      "validationStatus": "completed",
-      "validationScore": 100,
-      "validationCompletedAt": "2022-06-17T15:01:00Z",
-      "metadata": {
-        "originalFilename": "Raumliste_Verwaltung_Final.xlsx",
-        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "version": 1,
-        "checksum": "sha256:c5d4e3f2g1h0i9j8k7l6m5n4o3p2q1r0"
-      }
-    },
-    {
-      "id": "doc_109e4567-e89b-12d3-a456-426614174114",
-      "projectId": "prj_223e4567-e89b-12d3-a456-426614174001",
-      "filename": "Flächenplan_EG_Geneva.dwg",
-      "fileType": "DWG",
-      "fileSize": 3567890,
-      "filePath": "/uploads/2022/07/doc_109e4567.dwg",
-      "uploadedAt": "2022-07-10T09:00:00Z",
-      "uploadedBy": "usr_770e8400-e29b-41d4-a716-446655440002",
-      "lastModifiedAt": "2022-07-12T14:30:00Z",
-      "lastModifiedBy": "usr_770e8400-e29b-41d4-a716-446655440002",
-      "validationStatus": "completed",
-      "validationScore": 78,
-      "validationCompletedAt": "2022-07-10T09:08:00Z",
-      "metadata": {
-        "originalFilename": "Montbrillant_EG_Rev02.dwg",
-        "mimeType": "application/acad",
-        "version": 2,
-        "floor": "EG",
-        "scale": "1:100",
-        "drawingDate": "2022-07-08",
-        "revisionNumber": "Rev02",
-        "checksum": "sha256:d6e5f4g3h2i1j0k9l8m7n6o5p4q3r2s1"
-      }
-    },
-    {
-      "id": "doc_209e4567-e89b-12d3-a456-426614174115",
-      "projectId": "prj_323e4567-e89b-12d3-a456-426614174002",
-      "filename": "Flächenplan_UG_Magglingen.dwg",
-      "fileType": "DWG",
-      "fileSize": 4123456,
-      "filePath": "/uploads/2022/05/doc_209e4567.dwg",
-      "uploadedAt": "2022-05-20T11:45:00Z",
-      "uploadedBy": "usr_880e8400-e29b-41d4-a716-446655440003",
-      "lastModifiedAt": "2022-05-22T16:20:00Z",
-      "lastModifiedBy": "usr_880e8400-e29b-41d4-a716-446655440003",
-      "validationStatus": "completed",
-      "validationScore": 68,
-      "validationCompletedAt": "2022-05-20T11:52:00Z",
-      "metadata": {
-        "originalFilename": "BAZG_Hochschule_UG_Rev01.dwg",
-        "mimeType": "application/acad",
-        "version": 1,
-        "floor": "UG",
-        "scale": "1:100",
-        "drawingDate": "2022-05-18",
-        "revisionNumber": "Rev01",
-        "checksum": "sha256:e7f6g5h4i3j2k1l0m9n8o7p6q5r4s3t2"
-      }
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "projectId": 1,
+    "name": "Erdgeschoss (EG).dwg",
+    "creator": "peter.schmidt@bbl.admin.ch on 10/04/2022 09:30",
+    "lastChange": "peter.schmidt@bbl.admin.ch on 14/04/2022 14:20",
+    "status": "validated",
+    "score": 94
+  },
+  {
+    "id": 2,
+    "projectId": 1,
+    "name": "1. Obergeschoss (1.OG).dwg",
+    "creator": "peter.schmidt@bbl.admin.ch on 10/04/2022 10:15",
+    "lastChange": "peter.schmidt@bbl.admin.ch on 14/04/2022 15:00",
+    "status": "validated",
+    "score": 91
+  },
+  {
+    "id": 3,
+    "projectId": 1,
+    "name": "2. Obergeschoss (2.OG).dwg",
+    "creator": "peter.schmidt@bbl.admin.ch on 10/04/2022 11:00",
+    "lastChange": "peter.schmidt@bbl.admin.ch on 14/04/2022 15:45",
+    "status": "validated",
+    "score": 88
+  },
+  {
+    "id": 4,
+    "projectId": 1,
+    "name": "3. Obergeschoss (3.OG).dwg",
+    "creator": "maria.keller@bbl.admin.ch on 11/04/2022 08:30",
+    "lastChange": "maria.keller@bbl.admin.ch on 14/04/2022 16:30",
+    "status": "validated",
+    "score": 92
+  },
+  {
+    "id": 5,
+    "projectId": 1,
+    "name": "Untergeschoss (UG).dwg",
+    "creator": "peter.schmidt@bbl.admin.ch on 11/04/2022 14:00",
+    "lastChange": "peter.schmidt@bbl.admin.ch on 13/04/2022 11:15",
+    "status": "validated",
+    "score": 85
+  },
+  {
+    "id": 6,
+    "projectId": 1,
+    "name": "Dachgeschoss (DG).dwg",
+    "creator": "maria.keller@bbl.admin.ch on 12/04/2022 09:00",
+    "lastChange": "maria.keller@bbl.admin.ch on 14/04/2022 10:30",
+    "status": "validated",
+    "score": 96
+  },
+  {
+    "id": 7,
+    "projectId": 1,
+    "name": "Raumliste_Liebefeld.xlsx",
+    "creator": "peter.schmidt@bbl.admin.ch on 12/04/2022 15:00",
+    "lastChange": "peter.schmidt@bbl.admin.ch on 12/04/2022 15:00",
+    "status": "validated",
+    "score": 100
+  },
+  {
+    "id": 8,
+    "projectId": 2,
+    "name": "Sous-sol (SS).dwg",
+    "creator": "jean.dupont@bbl.admin.ch on 15/03/2022 08:00",
+    "lastChange": "jean.dupont@bbl.admin.ch on 22/03/2022 09:30",
+    "status": "validated",
+    "score": 72
+  },
+  {
+    "id": 9,
+    "projectId": 2,
+    "name": "Rez-de-chaussée (RC).dwg",
+    "creator": "jean.dupont@bbl.admin.ch on 15/03/2022 10:30",
+    "lastChange": "jean.dupont@bbl.admin.ch on 22/03/2022 11:00",
+    "status": "validated",
+    "score": 78
+  },
+  {
+    "id": 10,
+    "projectId": 2,
+    "name": "1er étage (1E).dwg",
+    "creator": "jean.dupont@bbl.admin.ch on 16/03/2022 09:00",
+    "lastChange": "jean.dupont@bbl.admin.ch on 22/03/2022 14:15",
+    "status": "validated",
+    "score": 81
+  },
+  {
+    "id": 11,
+    "projectId": 2,
+    "name": "2ème étage (2E).dwg",
+    "creator": "claire.martin@bbl.admin.ch on 16/03/2022 14:00",
+    "lastChange": "claire.martin@bbl.admin.ch on 21/03/2022 16:00",
+    "status": "validated",
+    "score": 69
+  },
+  {
+    "id": 12,
+    "projectId": 2,
+    "name": "3ème étage (3E).dwg",
+    "creator": "claire.martin@bbl.admin.ch on 17/03/2022 08:30",
+    "lastChange": "claire.martin@bbl.admin.ch on 21/03/2022 17:30",
+    "status": "validated",
+    "score": 74
+  },
+  {
+    "id": 13,
+    "projectId": 2,
+    "name": "4ème étage (4E).dwg",
+    "creator": "jean.dupont@bbl.admin.ch on 17/03/2022 11:00",
+    "lastChange": "jean.dupont@bbl.admin.ch on 22/03/2022 10:00",
+    "status": "validated",
+    "score": 76
+  },
+  {
+    "id": 14,
+    "projectId": 2,
+    "name": "5ème étage (5E).dwg",
+    "creator": "claire.martin@bbl.admin.ch on 18/03/2022 09:00",
+    "lastChange": "claire.martin@bbl.admin.ch on 21/03/2022 15:00",
+    "status": "processing",
+    "score": 0
+  },
+  {
+    "id": 15,
+    "projectId": 2,
+    "name": "Toiture (T).dwg",
+    "creator": "jean.dupont@bbl.admin.ch on 18/03/2022 14:00",
+    "lastChange": "jean.dupont@bbl.admin.ch on 20/03/2022 11:30",
+    "status": "validated",
+    "score": 82
+  },
+  {
+    "id": 16,
+    "projectId": 2,
+    "name": "Liste_Locaux_Montbrillant.xlsx",
+    "creator": "jean.dupont@bbl.admin.ch on 19/03/2022 10:00",
+    "lastChange": "jean.dupont@bbl.admin.ch on 19/03/2022 10:00",
+    "status": "validated",
+    "score": 100
+  },
+  {
+    "id": 17,
+    "projectId": 3,
+    "name": "Erdgeschoss (EG).dwg",
+    "creator": "max.muster@bbl.admin.ch on 17/06/2022 12:30",
+    "lastChange": "max.muster@bbl.admin.ch on 27/06/2022 10:45",
+    "status": "validated",
+    "score": 95
+  },
+  {
+    "id": 18,
+    "projectId": 3,
+    "name": "1. Obergeschoss (1.OG).dwg",
+    "creator": "max.muster@bbl.admin.ch on 17/06/2022 14:15",
+    "lastChange": "max.muster@bbl.admin.ch on 27/06/2022 11:00",
+    "status": "validated",
+    "score": 92
+  },
+  {
+    "id": 19,
+    "projectId": 3,
+    "name": "2. Obergeschoss (2.OG).dwg",
+    "creator": "max.muster@bbl.admin.ch on 17/06/2022 15:30",
+    "lastChange": "max.muster@bbl.admin.ch on 27/06/2022 11:20",
+    "status": "validated",
+    "score": 88
+  },
+  {
+    "id": 20,
+    "projectId": 3,
+    "name": "3. Obergeschoss (3.OG).dwg",
+    "creator": "anna.mueller@bbl.admin.ch on 18/06/2022 09:00",
+    "lastChange": "anna.mueller@bbl.admin.ch on 27/06/2022 14:30",
+    "status": "validated",
+    "score": 90
+  },
+  {
+    "id": 21,
+    "projectId": 3,
+    "name": "Untergeschoss (UG).dwg",
+    "creator": "max.muster@bbl.admin.ch on 16/06/2022 16:00",
+    "lastChange": "max.muster@bbl.admin.ch on 26/06/2022 10:15",
+    "status": "validated",
+    "score": 78
+  },
+  {
+    "id": 22,
+    "projectId": 3,
+    "name": "Dachgeschoss (DG).dwg",
+    "creator": "lisa.weber@bbl.admin.ch on 19/06/2022 10:30",
+    "lastChange": "lisa.weber@bbl.admin.ch on 28/06/2022 09:45",
+    "status": "processing",
+    "score": 0
+  },
+  {
+    "id": 23,
+    "projectId": 3,
+    "name": "Raumliste_Hochschule.xlsx",
+    "creator": "max.muster@bbl.admin.ch on 17/06/2022 15:00",
+    "lastChange": "max.muster@bbl.admin.ch on 17/06/2022 15:00",
+    "status": "validated",
+    "score": 100
+  },
+  {
+    "id": 24,
+    "projectId": 4,
+    "name": "Erdgeschoss (EG).dwg",
+    "creator": "thomas.brunner@bbl.admin.ch on 10/01/2022 09:00",
+    "lastChange": "thomas.brunner@bbl.admin.ch on 18/01/2022 14:00",
+    "status": "validated",
+    "score": 100
+  },
+  {
+    "id": 25,
+    "projectId": 4,
+    "name": "1. Obergeschoss (1.OG).dwg",
+    "creator": "thomas.brunner@bbl.admin.ch on 10/01/2022 11:30",
+    "lastChange": "thomas.brunner@bbl.admin.ch on 18/01/2022 15:00",
+    "status": "validated",
+    "score": 100
+  },
+  {
+    "id": 26,
+    "projectId": 4,
+    "name": "2. Obergeschoss (2.OG).dwg",
+    "creator": "thomas.brunner@bbl.admin.ch on 11/01/2022 08:00",
+    "lastChange": "thomas.brunner@bbl.admin.ch on 18/01/2022 16:00",
+    "status": "validated",
+    "score": 100
+  },
+  {
+    "id": 27,
+    "projectId": 4,
+    "name": "Untergeschoss (UG).dwg",
+    "creator": "sabine.hofer@bbl.admin.ch on 12/01/2022 10:00",
+    "lastChange": "sabine.hofer@bbl.admin.ch on 17/01/2022 11:30",
+    "status": "validated",
+    "score": 100
+  },
+  {
+    "id": 28,
+    "projectId": 4,
+    "name": "Raumliste_Forschung3.xlsx",
+    "creator": "thomas.brunner@bbl.admin.ch on 13/01/2022 14:00",
+    "lastChange": "thomas.brunner@bbl.admin.ch on 13/01/2022 14:00",
+    "status": "validated",
+    "score": 100
+  },
+  {
+    "id": 29,
+    "projectId": 5,
+    "name": "Erdgeschoss (EG).dwg",
+    "creator": "franz.huber@bbl.admin.ch on 28/11/2021 09:00",
+    "lastChange": "franz.huber@bbl.admin.ch on 05/12/2021 10:30",
+    "status": "validated",
+    "score": 98
+  },
+  {
+    "id": 30,
+    "projectId": 5,
+    "name": "1. Obergeschoss (1.OG).dwg",
+    "creator": "franz.huber@bbl.admin.ch on 28/11/2021 14:00",
+    "lastChange": "franz.huber@bbl.admin.ch on 05/12/2021 11:45",
+    "status": "validated",
+    "score": 100
+  },
+  {
+    "id": 31,
+    "projectId": 5,
+    "name": "Untergeschoss (UG).dwg",
+    "creator": "eva.steiner@bbl.admin.ch on 29/11/2021 08:30",
+    "lastChange": "eva.steiner@bbl.admin.ch on 04/12/2021 16:00",
+    "status": "validated",
+    "score": 99
+  },
+  {
+    "id": 32,
+    "projectId": 5,
+    "name": "Raumliste_Neubau.xlsx",
+    "creator": "franz.huber@bbl.admin.ch on 30/11/2021 10:00",
+    "lastChange": "franz.huber@bbl.admin.ch on 30/11/2021 10:00",
+    "status": "validated",
+    "score": 100
+  }
+]

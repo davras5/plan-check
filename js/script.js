@@ -242,6 +242,7 @@ function setupModals() {
     const newProjectBtn = safeGetElementById('new-project-btn');
     if (newProjectBtn) {
         newProjectBtn.addEventListener('click', () => {
+            populateRuleSetDropdown();
             openModal('new-project-modal');
         });
     }
@@ -268,6 +269,25 @@ function setupModals() {
 
     // Setup New Project form
     setupNewProjectForm();
+}
+
+/**
+ * Populates the rule set dropdown from mockRuleSets data
+ */
+function populateRuleSetDropdown() {
+    const ruleSetSelect = safeGetElementById('project-ruleset');
+    if (!ruleSetSelect) return;
+
+    // Keep the placeholder option
+    ruleSetSelect.innerHTML = '<option value="">Bitte wählen...</option>';
+
+    // Add options from mockRuleSets
+    mockRuleSets.forEach(ruleSet => {
+        const option = document.createElement('option');
+        option.value = ruleSet.id;
+        option.textContent = ruleSet.name;
+        ruleSetSelect.appendChild(option);
+    });
 }
 
 /**
@@ -376,7 +396,7 @@ function setupNewProjectForm() {
                 siaPhase: escapeHtml(siaPhase),
                 createdDate: formatDate(new Date()),
                 documentCount: 0,
-                completionPercentage: 0,
+                resultPercentage: 0,
                 status: 'active',
                 imageUrl: selectedImageUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop',
                 projectNumber: escapeHtml(projectNumber)
@@ -526,359 +546,51 @@ Object.defineProperty(window, 'isNavigatingFromHash', {
     set: (v) => { AppState.isNavigatingFromHash = v; }
 });
 
-// === MOCK DATA ===
-const mockProjects = [
-    {
-        id: 1,
-        name: 'Bern, Verwaltungsgebäude Liebefeld',
-        location: 'Bern',
-        siaPhase: '53',
-        createdDate: '14/04/2022',
-        documentCount: 7,
-        completionPercentage: 91,
-        status: 'active',
-        imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop'
-    },
-    {
-        id: 2,
-        name: 'Genf, Dienstleistungszentrum Montbrillant',
-        location: 'Genf',
-        siaPhase: '52',
-        createdDate: '22/03/2022',
-        documentCount: 9,
-        completionPercentage: 75,
-        status: 'active',
-        imageUrl: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&auto=format&fit=crop'
-    },
-    {
-        id: 3,
-        name: 'Magglingen, BAZG, Hochschule Hauptgebäude',
-        location: 'Magglingen',
-        siaPhase: '51',
-        createdDate: '10/02/2022',
-        documentCount: 6,
-        completionPercentage: 65,
-        status: 'active',
-        imageUrl: 'https://images.unsplash.com/photo-1502101872923-d48509bff386?w=800&auto=format&fit=crop'
-    },
-    {
-        id: 4,
-        name: 'Zollikofen, Forschung 3',
-        location: 'Zollikofen',
-        siaPhase: '53',
-        createdDate: '18/01/2022',
-        documentCount: 5,
-        completionPercentage: 100,
-        status: 'completed',
-        imageUrl: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop'
-    },
-    {
-        id: 5,
-        name: 'Magglingen, BAZG, Hochschule Neubau',
-        location: 'Magglingen',
-        siaPhase: '52',
-        createdDate: '05/12/2021',
-        documentCount: 4,
-        completionPercentage: 99,
-        status: 'completed',
-        imageUrl: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop'
-    }
-];
+// === DATA STORAGE ===
+// These arrays are populated from JSON files on initialization
+let mockProjects = [];
+let mockDocuments = [];
+let mockGeometry = [];
+let mockRuleSets = [];
+let mockCheckingResults = [];
+let mockUsers = [];
 
-const mockDocuments = [
-    {
-        id: 1,
-        name: 'Erdgeschoss (EG).dwg',
-        creator: 'max.muster@bbl.admin.ch on 17/06/2022 12:30',
-        lastChange: 'max.muster@bbl.admin.ch on 27/06/2022 10:45',
-        status: 'validated',
-        score: 95
-    },
-    {
-        id: 2,
-        name: '1. Obergeschoss (1.OG).dwg',
-        creator: 'max.muster@bbl.admin.ch on 17/06/2022 14:15',
-        lastChange: 'max.muster@bbl.admin.ch on 27/06/2022 11:00',
-        status: 'validated',
-        score: 92
-    },
-    {
-        id: 3,
-        name: '2. Obergeschoss (2.OG).dwg',
-        creator: 'max.muster@bbl.admin.ch on 17/06/2022 15:30',
-        lastChange: 'max.muster@bbl.admin.ch on 27/06/2022 11:20',
-        status: 'validated',
-        score: 88
-    },
-    {
-        id: 4,
-        name: '3. Obergeschoss (3.OG).dwg',
-        creator: 'anna.mueller@bbl.admin.ch on 18/06/2022 09:00',
-        lastChange: 'anna.mueller@bbl.admin.ch on 27/06/2022 14:30',
-        status: 'validated',
-        score: 90
-    },
-    {
-        id: 5,
-        name: 'Untergeschoss (UG).dwg',
-        creator: 'max.muster@bbl.admin.ch on 16/06/2022 16:00',
-        lastChange: 'max.muster@bbl.admin.ch on 26/06/2022 10:15',
-        status: 'validated',
-        score: 78
-    },
-    {
-        id: 6,
-        name: 'Dachgeschoss (DG).dwg',
-        creator: 'lisa.weber@bbl.admin.ch on 19/06/2022 10:30',
-        lastChange: 'lisa.weber@bbl.admin.ch on 28/06/2022 09:45',
-        status: 'processing',
-        score: 0
-    },
-    {
-        id: 7,
-        name: 'Raumliste_Verwaltungsgebaeude.xlsx',
-        creator: 'max.muster@bbl.admin.ch on 17/06/2022 15:00',
-        lastChange: 'max.muster@bbl.admin.ch on 17/06/2022 15:00',
-        status: 'validated',
-        score: 100
-    }
-];
+/**
+ * Loads data from JSON files
+ * @returns {Promise<boolean>} True if data loaded successfully
+ */
+async function loadData() {
+    try {
+        const [projectsRes, documentsRes, geometryRes, rulesRes, resultsRes, usersRes] = await Promise.all([
+            fetch('data/projects.json'),
+            fetch('data/documents.json'),
+            fetch('data/geometry.json'),
+            fetch('data/rules.json'),
+            fetch('data/results.json'),
+            fetch('data/users.json')
+        ]);
 
-const mockUsers = [
-    {
-        id: 1,
-        name: 'Max Muster',
-        email: 'max.muster@bbl.admin.ch',
-        role: 'Admin',
-        roleClass: 'info',
-        lastActivity: '27/06/2022 12:30'
-    },
-    {
-        id: 2,
-        name: 'Anna Beispiel',
-        email: 'anna.beispiel@bbl.admin.ch',
-        role: 'Editor',
-        roleClass: 'secondary',
-        lastActivity: '27/06/2022 10:45'
-    },
-    {
-        id: 3,
-        name: 'John Doe',
-        email: 'john.doe@bbl.admin.ch',
-        role: 'Viewer',
-        roleClass: 'muted',
-        lastActivity: '26/06/2022 09:15'
-    },
-    {
-        id: 4,
-        name: 'Lisa Weber',
-        email: 'lisa.weber@bbl.admin.ch',
-        role: 'Editor',
-        roleClass: 'secondary',
-        lastActivity: '27/06/2022 12:30'
-    },
-    {
-        id: 5,
-        name: 'Peter Schmidt',
-        email: 'peter.schmidt@bbl.admin.ch',
-        role: 'Viewer',
-        roleClass: 'muted',
-        lastActivity: '26/06/2022 09:15'
-    }
-];
+        if (!projectsRes.ok || !documentsRes.ok || !geometryRes.ok || !rulesRes.ok || !resultsRes.ok || !usersRes.ok) {
+            throw new Error('Failed to load data files');
+        }
 
-const mockRooms = [
-    { aoid: '1.01', area: 24.45, aofunction: 'conference', status: 'ok' },
-    { aoid: '1.02', area: 18.32, aofunction: 'office', status: 'ok' },
-    { aoid: '1.03', area: 22.10, aofunction: 'office', status: 'error' },
-    { aoid: '1.04', area: 15.67, aofunction: 'storage', status: 'ok' },
-    { aoid: '1.05', area: 28.90, aofunction: 'meeting', status: 'ok' },
-    { aoid: '1.06', area: 12.45, aofunction: 'WC', status: 'warning' },
-    { aoid: '1.07', area: 45.22, aofunction: 'hall', status: 'ok' },
-    { aoid: '1.08', area: 19.78, aofunction: 'office', status: 'ok' },
-    { aoid: '1.09', area: 16.33, aofunction: 'office', status: 'ok' },
-    { aoid: '1.10', area: 21.55, aofunction: 'office', status: 'error' },
-    { aoid: '2.01', area: 35.80, aofunction: 'conference', status: 'ok' },
-    { aoid: '2.02', area: 14.21, aofunction: 'office', status: 'ok' },
-    { aoid: '2.03', area: 18.95, aofunction: 'office', status: 'ok' },
-    { aoid: '2.04', area: 22.67, aofunction: 'office', status: 'warning' },
-    { aoid: '2.05', area: 11.30, aofunction: 'WC', status: 'ok' },
-    { aoid: '2.06', area: 27.45, aofunction: 'meeting', status: 'ok' },
-    { aoid: '2.07', area: 16.88, aofunction: 'office', status: 'ok' },
-    { aoid: '2.08', area: 19.12, aofunction: 'office', status: 'ok' },
-    { aoid: '2.09', area: 24.76, aofunction: 'office', status: 'ok' },
-    { aoid: '2.10', area: 13.45, aofunction: 'storage', status: 'ok' },
-    { aoid: '3.01', area: 42.30, aofunction: 'hall', status: 'ok' },
-    { aoid: '3.02', area: 20.55, aofunction: 'office', status: 'error' }
-];
+        mockProjects = await projectsRes.json();
+        mockDocuments = await documentsRes.json();
+        mockGeometry = await geometryRes.json();
+        mockRuleSets = await rulesRes.json();
+        mockCheckingResults = await resultsRes.json();
+        mockUsers = await usersRes.json();
 
-const mockErrors = [
-    {
-        code: 'LAYER_001',
-        severity: 'error',
-        message: 'Required layer "Architecture_Wände" is missing',
-        location: null
-    },
-    {
-        code: 'POLY_003',
-        severity: 'error',
-        message: 'Room polygon is not closed in room 1.04',
-        location: { x: 125, y: 340 }
-    },
-    {
-        code: 'AOID_002',
-        severity: 'warning',
-        message: 'AOID format invalid: "2011DM04045" (missing dots)',
-        location: { x: 280, y: 190 }
-    },
-    {
-        code: 'TEXT_001',
-        severity: 'error',
-        message: 'Text font is not Arial in 3 locations',
-        location: null
-    },
-    {
-        code: 'GEOM_005',
-        severity: 'warning',
-        message: 'Polyline has non-zero width (should be 0)',
-        location: { x: 450, y: 120 }
-    },
-    {
-        code: 'LAYER_002',
-        severity: 'warning',
-        message: 'Layer color mismatch: "Möblierung" should be RGB(128,128,128)',
-        location: null
-    },
-    {
-        code: 'ENTITY_001',
-        severity: 'error',
-        message: 'Forbidden entity type SPLINE found on layer "Architecture"',
-        location: { x: 320, y: 410 }
-    },
-    {
-        code: 'AOID_005',
-        severity: 'warning',
-        message: 'AOID "2011.DM.04.023" not found in Excel room list',
-        location: { x: 195, y: 275 }
-    },
-    {
-        code: 'GEOM_002',
-        severity: 'error',
-        message: 'Self-intersecting polygon detected in room 2.07',
-        location: { x: 380, y: 220 }
-    },
-    {
-        code: 'POLY_001',
-        severity: 'warning',
-        message: 'Room area below minimum threshold (0.18 m²)',
-        location: { x: 510, y: 305 }
-    },
-    {
-        code: 'LAYER_003',
-        severity: 'warning',
-        message: 'Unexpected layer "Temp_Construction" found',
-        location: null
-    },
-    {
-        code: 'GEOM_007',
-        severity: 'error',
-        message: 'Z-coordinate is not 0 in 12 entities',
-        location: null
-    },
-    {
-        code: 'AOID_001',
-        severity: 'error',
-        message: 'Duplicate AOID found: "2011.DM.04.015"',
-        location: { x: 240, y: 385 }
+        const roomCount = mockGeometry.filter(g => g.type === 'room').length;
+        const areaCount = mockGeometry.filter(g => g.type === 'area').length;
+        console.log(`[Data] Loaded ${mockProjects.length} projects, ${mockDocuments.length} documents, ${roomCount} rooms, ${areaCount} areas, ${mockRuleSets.length} rule sets, ${mockCheckingResults.length} results, ${mockUsers.length} users`);
+        return true;
+    } catch (error) {
+        console.error('[Data] Error loading data:', error);
+        showToast('Fehler beim Laden der Daten', 'error');
+        return false;
     }
-];
-
-const mockValidationRules = [
-    {
-        code: 'LAYER_001',
-        name: 'Pflichtlayer vorhanden',
-        category: 'Layer',
-        description: 'Prüft, ob alle 14 vorgeschriebenen Layer gemäss BBL CAD-Richtlinie vorhanden sind'
-    },
-    {
-        code: 'LAYER_002',
-        name: 'Layer-Farben korrekt',
-        category: 'Layer',
-        description: 'Prüft, ob die Layer-Farben den Vorgaben entsprechen (z.B. Layer 7 = weiss)'
-    },
-    {
-        code: 'LAYER_003',
-        name: 'Keine fremden Layer',
-        category: 'Layer',
-        description: 'Prüft, ob keine nicht definierten Layer in der Zeichnung vorhanden sind'
-    },
-    {
-        code: 'GEOM_001',
-        name: 'Polylinien geschlossen',
-        category: 'Geometrie',
-        description: 'Prüft, ob alle Raumpolygone geschlossen sind (Start- und Endpunkt identisch)'
-    },
-    {
-        code: 'GEOM_002',
-        name: 'Polylinien planar',
-        category: 'Geometrie',
-        description: 'Prüft, ob alle Polylinien auf Z=0 liegen (2D-Konformität)'
-    },
-    {
-        code: 'GEOM_003',
-        name: 'Keine Selbstüberschneidungen',
-        category: 'Geometrie',
-        description: 'Prüft, ob Raumpolygone sich nicht selbst überschneiden'
-    },
-    {
-        code: 'GEOM_004',
-        name: 'Minimale Raumgrösse',
-        category: 'Geometrie',
-        description: 'Prüft, ob alle Räume eine Mindestfläche von 1 m² haben'
-    },
-    {
-        code: 'ENTITY_001',
-        name: 'Erlaubte Entitätstypen',
-        category: 'Entität',
-        description: 'Prüft, ob nur erlaubte Entitätstypen verwendet werden (LINE, POLYLINE, TEXT, etc.)'
-    },
-    {
-        code: 'ENTITY_002',
-        name: 'Keine OLE-Objekte',
-        category: 'Entität',
-        description: 'Prüft, ob keine eingebetteten OLE-Objekte vorhanden sind'
-    },
-    {
-        code: 'TEXT_001',
-        name: 'Schriftart korrekt',
-        category: 'Text',
-        description: 'Prüft, ob nur die vorgeschriebene Schriftart "Arial" verwendet wird'
-    },
-    {
-        code: 'TEXT_002',
-        name: 'Textgrösse korrekt',
-        category: 'Text',
-        description: 'Prüft, ob die Texthöhe den Vorgaben entspricht (min. 2.5mm)'
-    },
-    {
-        code: 'AOID_001',
-        name: 'AOID-Format gültig',
-        category: 'AOID',
-        description: 'Prüft, ob alle AOIDs dem BBL-Format entsprechen (z.B. "2011.DM.04.015")'
-    },
-    {
-        code: 'AOID_002',
-        name: 'AOID eindeutig',
-        category: 'AOID',
-        description: 'Prüft, ob jede AOID nur einmal in der Zeichnung vorkommt'
-    },
-    {
-        code: 'AOID_003',
-        name: 'AOID in Raumliste',
-        category: 'AOID',
-        description: 'Prüft, ob alle AOIDs in der hochgeladenen Excel-Raumliste vorhanden sind'
-    }
-];
+}
 
 // === STATE MANAGEMENT ===
 let currentView = 'login';
@@ -1031,12 +743,15 @@ function renderProjects() {
     }
 
     grid.innerHTML = mockProjects.map(project => {
-        const scoreClass = project.completionPercentage >= 90 ? 'success' :
-                          project.completionPercentage >= 60 ? 'warning' : 'error';
+        const scoreClass = project.resultPercentage >= 90 ? 'success' :
+                          project.resultPercentage >= 60 ? 'warning' : 'error';
 
         const overlayHtml = project.status === 'completed'
             ? '<div class="card__overlay">Auftrag Abgeschlossen<br>(Wird in 30 Tagen gelöscht)</div>'
             : '';
+
+        // Count actual documents for this project
+        const actualDocumentCount = mockDocuments.filter(d => d.projectId === project.id).length;
 
         return `
             <article class="card" data-project-id="${safeParseInt(project.id)}">
@@ -1050,10 +765,10 @@ function renderProjects() {
                         <div class="card__meta-left">
                             <dd>SIA Phase: ${escapeHtml(project.siaPhase)}</dd>
                             <dd>${escapeHtml(project.createdDate)}</dd>
-                            <dd>${safeParseInt(project.documentCount)} Dokumente</dd>
+                            <dd>${actualDocumentCount} Dokumente</dd>
                         </div>
                         <div class="card__meta-right">
-                            <span class="card__percentage card__percentage--${scoreClass}">${safeParseInt(project.completionPercentage)}%</span>
+                            <span class="card__percentage card__percentage--${scoreClass}">${safeParseInt(project.resultPercentage)}%</span>
                         </div>
                     </dl>
                 </div>
@@ -1080,8 +795,11 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
     // Update breadcrumb with project name
     document.getElementById('breadcrumb-project-name').textContent = currentProject.name;
 
-    // Calculate average score from all validated floor plans (.dwg files)
-    const validatedFloorPlans = mockDocuments.filter(doc =>
+    // Get documents for this project
+    const projectDocuments = mockDocuments.filter(doc => doc.projectId === currentProject.id);
+
+    // Calculate average score from all validated floor plans (.dwg files) for this project
+    const validatedFloorPlans = projectDocuments.filter(doc =>
         doc.name.endsWith('.dwg') && doc.status !== 'processing'
     );
     const averageScore = validatedFloorPlans.length > 0
@@ -1107,13 +825,19 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
 
     // Update KPIs
     document.getElementById('project-sia-phase').textContent = currentProject.siaPhase;
-    document.getElementById('project-document-count').textContent = mockDocuments.length;
+    document.getElementById('project-document-count').textContent = projectDocuments.length;
 
-    // Calculate room count from mockRooms (in real app would come from project data)
-    document.getElementById('project-room-count').textContent = mockRooms.length;
+    // Calculate room count from geometry for this project's documents
+    const projectDocumentIds = projectDocuments.map(d => d.id);
+    const roomCount = mockGeometry.filter(g => g.type === 'room' && projectDocumentIds.includes(g.documentId)).length;
+    document.getElementById('project-room-count').textContent = roomCount;
 
-    // Mock area values (in real app would come from project data)
-    document.getElementById('project-gf').textContent = "4'500 m²";
+    // Calculate total BGF (Brutto Geschossfläche) from geometry for this project
+    const totalBGF = mockGeometry
+        .filter(g => g.type === 'area' && g.aofunction === 'Brutto Geschossfläche' && projectDocumentIds.includes(g.documentId))
+        .reduce((sum, g) => sum + g.area, 0);
+    const formattedBGF = totalBGF > 0 ? `${totalBGF.toLocaleString('de-CH')} m²` : '0 m²';
+    document.getElementById('project-gf').textContent = formattedBGF;
 
     // Render documents, users, and rules
     renderDocuments();
@@ -1121,9 +845,13 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
     renderRules();
 
     // Update tab counts
-    document.getElementById('tab-documents-count').textContent = mockDocuments.length;
+    const ruleSetId = currentProject ? currentProject.ruleSetId : 1;
+    const ruleSet = mockRuleSets.find(rs => rs.id === ruleSetId);
+    const rulesCount = ruleSet ? ruleSet.rules.length : 0;
+
+    document.getElementById('tab-documents-count').textContent = projectDocuments.length;
     document.getElementById('tab-users-count').textContent = mockUsers.length;
-    document.getElementById('tab-rules-count').textContent = mockValidationRules.length;
+    document.getElementById('tab-rules-count').textContent = rulesCount;
 
     if (skipHashUpdate) {
         // Directly switch view without updating hash
@@ -1223,7 +951,12 @@ function renderDocuments() {
     // Reset selection when re-rendering
     DocumentSelection.deselectAll();
 
-    tbody.innerHTML = mockDocuments.map(doc => {
+    // Filter documents by current project
+    const projectDocuments = currentProject
+        ? mockDocuments.filter(doc => doc.projectId === currentProject.id)
+        : mockDocuments;
+
+    tbody.innerHTML = projectDocuments.map(doc => {
         const scoreStatus = doc.score >= 90 ? 'ok' :
                            doc.score >= 60 ? 'warning' : 'error';
 
@@ -1430,6 +1163,15 @@ const UserSelection = {
 };
 
 // === USER RENDERING ===
+function getRoleClass(role) {
+    const roleClasses = {
+        'Admin': 'info',
+        'Editor': 'secondary',
+        'Viewer': 'muted'
+    };
+    return roleClasses[role] || 'muted';
+}
+
 function renderUsers() {
     const tbody = safeGetElementById('user-table-body');
     if (!tbody) return;
@@ -1438,6 +1180,7 @@ function renderUsers() {
     UserSelection.deselectAll();
 
     tbody.innerHTML = mockUsers.map(user => {
+        const roleClass = getRoleClass(user.role);
         return `
             <tr data-user-id="${safeParseInt(user.id)}">
                 <td class="table__checkbox-col">
@@ -1448,7 +1191,7 @@ function renderUsers() {
                 </td>
                 <td>${escapeHtml(user.name)}</td>
                 <td>${escapeHtml(user.email)}</td>
-                <td><span class="badge badge--${escapeHtml(user.roleClass)}">${escapeHtml(user.role)}</span></td>
+                <td><span class="badge badge--${roleClass}">${escapeHtml(user.role)}</span></td>
                 <td>${escapeHtml(user.lastActivity)}</td>
             </tr>
         `;
@@ -1549,7 +1292,12 @@ function renderRules() {
     const tbody = document.getElementById('rules-table-body');
     if (!tbody) return;
 
-    tbody.innerHTML = mockValidationRules.map(rule => {
+    // Get rules from the project's rule set, or first available rule set
+    const ruleSetId = currentProject ? currentProject.ruleSetId : 1;
+    const ruleSet = mockRuleSets.find(rs => rs.id === ruleSetId);
+    const rules = ruleSet ? ruleSet.rules : [];
+
+    tbody.innerHTML = rules.map(rule => {
         return `
             <tr>
                 <td><code>${escapeHtml(rule.code)}</code></td>
@@ -1577,6 +1325,42 @@ function openValidationView(documentId, skipHashUpdate = false) {
     const scoreClass = scoreValue >= 90 ? 'success' : scoreValue >= 60 ? 'warning' : 'error';
     scoreCard.className = `metric-card metric-card--${scoreClass}`;
 
+    // Update step 1 metrics from geometry data
+    const docRooms = mockGeometry.filter(g => g.type === 'room' && g.documentId === documentId);
+    const docAreas = mockGeometry.filter(g => g.type === 'area' && g.documentId === documentId);
+    const docErrors = mockCheckingResults.filter(r => r.documentId === documentId);
+
+    // Room count
+    document.getElementById('step1-room-count').textContent = docRooms.length;
+
+    // Calculate BGF (Geschossfläche) - sum of all BGF areas
+    const totalBGF = docAreas
+        .filter(a => a.aofunction === 'Brutto Geschossfläche')
+        .reduce((sum, a) => sum + a.area, 0);
+    document.getElementById('step1-gf').textContent = totalBGF > 0
+        ? `${totalBGF.toLocaleString('de-CH')} m²`
+        : '0 m²';
+
+    // Calculate NGF (Nettogeschossfläche) - sum of all room areas as approximation
+    const totalNGF = docRooms.reduce((sum, r) => sum + r.area, 0);
+    document.getElementById('step1-ngf').textContent = totalNGF > 0
+        ? `${totalNGF.toLocaleString('de-CH')} m²`
+        : '0 m²';
+
+    // Update step 2 metrics
+    document.getElementById('step2-dwg-rooms').textContent = docRooms.length;
+    document.getElementById('step2-excel-rooms').textContent = docRooms.length; // Same for now (mock)
+    document.getElementById('step2-ngf').textContent = totalNGF > 0
+        ? `${totalNGF.toLocaleString('de-CH')} m²`
+        : '0 m²';
+    document.getElementById('step2-error-count').textContent = docErrors.length;
+
+    // Update error card styling based on error count
+    const errorCard = document.getElementById('step2-error-card');
+    if (errorCard) {
+        errorCard.className = docErrors.length > 0 ? 'metric-card metric-card--error' : 'metric-card';
+    }
+
     // Reset to step 1 (DWG hochladen)
     currentStep = 1;
     updateStepper();
@@ -1599,6 +1383,7 @@ function openValidationView(documentId, skipHashUpdate = false) {
     renderRooms();
     renderAreaPolygons();
     renderErrors();
+    updateValidationTabCounts();
     renderFloorPlan();
 }
 
@@ -1732,7 +1517,12 @@ function renderRooms() {
     const tbody = document.getElementById('room-table-body');
     if (!tbody) return;
 
-    tbody.innerHTML = mockRooms.map(room => {
+    // Filter rooms for current document
+    const documentRooms = currentDocument
+        ? mockGeometry.filter(g => g.type === 'room' && g.documentId === currentDocument.id)
+        : mockGeometry.filter(g => g.type === 'room');
+
+    tbody.innerHTML = documentRooms.map(room => {
         return `
             <tr>
                 <td>${escapeHtml(room.aoid)}</td>
@@ -1754,13 +1544,18 @@ function renderErrors() {
     const errorList = document.getElementById('error-list');
     if (!errorList) return;
 
+    // Filter checking results for current document
+    const documentErrors = currentDocument
+        ? mockCheckingResults.filter(r => r.documentId === currentDocument.id)
+        : mockCheckingResults;
+
     const validSeverities = ['error', 'warning', 'info'];
-    errorList.innerHTML = mockErrors.map(error => {
+    errorList.innerHTML = documentErrors.map(error => {
         const severity = validSeverities.includes(error.severity) ? error.severity : 'error';
         return `
             <div class="error-item error-item--${severity}">
                 <div class="error-item__header">
-                    <span class="error-item__code">${escapeHtml(error.code)}</span>
+                    <span class="error-item__code">${escapeHtml(error.ruleCode)}</span>
                     <span class="error-item__severity error-item__severity--${severity}">${escapeHtml(error.severity)}</span>
                 </div>
                 <div class="error-item__message">${escapeHtml(error.message)}</div>
@@ -1774,16 +1569,12 @@ function renderAreaPolygons() {
     const tbody = document.getElementById('area-polygons-table-body');
     if (!tbody) return;
 
-    // Mock data for area polygons (same structure as rooms: AOID, AREA, AOFUNCTI, STATUS)
-    const areaPolygons = [
-        { aoid: 'BGF-01', area: 4500.00, aofunction: 'Brutto Geschossfläche', status: 'ok' },
-        { aoid: 'NGF-01', area: 4000.00, aofunction: 'Netto Geschossfläche', status: 'warning' },
-        { aoid: 'EBF-01', area: 4200.00, aofunction: 'Energiebezugsfläche', status: 'ok' },
-        { aoid: 'VF-01', area: 320.50, aofunction: 'Verkehrsfläche', status: 'ok' },
-        { aoid: 'NNF-01', area: 180.00, aofunction: 'Nebennutzfläche', status: 'error' }
-    ];
+    // Filter areas for current document
+    const documentAreas = currentDocument
+        ? mockGeometry.filter(g => g.type === 'area' && g.documentId === currentDocument.id)
+        : mockGeometry.filter(g => g.type === 'area');
 
-    tbody.innerHTML = areaPolygons.map(polygon => {
+    tbody.innerHTML = documentAreas.map(polygon => {
         return `
             <tr>
                 <td>${escapeHtml(polygon.aoid)}</td>
@@ -1800,14 +1591,48 @@ function renderAreaPolygons() {
     }
 }
 
+// === TAB COUNT UPDATES ===
+function updateValidationTabCounts() {
+    const docId = currentDocument ? currentDocument.id : null;
+
+    // Count rooms for current document
+    const roomCount = docId
+        ? mockGeometry.filter(g => g.type === 'room' && g.documentId === docId).length
+        : mockGeometry.filter(g => g.type === 'room').length;
+
+    // Count areas for current document
+    const areaCount = docId
+        ? mockGeometry.filter(g => g.type === 'area' && g.documentId === docId).length
+        : mockGeometry.filter(g => g.type === 'area').length;
+
+    // Count errors for current document
+    const errorCount = docId
+        ? mockCheckingResults.filter(r => r.documentId === docId).length
+        : mockCheckingResults.length;
+
+    // Update tab labels
+    const roomsTab = document.querySelector('[data-val-tab="rooms"]');
+    const areasTab = document.querySelector('[data-val-tab="areas"]');
+    const errorsTab = document.querySelector('[data-val-tab="errors"]');
+
+    if (roomsTab) roomsTab.textContent = `Räume (${roomCount})`;
+    if (areasTab) areasTab.textContent = `Flächen (${areaCount})`;
+    if (errorsTab) errorsTab.textContent = `Fehlermeldungen (${errorCount})`;
+}
+
 // === STEP 2 RENDERING ===
 function renderStep2Rooms() {
     const tbody = document.getElementById('step2-room-table-body');
     if (!tbody) return;
 
-    tbody.innerHTML = mockRooms.map((room, index) => {
+    // Filter rooms for current document
+    const rooms = currentDocument
+        ? mockGeometry.filter(g => g.type === 'room' && g.documentId === currentDocument.id)
+        : mockGeometry.filter(g => g.type === 'room');
+
+    tbody.innerHTML = rooms.map((room, index) => {
         // Simulate Excel matching - 3 rooms don't match
-        const hasExcelMatch = index < 19; // First 19 match, last 3 don't
+        const hasExcelMatch = index < rooms.length - 3; // Last 3 don't match
         const matchStatus = hasExcelMatch ? 'ok' : 'error';
 
         return `
@@ -2291,7 +2116,10 @@ function setupKeyboardShortcuts() {
 }
 
 // === INITIALIZATION ===
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Load data from JSON files first
+    await loadData();
+
     setupEventListeners();
     setupTabs();
     setupSearch();

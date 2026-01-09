@@ -6,7 +6,9 @@
       "Bash(curl:*)",
       "Bash(done)",
       "Bash(openssl dgst:*)",
-      "Bash(openssl base64:*)"
+      "Bash(openssl base64:*)",
+      "Bash(node --check:*)",
+      "Bash(node -e:*)"
     ]
   }
 }

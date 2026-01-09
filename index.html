@@ -175,11 +175,11 @@
                             <span class="project-kpi__label">Dokumente</span>
                         </div>
                         <div class="project-kpi">
-                            <span class="project-kpi__value" id="project-room-count">156</span>
+                            <span class="project-kpi__value" id="project-room-count">0</span>
                             <span class="project-kpi__label">Räume</span>
                         </div>
                         <div class="project-kpi">
-                            <span class="project-kpi__value" id="project-gf">4'500 m²</span>
+                            <span class="project-kpi__value" id="project-gf">0 m²</span>
                             <span class="project-kpi__label">GF</span>
                         </div>
                     </div>
@@ -381,19 +381,19 @@
                 <div id="step-2-content" class="step__detail-content" style="display: none;">
                     <div class="metrics">
                         <div class="metric-card">
-                            <span class="metric-card__value">22</span>
+                            <span class="metric-card__value" id="step2-dwg-rooms">0</span>
                             <span class="metric-card__label">Räume aus DWG</span>
                         </div>
                         <div class="metric-card">
-                            <span class="metric-card__value">22</span>
+                            <span class="metric-card__value" id="step2-excel-rooms">0</span>
                             <span class="metric-card__label">Räume aus Excel</span>
                         </div>
                         <div class="metric-card">
-                            <span class="metric-card__value">4'500 m²</span>
+                            <span class="metric-card__value" id="step2-ngf">0 m²</span>
                             <span class="metric-card__label">SIA 416 Nettogeschossfläche NGF</span>
                         </div>
-                        <div class="metric-card metric-card--error">
-                            <span class="metric-card__value">3</span>
+                        <div class="metric-card metric-card--error" id="step2-error-card">
+                            <span class="metric-card__value" id="step2-error-count">0</span>
                             <span class="metric-card__label">Fehler</span>
                         </div>
                     </div>
@@ -590,15 +590,15 @@
                 <div id="step-1-content" class="step__detail-content" style="display: none;">
                     <div class="metrics">
                         <div class="metric-card">
-                            <span class="metric-card__value">22</span>
+                            <span class="metric-card__value" id="step1-room-count">0</span>
                             <span class="metric-card__label">Räume</span>
                         </div>
                         <div class="metric-card">
-                            <span class="metric-card__value">4'000 m²</span>
+                            <span class="metric-card__value" id="step1-ngf">0 m²</span>
                             <span class="metric-card__label">SIA 416 Nettogeschossfläche NGF</span>
                         </div>
                         <div class="metric-card">
-                            <span class="metric-card__value">4'500 m²</span>
+                            <span class="metric-card__value" id="step1-gf">0 m²</span>
                             <span class="metric-card__label">SIA 416 Geschossfläche GF</span>
                         </div>
                         <div class="metric-card" id="step1-score-card">
@@ -830,6 +830,13 @@
                         <option value="51">51 - Ausführungsprojekt</option>
                         <option value="52">52 - Ausführung</option>
                         <option value="53">53 - Inbetriebnahme</option>
+                    </select>
+                </div>
+                <div class="form__field">
+                    <label for="project-ruleset" class="form__label">Regelsatz</label>
+                    <select class="form__input form__select" id="project-ruleset" name="ruleSetId" required>
+                        <option value="">Bitte wählen...</option>
+                        <!-- Options populated dynamically from rules.json -->
                     </select>
                 </div>
                 <div class="form__field">
