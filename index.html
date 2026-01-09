@@ -316,7 +316,7 @@
                         </li>
                         <li class="stepper__item stepper__item--current" data-step="2">
                             <span class="stepper__indicator">
-                                <i data-lucide="file-spreadsheet" class="icon icon-sm"></i>
+                                <i data-lucide="upload" class="icon icon-sm"></i>
                             </span>
                             <span class="stepper__label">2. Raumliste hochladen</span>
                         </li>
@@ -361,7 +361,11 @@
                     <div class="upload">
                         <h2 class="text-h2">Excel-Raumliste hochladen</h2>
                         <div class="upload__zone" id="excel-upload-zone">
-                            <i data-lucide="file-spreadsheet" style="width: 48px; height: 48px; color: var(--color-primary);"></i>
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
                             <p>Excel-Datei hier ablegen oder klicken zum Auswählen</p>
                             <p class="text-muted">Unterstützte Formate: XLSX, XLS (max. 10 MB)</p>
                             <input type="file" id="excel-file-input" accept=".xlsx,.xls" hidden>
@@ -384,24 +388,24 @@
                             <span class="metric-card__value">22</span>
                             <span class="metric-card__label">Räume aus Excel</span>
                         </div>
-                        <div class="metric-card metric-card--success">
-                            <span class="metric-card__value">19</span>
-                            <span class="metric-card__label">Übereinstimmungen</span>
+                        <div class="metric-card">
+                            <span class="metric-card__value">4'500 m²</span>
+                            <span class="metric-card__label">SIA 416 Nettogeschossfläche NGF</span>
                         </div>
                         <div class="metric-card metric-card--error">
                             <span class="metric-card__value">3</span>
-                            <span class="metric-card__label">Nicht übereinstimmend</span>
+                            <span class="metric-card__label">Fehler</span>
                         </div>
                     </div>
 
-                    <div class="tabs">
-                        <ul class="tabs__list">
-                            <li><a href="#" class="tabs__tab tabs__tab--active" data-step2-tab="rooms">Räume (22)</a></li>
-                            <li><a href="#" class="tabs__tab" data-step2-tab="errors">Fehlermeldungen (3)</a></li>
-                        </ul>
-                    </div>
+                    <div class="tabs-card">
+                        <div class="tabs">
+                            <ul class="tabs__list">
+                                <li><a href="#" class="tabs__tab tabs__tab--active" data-step2-tab="rooms">Räume (22)</a></li>
+                                <li><a href="#" class="tabs__tab" data-step2-tab="errors">Fehlermeldungen (3)</a></li>
+                            </ul>
+                        </div>
 
-                    <div class="step2-content-area">
                         <!-- Rooms Tab -->
                         <div class="tab-pane tab-pane--active" id="step2-tab-rooms">
                             <div class="table-wrapper">
@@ -435,111 +439,132 @@
                 <div id="step-content-3" class="step__content" style="display: none;">
                     <h2 class="text-h2">Zusammenfassung Ergebnisse</h2>
 
-                    <div class="results__layout">
-                        <!-- Left Column: Tables -->
-                        <div class="results__tables">
-                            <!-- Gebäudevolumen -->
-                            <div class="results__section">
-                                <h3 class="results__section-title">Gebäudevolumen</h3>
-                                <table class="table table--compact table--no-borders">
-                                    <tbody>
-                                        <tr><td class="table__abbr">GV</td><td>Gebäudevolumen</td><td class="text-right">74'786 m³</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">GV OG</td><td>Gebäudevolumen Obergeschosse</td><td class="text-right">74'786 m³</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">GV UG</td><td>Gebäudevolumen Untergeschosse</td><td class="text-right">74'786 m³</td><td class="text-right">100%</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                    <div class="tabs-card">
+                        <div class="tabs">
+                            <ul class="tabs__list">
+                                <li><a href="#" class="tabs__tab tabs__tab--active" data-step3-tab="kennzahlen">Kennzahlen</a></li>
+                                <li><a href="#" class="tabs__tab" data-step3-tab="viewer">Viewer</a></li>
+                            </ul>
+                        </div>
 
-                            <!-- Gebäudeflächen -->
-                            <div class="results__section">
-                                <h3 class="results__section-title">Gebäudeflächen</h3>
-                                <table class="table table--compact table--no-borders">
-                                    <tbody>
-                                        <tr><td class="table__abbr">GF</td><td>Geschossfläche</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">KF</td><td>Konstruktionsfläche</td><td class="text-right">2'895 m²</td><td class="text-right">16%</td></tr>
-                                        <tr><td class="table__abbr">NGF</td><td>Nettogeschossfläche</td><td class="text-right">15'637 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">NF</td><td>Nutzfläche</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">HNF</td><td>Hauptnutzfläche</td><td class="text-right">10'198 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">NNF</td><td>Nebennutzfläche</td><td class="text-right">3'524 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">VF</td><td>Verkehrsfläche</td><td class="text-right">1'566 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">FF</td><td>Funktionsfläche</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <!-- Kennzahlen Tab -->
+                        <div class="tab-pane tab-pane--active" id="step3-tab-kennzahlen">
+                            <div class="results__layout">
+                                <!-- Left Column: Tables -->
+                                <div class="results__tables">
+                                    <!-- Gebäudevolumen -->
+                                    <div class="results__section">
+                                        <h3 class="results__section-title">Gebäudevolumen</h3>
+                                        <table class="table table--compact table--no-borders">
+                                            <tbody>
+                                                <tr><td class="table__abbr">GV</td><td>Gebäudevolumen</td><td class="text-right table__value">74'786 m³</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">GV OG</td><td>Gebäudevolumen Obergeschosse</td><td class="text-right table__value">74'786 m³</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">GV UG</td><td>Gebäudevolumen Untergeschosse</td><td class="text-right table__value">74'786 m³</td><td class="text-right table__percent">100%</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
 
-                            <!-- Flächen DIN 277 -->
-                            <div class="results__section">
-                                <h3 class="results__section-title">Flächen DIN 277</h3>
-                                <table class="table table--compact table--no-borders">
-                                    <tbody>
-                                        <tr><td class="table__abbr">HNF 1</td><td>Wohnen und Aufenthalt</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">HNF 2</td><td>Büroarbeit</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">HNF 3</td><td>Produktion</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">HNF 4</td><td>Lagern, Verteilen, Verkaufen</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">HNF 5</td><td>Bildung, Unterricht, Kultur</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">HNF 6</td><td>Heilen, Pflegen</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">NNF 7</td><td>Nebennutzfläche</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">FF 8</td><td>Betriebstechnische Anlagen</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">VF 9</td><td>Verkehrserschliessung und -sicherung</td><td class="text-right">1'566 m²</td><td class="text-right">100%</td></tr>
-                                        <tr><td class="table__abbr">BUF 10</td><td>Verschiedene Nutzungen</td><td class="text-right">18'535 m²</td><td class="text-right">100%</td></tr>
-                                    </tbody>
-                                </table>
+                                    <!-- Gebäudeflächen -->
+                                    <div class="results__section">
+                                        <h3 class="results__section-title">Gebäudeflächen</h3>
+                                        <table class="table table--compact table--no-borders">
+                                            <tbody>
+                                                <tr><td class="table__abbr">GF</td><td>Geschossfläche</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">KF</td><td>Konstruktionsfläche</td><td class="text-right table__value">2'895 m²</td><td class="text-right table__percent">16%</td></tr>
+                                                <tr><td class="table__abbr">NGF</td><td>Nettogeschossfläche</td><td class="text-right table__value">15'637 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">NF</td><td>Nutzfläche</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">HNF</td><td>Hauptnutzfläche</td><td class="text-right table__value">10'198 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">NNF</td><td>Nebennutzfläche</td><td class="text-right table__value">3'524 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">VF</td><td>Verkehrsfläche</td><td class="text-right table__value">1'566 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">FF</td><td>Funktionsfläche</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Flächen DIN 277 -->
+                                    <div class="results__section">
+                                        <h3 class="results__section-title">Flächen DIN 277</h3>
+                                        <table class="table table--compact table--no-borders">
+                                            <tbody>
+                                                <tr><td class="table__abbr">HNF 1</td><td>Wohnen und Aufenthalt</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">HNF 2</td><td>Büroarbeit</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">HNF 3</td><td>Produktion</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">HNF 4</td><td>Lagern, Verteilen, Verkaufen</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">HNF 5</td><td>Bildung, Unterricht, Kultur</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">HNF 6</td><td>Heilen, Pflegen</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">NNF 7</td><td>Nebennutzfläche</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">FF 8</td><td>Betriebstechnische Anlagen</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">VF 9</td><td>Verkehrserschliessung und -sicherung</td><td class="text-right table__value">1'566 m²</td><td class="text-right table__percent">100%</td></tr>
+                                                <tr><td class="table__abbr">BUF 10</td><td>Verschiedene Nutzungen</td><td class="text-right table__value">18'535 m²</td><td class="text-right table__percent">100%</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column: Kennzahlen + Donut Chart -->
+                                <div class="results__sidebar">
+                                    <div class="results__section">
+                                        <h3 class="results__section-title">Kennzahlen Wirtschaftlichkeit von Grundris</h3>
+                                        <table class="table table--compact table--no-borders">
+                                            <tbody>
+                                                <tr><td class="table__abbr">HNF SIA 416 / GF</td><td>Hauptnutzfläche / Geschossfläche</td><td class="text-right">0.40</td></tr>
+                                                <tr><td class="table__abbr">VMF SIA 165 / GF</td><td>Vermietbare Fläche / Geschossfläche</td><td class="text-right">0.75</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Multi-segment Donut Chart -->
+                                    <div class="results__donut">
+                                        <svg viewBox="0 0 200 200" class="donut-multi">
+                                            <!-- Background circle -->
+                                            <circle cx="100" cy="100" r="70" fill="none" stroke="#E5E5E5" stroke-width="30"/>
+                                            <!-- HNF segment (74%) - red (SIA standard) -->
+                                            <circle cx="100" cy="100" r="70" fill="none" stroke="#E57373" stroke-width="30"
+                                                    stroke-dasharray="327.6 112.4" stroke-dashoffset="110" class="donut-segment"/>
+                                            <!-- NNF segment (14.6%) - orange (SIA standard) -->
+                                            <circle cx="100" cy="100" r="70" fill="none" stroke="#FFB74D" stroke-width="30"
+                                                    stroke-dasharray="64.2 375.8" stroke-dashoffset="-217.6" class="donut-segment"/>
+                                            <!-- VF segment (10%) - yellow (SIA standard) -->
+                                            <circle cx="100" cy="100" r="70" fill="none" stroke="#FFF176" stroke-width="30"
+                                                    stroke-dasharray="44 396" stroke-dashoffset="-281.8" class="donut-segment"/>
+                                            <!-- FF segment (1.4%) - blue (SIA standard) -->
+                                            <circle cx="100" cy="100" r="70" fill="none" stroke="#64B5F6" stroke-width="30"
+                                                    stroke-dasharray="6.2 433.8" stroke-dashoffset="-325.8" class="donut-segment"/>
+                                        </svg>
+                                        <!-- Legend -->
+                                        <div class="donut-legend">
+                                            <div class="donut-legend__item">
+                                                <span class="donut-legend__color" style="background: #FFF176;"></span>
+                                                <span class="donut-legend__label">VF</span>
+                                                <span class="donut-legend__value">10%</span>
+                                            </div>
+                                            <div class="donut-legend__item">
+                                                <span class="donut-legend__color" style="background: #64B5F6;"></span>
+                                                <span class="donut-legend__label">FF</span>
+                                                <span class="donut-legend__value">1.4%</span>
+                                            </div>
+                                            <div class="donut-legend__item">
+                                                <span class="donut-legend__color" style="background: #FFB74D;"></span>
+                                                <span class="donut-legend__label">NNF</span>
+                                                <span class="donut-legend__value">14.6%</span>
+                                            </div>
+                                            <div class="donut-legend__item">
+                                                <span class="donut-legend__color" style="background: #E57373;"></span>
+                                                <span class="donut-legend__label">HNF</span>
+                                                <span class="donut-legend__value">74%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Right Column: Kennzahlen + Donut Chart -->
-                        <div class="results__sidebar">
-                            <div class="results__section">
-                                <h3 class="results__section-title">Kennzahlen Wirtschaftlichkeit von Grundris</h3>
-                                <table class="table table--compact table--no-borders">
-                                    <tbody>
-                                        <tr><td class="table__abbr">HNF SIA 416 / GF</td><td>Hauptnutzfläche / Geschossfläche</td><td class="text-right">0.40</td></tr>
-                                        <tr><td class="table__abbr">VMF SIA 165 / GF</td><td>Vermietbare Fläche / Geschossfläche</td><td class="text-right">0.75</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Multi-segment Donut Chart -->
-                            <div class="results__donut">
-                                <svg viewBox="0 0 200 200" class="donut-multi">
-                                    <!-- Background circle -->
-                                    <circle cx="100" cy="100" r="70" fill="none" stroke="#E5E5E5" stroke-width="30"/>
-                                    <!-- HNF segment (74%) - red (SIA standard) -->
-                                    <circle cx="100" cy="100" r="70" fill="none" stroke="#E57373" stroke-width="30"
-                                            stroke-dasharray="327.6 112.4" stroke-dashoffset="110" class="donut-segment"/>
-                                    <!-- NNF segment (14.6%) - orange (SIA standard) -->
-                                    <circle cx="100" cy="100" r="70" fill="none" stroke="#FFB74D" stroke-width="30"
-                                            stroke-dasharray="64.2 375.8" stroke-dashoffset="-217.6" class="donut-segment"/>
-                                    <!-- VF segment (10%) - yellow (SIA standard) -->
-                                    <circle cx="100" cy="100" r="70" fill="none" stroke="#FFF176" stroke-width="30"
-                                            stroke-dasharray="44 396" stroke-dashoffset="-281.8" class="donut-segment"/>
-                                    <!-- FF segment (1.4%) - blue (SIA standard) -->
-                                    <circle cx="100" cy="100" r="70" fill="none" stroke="#64B5F6" stroke-width="30"
-                                            stroke-dasharray="6.2 433.8" stroke-dashoffset="-325.8" class="donut-segment"/>
-                                </svg>
-                                <!-- Legend -->
-                                <div class="donut-legend">
-                                    <div class="donut-legend__item">
-                                        <span class="donut-legend__color" style="background: #FFF176;"></span>
-                                        <span class="donut-legend__label">VF</span>
-                                        <span class="donut-legend__value">10%</span>
-                                    </div>
-                                    <div class="donut-legend__item">
-                                        <span class="donut-legend__color" style="background: #64B5F6;"></span>
-                                        <span class="donut-legend__label">FF</span>
-                                        <span class="donut-legend__value">1.4%</span>
-                                    </div>
-                                    <div class="donut-legend__item">
-                                        <span class="donut-legend__color" style="background: #FFB74D;"></span>
-                                        <span class="donut-legend__label">NNF</span>
-                                        <span class="donut-legend__value">14.6%</span>
-                                    </div>
-                                    <div class="donut-legend__item">
-                                        <span class="donut-legend__color" style="background: #E57373;"></span>
-                                        <span class="donut-legend__label">HNF</span>
-                                        <span class="donut-legend__value">74%</span>
-                                    </div>
-                                </div>
+                        <!-- Viewer Tab -->
+                        <div class="tab-pane" id="step3-tab-viewer">
+                            <div class="empty-state">
+                                <i data-lucide="construction" class="empty-state__icon"></i>
+                                <h3 class="empty-state__title">Zukünftige Entwicklung</h3>
+                                <p class="empty-state__message">Der 3D-Viewer wird in einer zukünftigen Version implementiert.</p>
                             </div>
                         </div>
                     </div>

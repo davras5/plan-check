@@ -1013,6 +1013,10 @@ a:hover {
     border: none;
 }
 
+.table--compact.table--no-borders td {
+    padding: var(--space-1) var(--space-2);
+}
+
 .table--selectable tbody tr {
     transition: background var(--duration-normal) ease;
 }
@@ -1046,6 +1050,16 @@ a:hover {
     color: var(--color-text-primary);
     white-space: nowrap;
     width: 80px;
+}
+
+.table__value {
+    width: 100px;
+    white-space: nowrap;
+}
+
+.table__percent {
+    width: 60px;
+    white-space: nowrap;
 }
 
 .table-wrapper {
@@ -1426,9 +1440,7 @@ a:hover {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-8);
-    background: var(--color-bg-primary);
-    padding: var(--space-6);
-    border: 1px solid var(--color-border-light);
+    padding-top: var(--space-4);
 }
 
 .results__tables,

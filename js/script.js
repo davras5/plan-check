@@ -1970,6 +1970,9 @@ function setupTabs() {
 
     // Step 2 tabs (rooms, errors)
     setupTabGroup('data-step2-tab', 'step2-tab-', ['step2-tab-rooms', 'step2-tab-errors']);
+
+    // Step 3 tabs (kennzahlen, viewer)
+    setupTabGroup('data-step3-tab', 'step3-tab-', ['step3-tab-kennzahlen', 'step3-tab-viewer']);
 }
 
 // === PROJECT SEARCH ===
