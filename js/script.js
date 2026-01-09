@@ -1552,15 +1552,14 @@ document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
     }
 
-    // Check if there's a URL hash to navigate to, otherwise start at login
+    // Default to login view if no valid hash
+    // Note: setupRouting() already handles hash-based navigation on page load,
+    // so we only need to set the default view when there's no hash
     const hash = window.location.hash;
-    if (hash && hash !== '#/login' && hash !== '#/' && hash !== '#') {
-        // URL routing will handle navigation
-        navigateFromHash();
-    } else {
-        // Default to login view
+    if (!hash || hash === '#/login' || hash === '#/' || hash === '#') {
         switchView('login');
     }
+    // Navigation for other hashes is handled by setupRouting() to avoid race conditions
 
     // Add welcome message after brief delay
     setTimeout(() => {
