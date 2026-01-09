@@ -407,7 +407,16 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
 
     // Update breadcrumb with project name
     document.getElementById('breadcrumb-project-name').textContent = currentProject.name;
-    document.getElementById('project-completion').textContent = `${currentProject.completionPercentage}%`;
+
+    // Calculate average score from all validated floor plans (.dwg files)
+    const validatedFloorPlans = mockDocuments.filter(doc =>
+        doc.name.endsWith('.dwg') && doc.status !== 'processing'
+    );
+    const averageScore = validatedFloorPlans.length > 0
+        ? Math.round(validatedFloorPlans.reduce((sum, doc) => sum + doc.score, 0) / validatedFloorPlans.length)
+        : 0;
+
+    document.getElementById('project-completion').textContent = `${averageScore}%`;
 
     // Update image
     const imageElement = document.getElementById('project-detail-image');
@@ -415,13 +424,13 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
 
     // Update donut chart (r=40, circumference = 2 * π * 40 ≈ 251)
     const circumference = 2 * Math.PI * 40;
-    const offset = circumference - (currentProject.completionPercentage / 100) * circumference;
+    const offset = circumference - (averageScore / 100) * circumference;
     const donutProgress = document.getElementById('project-donut-progress');
     donutProgress.setAttribute('stroke-dasharray', circumference);
     donutProgress.setAttribute('stroke-dashoffset', offset);
 
-    const scoreClass = currentProject.completionPercentage >= 90 ? 'success' :
-                      currentProject.completionPercentage >= 60 ? 'warning' : 'error';
+    const scoreClass = averageScore >= 90 ? 'success' :
+                      averageScore >= 60 ? 'warning' : 'error';
     donutProgress.className = `donut-chart__progress donut-chart__progress--${scoreClass}`;
 
     // Update KPIs
