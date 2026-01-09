@@ -128,12 +128,24 @@ function setupTabGroup(tabAttribute, paneIdPrefix, paneIds = null) {
 
             // Update active tab within the same tab list
             const tabList = tab.closest('.tabs__list');
+            const tabsContainer = tab.closest('.tabs');
             if (tabList) {
                 tabList.querySelectorAll('.tabs__tab').forEach(t => {
                     t.classList.remove('tabs__tab--active');
                 });
             }
             tab.classList.add('tabs__tab--active');
+
+            // Update tab actions visibility
+            if (tabsContainer) {
+                tabsContainer.querySelectorAll('.tabs__actions').forEach(actions => {
+                    actions.style.display = 'none';
+                });
+                const targetActions = tabsContainer.querySelector(`#tabs-actions-${tabName}`);
+                if (targetActions) {
+                    targetActions.style.display = 'flex';
+                }
+            }
 
             // Update active pane
             if (paneIds) {
@@ -1226,7 +1238,8 @@ function renderDocuments() {
                 <td>${escapeHtml(doc.name)}</td>
                 <td>${escapeHtml(doc.creator)}</td>
                 <td>${escapeHtml(doc.lastChange)}</td>
-                <td class="text-right">${renderStatusIcon(scoreStatus)} ${safeParseInt(doc.score)}%</td>
+                <td class="text-right">${safeParseInt(doc.score)}%</td>
+                <td class="table__status-col">${renderStatusIcon(scoreStatus)}</td>
             </tr>
         `;
     }).join('');

@@ -132,7 +132,7 @@ a:hover {
     align-items: center;
     justify-content: center;
     background: transparent;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-light);
     cursor: pointer;
     color: var(--color-text-primary);
     transition: background var(--duration-normal) ease;
@@ -360,25 +360,26 @@ a:hover {
 }
 
 .btn--primary {
-    background: var(--color-night-rider);
+    background: var(--color-primary);
     color: var(--color-white);
-    border-color: var(--color-night-rider);
+    border-color: var(--color-primary);
 }
 
 .btn--primary:hover {
-    background: var(--color-black);
-    border-color: var(--color-black);
+    background: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
 }
 
 .btn--secondary {
-    background: transparent;
-    color: var(--color-night-rider);
-    border-color: var(--color-night-rider);
+    background: var(--color-smoke);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
 }
 
 .btn--secondary:hover {
-    background: var(--color-smoke);
-    color: var(--color-black);
+    background: var(--color-gainsboro);
+    color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
 }
 
 .btn--sm {
@@ -434,9 +435,10 @@ a:hover {
 
 .search__input {
     width: 100%;
-    padding: var(--space-3) var(--space-3) var(--space-3) var(--input-icon-offset);
+    height: 40px;
+    padding: 0 var(--space-3) 0 var(--input-icon-offset);
     font-family: var(--font-family-primary);
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
     border: 1px solid var(--color-border);
     border-radius: 0;
     background: var(--color-bg-primary);
@@ -699,7 +701,6 @@ a:hover {
     gap: var(--space-6);
     align-items: stretch;
     margin-bottom: var(--space-6);
-    padding: var(--space-5);
     background: var(--color-bg-primary);
     border: 1px solid var(--color-border-light);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -712,7 +713,7 @@ a:hover {
 
 .project-header__image {
     width: 200px;
-    height: 150px;
+    min-height: 150px;
     background-size: cover;
     background-position: center;
     background-color: var(--color-bg-secondary);
@@ -725,6 +726,8 @@ a:hover {
     align-items: center;
     justify-content: space-between;
     gap: var(--space-6);
+    padding: var(--space-5);
+    padding-left: 0;
 }
 
 /* === PROJECT KPI === */
@@ -733,6 +736,13 @@ a:hover {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding-left: var(--space-5);
+    border-left: 1px solid var(--color-border-light);
+}
+
+.project-kpi:first-child {
+    padding-left: 0;
+    border-left: none;
 }
 
 .project-kpi__value {
@@ -744,8 +754,8 @@ a:hover {
 }
 
 .project-kpi__label {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
     margin-top: var(--space-1);
 }
 
@@ -762,12 +772,12 @@ a:hover {
 .donut-chart__background {
     fill: none;
     stroke: var(--color-border-light);
-    stroke-width: 12;
+    stroke-width: 6;
 }
 
 .donut-chart__progress {
     fill: none;
-    stroke-width: 12;
+    stroke-width: 6;
     stroke-linecap: round;
     transition: stroke-dashoffset 0.5s ease;
 }
@@ -794,10 +804,21 @@ a:hover {
     line-height: 1;
 }
 
+/* === TABS CARD CONTAINER === */
+.tabs-card {
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border-light);
+    padding: var(--space-5);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
 /* === TABS === */
 .tabs {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
     border-bottom: 1px solid var(--color-border-light);
-    margin-bottom: var(--space-5);
+    margin-bottom: var(--space-4);
 }
 
 .tabs__list {
@@ -806,8 +827,16 @@ a:hover {
     list-style: none;
 }
 
+.tabs__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-bottom: var(--space-3);
+}
+
 .tabs__tab {
-    padding: var(--space-3) 0;
+    display: block;
+    padding-bottom: var(--space-3);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-medium);
     color: var(--color-text-secondary);
@@ -823,12 +852,8 @@ a:hover {
 }
 
 .tabs__tab--active {
-    color: var(--color-text-primary);
-    border-bottom-color: var(--color-text-primary);
-}
-
-.tab-content {
-    margin-bottom: var(--space-6);
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
 }
 
 /* Tab Pane (unified) */
@@ -860,7 +885,7 @@ a:hover {
 .table-actions__right {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
 }
 
 .table-actions__selected {
@@ -889,7 +914,7 @@ a:hover {
 .checkbox__mark {
     width: 18px;
     height: 18px;
-    border: 2px solid var(--color-border);
+    border: 2px solid var(--color-border-light);
     background: var(--color-bg-primary);
     transition: all var(--duration-normal) ease;
     display: flex;
@@ -959,8 +984,6 @@ a:hover {
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-secondary);
     background: var(--color-bg-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
 }
 
 .table td {
@@ -979,7 +1002,7 @@ a:hover {
 
 .table--compact th,
 .table--compact td {
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-3) var(--space-4);
     font-size: var(--font-size-sm);
 }
 
@@ -1009,6 +1032,11 @@ a:hover {
 
 .table__checkbox-col .checkbox {
     vertical-align: middle;
+}
+
+.table__status-col {
+    width: 48px;
+    text-align: center;
 }
 
 .table__abbr {
@@ -1236,8 +1264,12 @@ a:hover {
 .split-view {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-5);
+    gap: var(--space-4);
     margin-bottom: var(--space-6);
+}
+
+.tabs-card > .split-view:last-child {
+    margin-bottom: 0;
 }
 
 .split-view__left,
@@ -1262,7 +1294,7 @@ a:hover {
 }
 
 .floorplan--speckle {
-    border: 1px solid var(--color-border);
+    border: none;
 }
 
 .floorplan__room {
@@ -1277,9 +1309,9 @@ a:hover {
 
 .floorplan__room--selected {
     fill: var(--color-room-selected) !important;
-    stroke: #0088CC !important;
+    stroke: var(--color-primary) !important;
     stroke-width: 3 !important;
-    filter: drop-shadow(0 0 8px rgba(0, 136, 204, 0.6));
+    filter: drop-shadow(0 0 8px rgba(0, 102, 153, 0.6));
 }
 
 /* === SPECKLE VIEWER === */
@@ -1510,7 +1542,7 @@ a:hover {
 }
 
 .upload__zone {
-    border: 2px dashed var(--color-border);
+    border: 2px dashed var(--color-border-light);
     background: var(--color-bg-secondary);
     padding: var(--space-8);
     text-align: center;

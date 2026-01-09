@@ -149,8 +149,8 @@
     --margin-xl: var(--space-8);    /* 48px */
 
     /* Component-specific Spacing */
-    --button-padding-y-sm: var(--space-1);    /* 4px */
-    --button-padding-x-sm: var(--space-2);    /* 8px */
+    --button-padding-y-sm: 0.5rem;            /* 8px - matches 40px height with sm font */
+    --button-padding-x-sm: var(--space-4);    /* 16px */
     --button-padding-y: var(--space-2);       /* 8px */
     --button-padding-x: var(--space-3);       /* 12px */
     --button-padding-y-lg: var(--space-3);    /* 12px */

@@ -6,7 +6,7 @@
     <title>BBL Prüfplattform Flächenmanagement</title>
     <link rel="stylesheet" href="css/tokens.css">
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" integrity="sha384-4tstPXwfCpbD90fH8HpMgXjZNJjvLu6xGLnQwJ7cDkVhKnLPPBNiH9PJRp0DnPhl" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/lucide@0.562.0/dist/umd/lucide.min.js" integrity="sha384-FmRlymRnpgjuKyAnwH4DftRjl+RqHOlfcw9k4xcpPyovclg/2RZRrvw7qe1koVCP" crossorigin="anonymous"></script>
 </head>
 <body>
     <!-- Skip to Main Content (Accessibility) -->
@@ -118,7 +118,7 @@
                                 <i data-lucide="list" class="icon icon-md" aria-hidden="true"></i>
                             </button>
                         </div>
-                        <button class="btn btn--secondary" id="new-project-btn">
+                        <button class="btn btn--primary btn--sm" id="new-project-btn">
                             <i data-lucide="plus" class="icon icon-sm"></i>
                             Neues Projekt
                         </button>
@@ -140,7 +140,7 @@
                         <span class="breadcrumb__separator">/</span>
                         <span class="breadcrumb__current" id="breadcrumb-project-name">Projekt Name</span>
                     </div>
-                    <button class="btn btn--secondary" id="back-to-overview">
+                    <button class="btn btn--secondary btn--sm" id="back-to-overview">
                         <i data-lucide="arrow-left" class="icon icon-sm"></i>
                         Zurück Übersicht
                     </button>
@@ -185,35 +185,48 @@
                     </div>
                 </div>
 
-                <div class="tabs">
-                    <ul class="tabs__list">
-                        <li><a href="#" class="tabs__tab tabs__tab--active" data-tab="documents">Abgabe Dokumente (<span id="tab-documents-count">0</span>)</a></li>
-                        <li><a href="#" class="tabs__tab" data-tab="users">Benutzer (<span id="tab-users-count">0</span>)</a></li>
-                        <li><a href="#" class="tabs__tab" data-tab="rules">Prüfregeln (<span id="tab-rules-count">0</span>)</a></li>
-                    </ul>
-                </div>
-
-                <div class="tab-content">
-                    <div class="tab-pane tab-pane--active" id="tab-documents">
-                        <div class="table-actions">
-                            <div class="table-actions__left">
-                                <span class="table-actions__selected" id="documents-selected-count">0 ausgewählt</span>
-                            </div>
-                            <div class="table-actions__right">
-                                <button class="btn btn--secondary btn--sm" id="edit-document-btn" disabled>
-                                    <i data-lucide="pencil" class="icon icon-sm" aria-hidden="true"></i>
-                                    Bearbeiten
-                                </button>
-                                <button class="btn btn--secondary btn--sm" id="delete-documents-btn" disabled>
-                                    <i data-lucide="trash-2" class="icon icon-sm" aria-hidden="true"></i>
-                                    Löschen
-                                </button>
-                                <button class="btn btn--primary btn--sm" id="new-document-btn">
-                                    <i data-lucide="plus" class="icon icon-sm" aria-hidden="true"></i>
-                                    Neues Dokument
-                                </button>
-                            </div>
+                <div class="tabs-card">
+                    <div class="tabs">
+                        <ul class="tabs__list">
+                            <li><a href="#" class="tabs__tab tabs__tab--active" data-tab="documents">Abgabe Dokumente (<span id="tab-documents-count">0</span>)</a></li>
+                            <li><a href="#" class="tabs__tab" data-tab="users">Benutzer (<span id="tab-users-count">0</span>)</a></li>
+                            <li><a href="#" class="tabs__tab" data-tab="rules">Prüfregeln (<span id="tab-rules-count">0</span>)</a></li>
+                        </ul>
+                        <div class="tabs__actions" id="tabs-actions-documents">
+                            <button class="btn btn--secondary btn--sm" id="edit-document-btn" disabled>
+                                <i data-lucide="pencil" class="icon icon-sm" aria-hidden="true"></i>
+                                Bearbeiten
+                            </button>
+                            <button class="btn btn--secondary btn--sm" id="delete-documents-btn" disabled>
+                                <i data-lucide="trash-2" class="icon icon-sm" aria-hidden="true"></i>
+                                Löschen
+                            </button>
+                            <button class="btn btn--primary btn--sm" id="new-document-btn">
+                                <i data-lucide="plus" class="icon icon-sm" aria-hidden="true"></i>
+                                Neues Dokument
+                            </button>
                         </div>
+                        <div class="tabs__actions" id="tabs-actions-users" style="display: none;">
+                            <button class="btn btn--secondary btn--sm" id="edit-user-btn" disabled>
+                                <i data-lucide="pencil" class="icon icon-sm" aria-hidden="true"></i>
+                                Bearbeiten
+                            </button>
+                            <button class="btn btn--secondary btn--sm" id="delete-users-btn" disabled>
+                                <i data-lucide="trash-2" class="icon icon-sm" aria-hidden="true"></i>
+                                Löschen
+                            </button>
+                            <button class="btn btn--primary btn--sm" id="invite-user-btn">
+                                <i data-lucide="user-plus" class="icon icon-sm" aria-hidden="true"></i>
+                                Benutzer einladen
+                            </button>
+                        </div>
+                        <div class="tabs__actions" id="tabs-actions-rules" style="display: none;">
+                            <button class="btn btn--secondary btn--sm" style="visibility: hidden;" aria-hidden="true" tabindex="-1">Placeholder</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-content">
+                    <div class="tab-pane tab-pane--active" id="tab-documents">
                         <table class="table table--compact table--selectable">
                             <thead>
                                 <tr>
@@ -223,10 +236,11 @@
                                             <span class="checkbox__mark"></span>
                                         </label>
                                     </th>
-                                    <th scope="col">NAME</th>
-                                    <th scope="col">ERSTELLER</th>
-                                    <th scope="col">LETZTE ÄNDERUNG</th>
-                                    <th scope="col" class="text-right">SCORE</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Ersteller</th>
+                                    <th scope="col">Letzte Änderung</th>
+                                    <th scope="col" class="text-right">Score</th>
+                                    <th scope="col" class="table__status-col"></th>
                                 </tr>
                             </thead>
                             <tbody id="document-table-body">
@@ -236,25 +250,6 @@
                     </div>
 
                     <div class="tab-pane" id="tab-users">
-                        <div class="table-actions">
-                            <div class="table-actions__left">
-                                <span class="table-actions__selected" id="users-selected-count">0 ausgewählt</span>
-                            </div>
-                            <div class="table-actions__right">
-                                <button class="btn btn--secondary btn--sm" id="edit-user-btn" disabled>
-                                    <i data-lucide="pencil" class="icon icon-sm" aria-hidden="true"></i>
-                                    Bearbeiten
-                                </button>
-                                <button class="btn btn--secondary btn--sm" id="delete-users-btn" disabled>
-                                    <i data-lucide="trash-2" class="icon icon-sm" aria-hidden="true"></i>
-                                    Löschen
-                                </button>
-                                <button class="btn btn--primary btn--sm" id="invite-user-btn">
-                                    <i data-lucide="user-plus" class="icon icon-sm" aria-hidden="true"></i>
-                                    Benutzer einladen
-                                </button>
-                            </div>
-                        </div>
                         <table class="table table--compact table--selectable">
                             <thead>
                                 <tr>
@@ -264,10 +259,10 @@
                                             <span class="checkbox__mark"></span>
                                         </label>
                                     </th>
-                                    <th scope="col">NAME</th>
-                                    <th scope="col">E-MAIL</th>
-                                    <th scope="col">ROLLE</th>
-                                    <th scope="col">LETZTE AKTIVITÄT</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Role</th>
+                                    <th scope="col">Last Activity</th>
                                 </tr>
                             </thead>
                             <tbody id="user-table-body">
@@ -280,16 +275,17 @@
                         <table class="table table--compact">
                             <thead>
                                 <tr>
-                                    <th scope="col">CODE</th>
-                                    <th scope="col">NAME</th>
-                                    <th scope="col">KATEGORIE</th>
-                                    <th scope="col">BESCHREIBUNG</th>
+                                    <th scope="col">Code</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Kategorie</th>
+                                    <th scope="col">Beschreibung</th>
                                 </tr>
                             </thead>
                             <tbody id="rules-table-body">
                                 <!-- Rules rendered by JS -->
                             </tbody>
                         </table>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -306,7 +302,7 @@
                         <span class="breadcrumb__separator">/</span>
                         <span class="breadcrumb__current" id="breadcrumb-val-document">Dokument</span>
                     </div>
-                    <button class="btn btn--secondary" id="back-to-project">
+                    <button class="btn btn--secondary btn--sm" id="back-to-project">
                         <i data-lucide="arrow-left" class="icon icon-sm"></i>
                         Zurück Übersicht
                     </button>
@@ -588,81 +584,84 @@
                         </div>
                     </div>
 
-                    <div class="tabs">
-                    <ul class="tabs__list">
-                        <li><a href="#" class="tabs__tab tabs__tab--active" data-val-tab="rooms">Räume (22)</a></li>
-                        <li><a href="#" class="tabs__tab" data-val-tab="areas">Flächen (4)</a></li>
-                        <li><a href="#" class="tabs__tab" data-val-tab="errors">Fehlermeldungen (13)</a></li>
-                    </ul>
-                </div>
-
-                <div class="split-view">
-                    <div class="split-view__left">
-                        <!-- Rooms Tab -->
-                        <div class="tab-pane tab-pane--active" id="val-tab-rooms">
-                            <div class="table-wrapper">
-                                <table class="table table--compact">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">AOID</th>
-                                            <th scope="col" class="text-right">AREA</th>
-                                            <th scope="col">AOFUNCTION</th>
-                                            <th scope="col" class="text-center">ERROR</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="room-table-body">
-                                        <!-- Rooms rendered by JS -->
-                                    </tbody>
-                                </table>
+                    <div class="tabs-card">
+                        <div class="tabs">
+                            <ul class="tabs__list">
+                                <li><a href="#" class="tabs__tab tabs__tab--active" data-val-tab="rooms">Räume (22)</a></li>
+                                <li><a href="#" class="tabs__tab" data-val-tab="areas">Flächen (4)</a></li>
+                                <li><a href="#" class="tabs__tab" data-val-tab="errors">Fehlermeldungen (13)</a></li>
+                            </ul>
+                            <div class="tabs__actions">
+                                <button class="btn btn--secondary btn--sm" style="visibility: hidden;" aria-hidden="true" tabindex="-1">Placeholder</button>
                             </div>
                         </div>
 
-                        <!-- Areas Tab -->
-                        <div class="tab-pane" id="val-tab-areas">
-                            <div class="table-wrapper">
-                                <table class="table table--compact">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">AOID</th>
-                                            <th scope="col" class="text-right">AREA</th>
-                                            <th scope="col">AOFUNCTION</th>
-                                            <th scope="col" class="text-center">ERROR</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="area-polygons-table-body">
-                                        <!-- Area polygons rendered by JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <div class="split-view">
+                            <div class="split-view__left">
+                                <!-- Rooms Tab -->
+                                <div class="tab-pane tab-pane--active" id="val-tab-rooms">
+                                    <div class="table-wrapper">
+                                        <table class="table table--compact">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">AOID</th>
+                                                    <th scope="col" class="text-right">AREA</th>
+                                                    <th scope="col">AOFUNCTION</th>
+                                                    <th scope="col" class="text-center">ERROR</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="room-table-body">
+                                                <!-- Rooms rendered by JS -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
 
-                        <!-- Errors Tab -->
-                        <div class="tab-pane" id="val-tab-errors">
-                            <div class="error-list" id="error-list">
-                                <!-- Errors rendered by JS -->
+                                <!-- Areas Tab -->
+                                <div class="tab-pane" id="val-tab-areas">
+                                    <div class="table-wrapper">
+                                        <table class="table table--compact">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">AOID</th>
+                                                    <th scope="col" class="text-right">AREA</th>
+                                                    <th scope="col">AOFUNCTION</th>
+                                                    <th scope="col" class="text-center">ERROR</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="area-polygons-table-body">
+                                                <!-- Area polygons rendered by JS -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Errors Tab -->
+                                <div class="tab-pane" id="val-tab-errors">
+                                    <div class="error-list" id="error-list">
+                                        <!-- Errors rendered by JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="split-view__right">
+                                <div class="floorplan floorplan--speckle">
+                                    <!-- Speckle viewer URL configured via JavaScript for security -->
+                                    <iframe
+                                        id="speckle-viewer"
+                                        class="speckle-viewer__iframe"
+                                        src=""
+                                        title="Speckle 3D Floor Plan Viewer"
+                                        allow="fullscreen">
+                                    </iframe>
+                                    <div class="speckle-viewer__loading" id="speckle-loading">
+                                        <div class="speckle-viewer__spinner"></div>
+                                        <span>Lade 3D-Grundriss...</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="split-view__right">
-                        <div class="floorplan floorplan--speckle">
-                            <!-- Speckle viewer URL configured via JavaScript for security -->
-                            <iframe
-                                id="speckle-viewer"
-                                class="speckle-viewer__iframe"
-                                src=""
-                                title="Speckle 3D Floor Plan Viewer"
-                                allow="fullscreen"
-                                sandbox="allow-scripts allow-same-origin"
-                                loading="lazy">
-                            </iframe>
-                            <div class="speckle-viewer__loading" id="speckle-loading">
-                                <div class="speckle-viewer__spinner"></div>
-                                <span>Lade 3D-Grundriss...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 </div>
                 <!-- END STEP 1 CONTENT -->
 
@@ -684,7 +683,7 @@
                         <span class="breadcrumb__separator">/</span>
                         <span class="breadcrumb__current">Zusammenfassung Ergebnis</span>
                     </div>
-                    <button class="btn btn--secondary" id="back-to-project-results">
+                    <button class="btn btn--secondary btn--sm" id="back-to-project-results">
                         <i data-lucide="arrow-left" class="icon icon-sm"></i>
                         Zurück Übersicht
                     </button>

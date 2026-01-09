@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(dir \"C:\\\\Users\\\\DavidRasner\\\\Documents\\\\GitHub\\\\plan-check\\\\documentation\\\\wireframes_05-2025\" /b)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(curl:*)",
+      "Bash(done)",
+      "Bash(openssl dgst:*)",
+      "Bash(openssl base64:*)"
     ]
   }
 }
