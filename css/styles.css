@@ -1107,6 +1107,7 @@ a:hover {
 }
 
 .metric-card--error .metric-card__value { color: var(--color-error); }
+.metric-card--warning .metric-card__value { color: var(--color-warning); }
 .metric-card--success .metric-card__value { color: var(--color-success); }
 
 /* === SPLIT VIEW === */

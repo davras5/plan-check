@@ -493,6 +493,13 @@ function openValidationView(documentId, skipHashUpdate = false) {
     document.getElementById('breadcrumb-val-project').textContent = currentProject.name;
     document.getElementById('breadcrumb-val-document').textContent = currentDocument.name;
 
+    // Update step 1 score KPI with current document's score
+    const scoreValue = currentDocument.score;
+    document.getElementById('step1-score-value').textContent = `${scoreValue}%`;
+    const scoreCard = document.getElementById('step1-score-card');
+    const scoreClass = scoreValue >= 90 ? 'success' : scoreValue >= 60 ? 'warning' : 'error';
+    scoreCard.className = `metric-card metric-card--${scoreClass}`;
+
     // Reset to step 1 (DWG hochladen)
     currentStep = 1;
     updateStepper();
