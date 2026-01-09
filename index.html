@@ -884,6 +884,61 @@
         </div>
     </div>
 
+    <!-- Invite User Modal -->
+    <div class="modal" id="invite-user-modal" role="dialog" aria-labelledby="invite-user-modal-title" aria-modal="true" hidden>
+        <div class="modal__backdrop" data-modal-close></div>
+        <div class="modal__content modal__content--sm">
+            <div class="modal__header">
+                <h2 class="modal__title" id="invite-user-modal-title">Benutzer einladen</h2>
+                <button class="modal__close" data-modal-close aria-label="Schliessen">
+                    <i data-lucide="x" class="icon icon-md" aria-hidden="true"></i>
+                </button>
+            </div>
+            <form class="modal__body" id="invite-user-form">
+                <div class="form__field">
+                    <label for="invite-email" class="form__label">E-Mail-Adresse</label>
+                    <input type="email" class="form__input" id="invite-email" name="email" placeholder="beispiel@domain.ch" required>
+                </div>
+                <div class="form__field">
+                    <label for="invite-role" class="form__label">Rolle</label>
+                    <select class="form__input form__select" id="invite-role" name="role" required>
+                        <option value="">Bitte wählen...</option>
+                        <option value="viewer">Betrachter</option>
+                        <option value="editor">Bearbeiter</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+            </form>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--secondary" data-modal-close>Abbrechen</button>
+                <button type="submit" class="btn btn--primary" form="invite-user-form">Einladung senden</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Document Modal -->
+    <div class="modal" id="new-document-modal" role="dialog" aria-labelledby="new-document-modal-title" aria-modal="true" hidden>
+        <div class="modal__backdrop" data-modal-close></div>
+        <div class="modal__content modal__content--sm">
+            <div class="modal__header">
+                <h2 class="modal__title" id="new-document-modal-title">Neues Dokument</h2>
+                <button class="modal__close" data-modal-close aria-label="Schliessen">
+                    <i data-lucide="x" class="icon icon-md" aria-hidden="true"></i>
+                </button>
+            </div>
+            <form class="modal__body" id="new-document-form">
+                <div class="form__field">
+                    <label for="document-name" class="form__label">Dokumentname</label>
+                    <input type="text" class="form__input" id="document-name" name="name" placeholder="z.B. EG_Grundriss.dwg" required>
+                </div>
+            </form>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--secondary" data-modal-close>Abbrechen</button>
+                <button type="submit" class="btn btn--primary" form="new-document-form">Dokument erstellen</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/script.js"></script>
 </body>
 </html>

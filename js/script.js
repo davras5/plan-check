@@ -1237,7 +1237,19 @@ function setupDocumentActions() {
 
     if (newBtn) {
         newBtn.addEventListener('click', () => {
-            showToast('Neues Dokument erstellen - Funktion kommt bald', 'info');
+            openModal('new-document-modal');
+        });
+    }
+
+    const newDocForm = safeGetElementById('new-document-form');
+    if (newDocForm) {
+        newDocForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(newDocForm);
+            const name = formData.get('name');
+            showToast(`Dokument "${name}" erstellt`, 'success');
+            closeModal('new-document-modal');
+            newDocForm.reset();
         });
     }
 
@@ -1441,7 +1453,21 @@ function setupUserActions() {
 
     if (inviteBtn) {
         inviteBtn.addEventListener('click', () => {
-            showToast('Benutzer einladen - Funktion kommt bald', 'info');
+            openModal('invite-user-modal');
+        });
+    }
+
+    const inviteForm = safeGetElementById('invite-user-form');
+    if (inviteForm) {
+        inviteForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(inviteForm);
+            const email = formData.get('email');
+            const role = formData.get('role');
+            const roleLabels = { viewer: 'Betrachter', editor: 'Bearbeiter', admin: 'Administrator' };
+            showToast(`Einladung an ${email} als ${roleLabels[role]} gesendet`, 'success');
+            closeModal('invite-user-modal');
+            inviteForm.reset();
         });
     }
 
