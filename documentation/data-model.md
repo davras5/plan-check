@@ -113,12 +113,12 @@ interface Document {
 [
   {
     "id": 1,
-    "projectId": 3,
+    "projectId": 1,
     "name": "Erdgeschoss (EG).dwg",
-    "creator": "max.muster@bbl.admin.ch on 17/06/2022 12:30",
-    "lastChange": "max.muster@bbl.admin.ch on 27/06/2022 10:45",
+    "creator": "peter.schmidt@bbl.admin.ch on 10/04/2022 09:30",
+    "lastChange": "peter.schmidt@bbl.admin.ch on 14/04/2022 14:20",
     "status": "validated",
-    "score": 95
+    "score": 94
   }
 ]
 ```
@@ -154,10 +154,12 @@ interface Geometry {
 
 ```json
 [
-  { "documentId": 1, "type": "room", "aoid": "EG.01", "area": 24.45, "aofunction": "conference", "status": "ok" },
-  { "documentId": 1, "type": "room", "aoid": "EG.02", "area": 18.32, "aofunction": "office", "status": "ok" },
-  { "documentId": 1, "type": "area", "aoid": "BGF-EG-001", "area": 4500.00, "aofunction": "Brutto Geschossfläche", "status": "ok" },
-  { "documentId": 1, "type": "area", "aoid": "EBF-EG-001", "area": 2800.00, "aofunction": "Energiebezugsfläche", "status": "ok" }
+  { "documentId": 1, "type": "room", "aoid": "EG.01", "area": 24.50, "aofunction": "conference", "status": "ok" },
+  { "documentId": 1, "type": "room", "aoid": "EG.02", "area": 18.30, "aofunction": "office", "status": "ok" },
+  { "documentId": 1, "type": "room", "aoid": "EG.03", "area": 22.10, "aofunction": "office", "status": "error" },
+  { "documentId": 1, "type": "room", "aoid": "EG.07", "area": 45.20, "aofunction": "hall", "status": "ok" },
+  { "documentId": 1, "type": "area", "aoid": "BGF-EG-001", "area": 450.00, "aofunction": "Brutto Geschossfläche", "status": "ok" },
+  { "documentId": 1, "type": "area", "aoid": "EBF-EG-001", "area": 280.00, "aofunction": "Energiebezugsfläche", "status": "ok" }
 ]
 ```
 
@@ -184,6 +186,18 @@ Common room function values:
 | EBF | Energiebezugsfläche | Energy reference area polygons (can be multiple) |
 
 **Note:** Only BGF and EBF are drawn as polygons in the CAD file. Other SIA 416 area types (NGF, VF, NNF, etc.) are calculated values, not drawn geometries.
+
+### Realistic Area Ratios
+
+Per SIA 416, the sum of room areas (Nettogeschossfläche/NGF) should typically be **75-85%** of BGF. The test data uses realistic values:
+
+| Floor | BGF | Sum of Rooms | Ratio |
+|-------|-----|--------------|-------|
+| EG (Doc 1) | 450 m² | ~345 m² | 77% |
+| 1.OG (Doc 2) | 435 m² | ~333 m² | 77% |
+| UG (Doc 5) | 320 m² | ~268 m² | 84% |
+
+The remaining ~15-25% accounts for walls, structural elements, and circulation space not counted as usable room area.
 
 ---
 
@@ -220,8 +234,18 @@ interface Rule {
     "rules": [
       { "code": "LAYER_001", "name": "Pflichtlayer vorhanden", "category": "Layer", "description": "Prüft, ob alle 14 vorgeschriebenen Layer gemäss BBL CAD-Richtlinie vorhanden sind" },
       { "code": "LAYER_002", "name": "Layer-Farben korrekt", "category": "Layer", "description": "Prüft, ob die Layer-Farben den Vorgaben entsprechen (z.B. Layer 7 = weiss)" },
+      { "code": "LAYER_003", "name": "Keine fremden Layer", "category": "Layer", "description": "Prüft, ob keine nicht definierten Layer in der Zeichnung vorhanden sind" },
       { "code": "GEOM_001", "name": "Polylinien geschlossen", "category": "Geometrie", "description": "Prüft, ob alle Raumpolygone geschlossen sind (Start- und Endpunkt identisch)" },
-      { "code": "AOID_001", "name": "AOID-Format gültig", "category": "AOID", "description": "Prüft, ob alle AOIDs dem BBL-Format entsprechen (z.B. \"2011.DM.04.015\")" }
+      { "code": "GEOM_002", "name": "Polylinien planar", "category": "Geometrie", "description": "Prüft, ob alle Polylinien auf Z=0 liegen (2D-Konformität)" },
+      { "code": "GEOM_003", "name": "Keine Selbstüberschneidungen", "category": "Geometrie", "description": "Prüft, ob Raumpolygone sich nicht selbst überschneiden" },
+      { "code": "GEOM_004", "name": "Minimale Raumgrösse", "category": "Geometrie", "description": "Prüft, ob alle Räume eine Mindestfläche von 1 m² haben" },
+      { "code": "ENTITY_001", "name": "Erlaubte Entitätstypen", "category": "Entität", "description": "Prüft, ob nur erlaubte Entitätstypen verwendet werden (LINE, POLYLINE, TEXT, etc.)" },
+      { "code": "ENTITY_002", "name": "Keine OLE-Objekte", "category": "Entität", "description": "Prüft, ob keine eingebetteten OLE-Objekte vorhanden sind" },
+      { "code": "TEXT_001", "name": "Schriftart korrekt", "category": "Text", "description": "Prüft, ob nur die vorgeschriebene Schriftart \"Arial\" verwendet wird" },
+      { "code": "TEXT_002", "name": "Textgrösse korrekt", "category": "Text", "description": "Prüft, ob die Texthöhe den Vorgaben entspricht (min. 2.5mm)" },
+      { "code": "AOID_001", "name": "AOID-Format gültig", "category": "AOID", "description": "Prüft, ob alle AOIDs dem BBL-Format entsprechen (z.B. \"2011.DM.04.015\")" },
+      { "code": "AOID_002", "name": "AOID eindeutig", "category": "AOID", "description": "Prüft, ob jede AOID nur einmal in der Zeichnung vorkommt" },
+      { "code": "AOID_003", "name": "AOID in Raumliste", "category": "AOID", "description": "Prüft, ob alle AOIDs in der hochgeladenen Excel-Raumliste vorhanden sind" }
     ]
   }
 ]
@@ -306,7 +330,9 @@ interface User {
 ```json
 [
   { "id": 1, "name": "Max Muster", "email": "max.muster@bbl.admin.ch", "role": "Admin", "lastActivity": "27/06/2022 12:30" },
-  { "id": 2, "name": "Anna Beispiel", "email": "anna.beispiel@bbl.admin.ch", "role": "Editor", "lastActivity": "27/06/2022 10:45" }
+  { "id": 2, "name": "Anna Müller", "email": "anna.mueller@architekten-zuerich.ch", "role": "Editor", "lastActivity": "27/06/2022 10:45" },
+  { "id": 3, "name": "Peter Schmidt", "email": "p.schmidt@geometer-bern.ch", "role": "Editor", "lastActivity": "14/04/2022 16:30" },
+  { "id": 5, "name": "Maria Keller", "email": "m.keller@elektroplanung-gmbh.ch", "role": "Viewer", "lastActivity": "14/04/2022 10:30" }
 ]
 ```
 
@@ -395,15 +421,17 @@ Example: Adding data for document ID 2
 
 ```json
 // documents.json
-{ "id": 2, "projectId": 3, "name": "1. Obergeschoss (1.OG).dwg", ... }
+{ "id": 2, "projectId": 1, "name": "1. Obergeschoss (1.OG).dwg", ... }
 
-// geometry.json - rooms
-{ "documentId": 2, "type": "room", "aoid": "1OG.01", "area": 30.00, "aofunction": "office", "status": "ok" }
-{ "documentId": 2, "type": "room", "aoid": "1OG.02", "area": 25.50, "aofunction": "meeting", "status": "ok" }
+// geometry.json - rooms (aim for ~75-85% of BGF as total room area)
+{ "documentId": 2, "type": "room", "aoid": "1OG.01", "area": 35.80, "aofunction": "conference", "status": "ok" }
+{ "documentId": 2, "type": "room", "aoid": "1OG.02", "area": 14.20, "aofunction": "office", "status": "ok" }
+{ "documentId": 2, "type": "room", "aoid": "1OG.03", "area": 18.95, "aofunction": "office", "status": "ok" }
+{ "documentId": 2, "type": "room", "aoid": "1OG.07", "area": 42.30, "aofunction": "hall", "status": "ok" }
 
 // geometry.json - areas
-{ "documentId": 2, "type": "area", "aoid": "BGF-1OG-001", "area": 4200.00, "aofunction": "Brutto Geschossfläche", "status": "ok" }
-{ "documentId": 2, "type": "area", "aoid": "EBF-1OG-001", "area": 2500.00, "aofunction": "Energiebezugsfläche", "status": "ok" }
+{ "documentId": 2, "type": "area", "aoid": "BGF-1OG-001", "area": 435.00, "aofunction": "Brutto Geschossfläche", "status": "ok" }
+{ "documentId": 2, "type": "area", "aoid": "EBF-1OG-001", "area": 265.00, "aofunction": "Energiebezugsfläche", "status": "ok" }
 ```
 
 ---
@@ -417,6 +445,7 @@ Example: Adding data for document ID 2
 | 2.1 | 2025-01-09 | Added rules.json for validation rule sets (Prüfregeln) |
 | 3.0 | 2025-01-09 | Merged rooms.json and areas.json into geometry.json with type field |
 | 3.1 | 2025-01-09 | Added results.json for validation results, users.json for user management |
+| 3.2 | 2025-01-09 | Updated test data with realistic area values (BGF ~300-550 m², room totals 75-85% of BGF) |
 
 ---
 

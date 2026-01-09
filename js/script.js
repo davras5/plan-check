@@ -743,15 +743,23 @@ function renderProjects() {
     }
 
     grid.innerHTML = mockProjects.map(project => {
-        const scoreClass = project.resultPercentage >= 90 ? 'success' :
-                          project.resultPercentage >= 60 ? 'warning' : 'error';
+        // Get documents for this project
+        const projectDocuments = mockDocuments.filter(d => d.projectId === project.id);
+
+        // Calculate average score from validated DWG files
+        const validatedDwgDocs = projectDocuments.filter(doc =>
+            doc.name.endsWith('.dwg') && doc.status !== 'processing'
+        );
+        const averageScore = validatedDwgDocs.length > 0
+            ? Math.round(validatedDwgDocs.reduce((sum, doc) => sum + doc.score, 0) / validatedDwgDocs.length)
+            : 0;
+
+        const scoreClass = averageScore >= 90 ? 'success' :
+                          averageScore >= 60 ? 'warning' : 'error';
 
         const overlayHtml = project.status === 'completed'
             ? '<div class="card__overlay">Auftrag Abgeschlossen<br>(Wird in 30 Tagen gelöscht)</div>'
             : '';
-
-        // Count actual documents for this project
-        const actualDocumentCount = mockDocuments.filter(d => d.projectId === project.id).length;
 
         return `
             <article class="card" data-project-id="${safeParseInt(project.id)}">
@@ -765,10 +773,10 @@ function renderProjects() {
                         <div class="card__meta-left">
                             <dd>SIA Phase: ${escapeHtml(project.siaPhase)}</dd>
                             <dd>${escapeHtml(project.createdDate)}</dd>
-                            <dd>${actualDocumentCount} Dokumente</dd>
+                            <dd>${projectDocuments.length} Dokumente</dd>
                         </div>
                         <div class="card__meta-right">
-                            <span class="card__percentage card__percentage--${scoreClass}">${safeParseInt(project.resultPercentage)}%</span>
+                            <span class="card__percentage card__percentage--${scoreClass}">${averageScore}%</span>
                         </div>
                     </dl>
                 </div>
@@ -821,7 +829,7 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
 
     const scoreClass = averageScore >= 90 ? 'success' :
                       averageScore >= 60 ? 'warning' : 'error';
-    donutProgress.className = `donut-chart__progress donut-chart__progress--${scoreClass}`;
+    donutProgress.setAttribute('class', `donut-chart__progress donut-chart__progress--${scoreClass}`);
 
     // Update KPIs
     document.getElementById('project-sia-phase').textContent = currentProject.siaPhase;
@@ -881,7 +889,10 @@ const DocumentSelection = {
     },
 
     selectAll() {
-        mockDocuments.forEach(doc => this.selectedIds.add(doc.id));
+        const projectDocuments = currentProject
+            ? mockDocuments.filter(doc => doc.projectId === currentProject.id)
+            : mockDocuments;
+        projectDocuments.forEach(doc => this.selectedIds.add(doc.id));
         this.updateUI();
     },
 
@@ -900,7 +911,10 @@ const DocumentSelection = {
 
     updateUI() {
         const count = this.getSelectedCount();
-        const total = mockDocuments.length;
+        const projectDocuments = currentProject
+            ? mockDocuments.filter(doc => doc.projectId === currentProject.id)
+            : mockDocuments;
+        const total = projectDocuments.length;
 
         // Update selected count text
         const countEl = safeGetElementById('documents-selected-count');
@@ -1074,7 +1088,10 @@ function setupDocumentActions() {
                     // Update document count in tab
                     const countEl = safeGetElementById('tab-documents-count');
                     if (countEl) {
-                        countEl.textContent = mockDocuments.length;
+                        const projectDocuments = currentProject
+                            ? mockDocuments.filter(doc => doc.projectId === currentProject.id)
+                            : mockDocuments;
+                        countEl.textContent = projectDocuments.length;
                     }
 
                     // Re-render and show toast
@@ -1353,12 +1370,15 @@ function openValidationView(documentId, skipHashUpdate = false) {
     document.getElementById('step2-ngf').textContent = totalNGF > 0
         ? `${totalNGF.toLocaleString('de-CH')} m²`
         : '0 m²';
-    document.getElementById('step2-error-count').textContent = docErrors.length;
+
+    // Step 2 errors are Excel matching errors (simulated: last 3 rooms don't match)
+    const step2ExcelErrors = Math.min(3, docRooms.length);
+    document.getElementById('step2-error-count').textContent = step2ExcelErrors;
 
     // Update error card styling based on error count
     const errorCard = document.getElementById('step2-error-card');
     if (errorCard) {
-        errorCard.className = docErrors.length > 0 ? 'metric-card metric-card--error' : 'metric-card';
+        errorCard.className = step2ExcelErrors > 0 ? 'metric-card metric-card--error' : 'metric-card';
     }
 
     // Reset to step 1 (DWG hochladen)
@@ -1610,14 +1630,23 @@ function updateValidationTabCounts() {
         ? mockCheckingResults.filter(r => r.documentId === docId).length
         : mockCheckingResults.length;
 
-    // Update tab labels
-    const roomsTab = document.querySelector('[data-val-tab="rooms"]');
-    const areasTab = document.querySelector('[data-val-tab="areas"]');
-    const errorsTab = document.querySelector('[data-val-tab="errors"]');
+    // Update Step 1 (validation view) tab counts
+    const valRoomsCount = document.getElementById('val-tab-rooms-count');
+    const valAreasCount = document.getElementById('val-tab-areas-count');
+    const valErrorsCount = document.getElementById('val-tab-errors-count');
 
-    if (roomsTab) roomsTab.textContent = `Räume (${roomCount})`;
-    if (areasTab) areasTab.textContent = `Flächen (${areaCount})`;
-    if (errorsTab) errorsTab.textContent = `Fehlermeldungen (${errorCount})`;
+    if (valRoomsCount) valRoomsCount.textContent = roomCount;
+    if (valAreasCount) valAreasCount.textContent = areaCount;
+    if (valErrorsCount) valErrorsCount.textContent = errorCount;
+
+    // Update Step 2 tab counts
+    // Step 2 errors are simulated Excel matching errors (last 3 rooms don't match)
+    const step2ExcelErrorCount = Math.min(3, roomCount);
+    const step2RoomsCount = document.getElementById('step2-tab-rooms-count');
+    const step2ErrorsCount = document.getElementById('step2-tab-errors-count');
+
+    if (step2RoomsCount) step2RoomsCount.textContent = roomCount;
+    if (step2ErrorsCount) step2ErrorsCount.textContent = step2ExcelErrorCount;
 }
 
 // === STEP 2 RENDERING ===
