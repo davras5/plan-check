@@ -707,7 +707,7 @@ a:hover {
 }
 
 .project-header__image {
-    width: 200px;
+    min-width: 300px;
     min-height: 150px;
     background-size: cover;
     background-position: center;
