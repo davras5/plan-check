@@ -534,6 +534,11 @@ function openProjectDetail(projectId, skipHashUpdate = false) {
     renderDocuments();
     renderRules();
 
+    // Update tab counts
+    document.getElementById('tab-documents-count').textContent = mockDocuments.length;
+    document.getElementById('tab-users-count').textContent = document.querySelectorAll('#user-table-body tr').length;
+    document.getElementById('tab-rules-count').textContent = mockValidationRules.length;
+
     if (skipHashUpdate) {
         // Directly switch view without updating hash
         document.querySelectorAll('.view').forEach(view => view.classList.remove('view--active'));
