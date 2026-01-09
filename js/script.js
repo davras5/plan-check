@@ -230,12 +230,30 @@ const AppState = {
     }
 };
 
-// Legacy compatibility - map old globals to AppState
-let currentView = AppState.currentView;
-let currentProject = AppState.currentProject;
-let currentDocument = AppState.currentDocument;
-let currentStep = AppState.currentStep;
-let isNavigatingFromHash = AppState.isNavigatingFromHash;
+// Legacy compatibility - use getters/setters to sync with AppState
+let _navigationTimeoutId = null; // Track pending navigation timeout
+
+// Define getters/setters for legacy global compatibility
+Object.defineProperty(window, 'currentView', {
+    get: () => AppState.currentView,
+    set: (v) => { AppState.currentView = v; }
+});
+Object.defineProperty(window, 'currentProject', {
+    get: () => AppState.currentProject,
+    set: (v) => { AppState.currentProject = v; }
+});
+Object.defineProperty(window, 'currentDocument', {
+    get: () => AppState.currentDocument,
+    set: (v) => { AppState.currentDocument = v; }
+});
+Object.defineProperty(window, 'currentStep', {
+    get: () => AppState.currentStep,
+    set: (v) => { AppState.currentStep = v; }
+});
+Object.defineProperty(window, 'isNavigatingFromHash', {
+    get: () => AppState.isNavigatingFromHash,
+    set: (v) => { AppState.isNavigatingFromHash = v; }
+});
 
 // === MOCK DATA ===
 const mockProjects = [
@@ -596,6 +614,12 @@ function parseUrlHash() {
 }
 
 function navigateFromHash() {
+    // Cancel any pending navigation timeout to prevent race conditions
+    if (_navigationTimeoutId) {
+        clearTimeout(_navigationTimeoutId);
+        _navigationTimeoutId = null;
+    }
+
     isNavigatingFromHash = true;
     const hash = window.location.hash || '';
 
@@ -610,14 +634,16 @@ function navigateFromHash() {
     } else if (hash === '#/login') {
         switchView('login');
     } else if (projectMatch) {
-        const projectId = parseInt(projectMatch[1]);
+        const projectId = safeParseInt(projectMatch[1]);
 
         if (documentMatch) {
-            const documentId = parseInt(documentMatch[1]);
+            const documentId = safeParseInt(documentMatch[1]);
             // First open project, then document
             openProjectDetail(projectId, true); // true = skip hash update
 
-            setTimeout(() => {
+            // Use tracked timeout to allow cancellation on rapid navigation
+            _navigationTimeoutId = setTimeout(() => {
+                _navigationTimeoutId = null;
                 openValidationView(documentId, true);
                 if (isResults) {
                     switchView('results');
@@ -1137,27 +1163,34 @@ function renderStep2Errors() {
 }
 
 // === SPECKLE VIEWER ===
+let _speckleViewerInitialized = false; // Prevent duplicate event listener attachment
+
 function initSpeckleViewer() {
     const iframe = document.getElementById('speckle-viewer');
     const loading = document.getElementById('speckle-loading');
 
     if (!iframe || !loading) return;
 
-    // Set the Speckle viewer URL dynamically
+    // Set the Speckle viewer URL dynamically (only once)
     const viewerUrl = getSpeckleViewerUrl();
     if (viewerUrl && !iframe.src) {
         iframe.src = viewerUrl;
     }
 
-    // Hide loading indicator when iframe loads
-    iframe.addEventListener('load', () => {
-        loading.classList.add('is-hidden');
-    });
+    // Only attach event listeners once to prevent duplicates
+    if (!_speckleViewerInitialized) {
+        _speckleViewerInitialized = true;
 
-    // Handle iframe load errors
-    iframe.addEventListener('error', () => {
-        loading.innerHTML = '<span>Fehler beim Laden des 3D-Grundrisses</span>';
-    });
+        // Hide loading indicator when iframe loads
+        iframe.addEventListener('load', () => {
+            loading.classList.add('is-hidden');
+        });
+
+        // Handle iframe load errors
+        iframe.addEventListener('error', () => {
+            loading.innerHTML = '<span>Fehler beim Laden des 3D-Grundrisses</span>';
+        });
+    }
 }
 
 // Legacy function kept for compatibility - now handled by Speckle iframe
@@ -1464,56 +1497,68 @@ function showToast(message, type = 'info') {
 }
 
 // === ENHANCED INTERACTIONS ===
+let _interactionsInitialized = false;
+
 function enhanceInteractions() {
-    // Add ripple effect to buttons
-    document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
+    // Only initialize once - use event delegation for dynamic content
+    if (_interactionsInitialized) return;
+    _interactionsInitialized = true;
 
-            ripple.style.cssText = `
-                position: absolute;
-                width: ${size}px;
-                height: ${size}px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.5);
-                left: ${x}px;
-                top: ${y}px;
-                pointer-events: none;
-                animation: ripple 0.6s ease-out;
-            `;
+    // Add ripple effect to buttons using event delegation
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn');
+        if (!btn) return;
 
-            this.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
-        });
+        const ripple = document.createElement('span');
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+
+        ripple.style.cssText = `
+            position: absolute;
+            width: ${size}px;
+            height: ${size}px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            left: ${x}px;
+            top: ${y}px;
+            pointer-events: none;
+            animation: ripple 0.6s ease-out;
+        `;
+
+        btn.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
     });
 
-    // Enhanced room table hover
-    document.querySelectorAll('#room-table-body tr').forEach((row, index) => {
-        row.addEventListener('mouseenter', () => {
-            // Highlight corresponding room on floor plan
+    // Room table hover using event delegation (works with dynamically rendered rows)
+    const roomTableBody = document.getElementById('room-table-body');
+    if (roomTableBody) {
+        roomTableBody.addEventListener('mouseenter', (e) => {
+            const row = e.target.closest('tr');
+            if (!row) return;
+            const index = Array.from(roomTableBody.children).indexOf(row);
             const rooms = document.querySelectorAll('.floorplan__room');
             if (rooms[index]) {
                 rooms[index].classList.add('floorplan__room--selected');
             }
-        });
+        }, true); // Use capture phase for delegation
 
-        row.addEventListener('mouseleave', () => {
+        roomTableBody.addEventListener('mouseleave', (e) => {
+            const row = e.target.closest('tr');
+            if (!row) return;
             document.querySelectorAll('.floorplan__room').forEach(r => {
                 r.classList.remove('floorplan__room--selected');
             });
-        });
-    });
+        }, true);
+    }
 
-    // Add smooth scroll to error locations
-    document.querySelectorAll('.error-item').forEach(error => {
-        error.style.cursor = 'pointer';
-        error.addEventListener('click', () => {
+    // Error item clicks using event delegation
+    document.addEventListener('click', (e) => {
+        const errorItem = e.target.closest('.error-item');
+        if (errorItem) {
             showToast('Error location highlighted on floor plan', 'info');
-        });
+        }
     });
 }
 
@@ -1561,12 +1606,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // Navigation for other hashes is handled by setupRouting() to avoid race conditions
 
-    // Add welcome message after brief delay
-    setTimeout(() => {
-        console.log('%c BBL Prüfplattform Flächenmanagement ', 'background: #DC0018; color: white; font-size: 14px; padding: 4px 8px;');
-        console.log('%c Prototype v1.0 - Swiss Federal Design System ', 'background: #006699; color: white; font-size: 12px; padding: 4px 8px;');
-    }, 100);
+    // Add welcome message
+    console.log('%c BBL Prüfplattform Flächenmanagement ', 'background: #DC0018; color: white; font-size: 14px; padding: 4px 8px;');
+    console.log('%c Prototype v1.0 - Swiss Federal Design System ', 'background: #006699; color: white; font-size: 12px; padding: 4px 8px;');
 
-    // Enhance interactions after DOM is ready
-    setTimeout(enhanceInteractions, 500);
+    // Enhance interactions - now uses event delegation so no delay needed
+    enhanceInteractions();
 });
