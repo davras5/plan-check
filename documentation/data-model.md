@@ -12,6 +12,11 @@ This document defines the data model for the BBL Prüfplattform Flächenmanageme
 erDiagram
     RuleSet ||--o{ Project : "applies to"
     Project ||--o{ Document : "contains"
+    Project ||--o{ ProjectMember : "has"
+    ProjectMember }o--|| User : "references"
+    User ||--o{ Project : "creates"
+    User ||--o{ Document : "creates"
+    User ||--o{ Document : "edits"
     Document ||--o{ Geometry : "has"
     Document ||--o{ Result : "has"
 
@@ -25,22 +30,30 @@ erDiagram
     Project {
         int id PK
         string name
-        string location
         string siaPhase
+        int createdBy FK
         string createdDate
         int documentCount
         int resultPercentage
         string status
         int ruleSetId FK
         string imageUrl
+        array members
+    }
+
+    ProjectMember {
+        int userId FK
+        string role
     }
 
     Document {
         int id PK
         int projectId FK
         string name
-        string creator
-        string lastChange
+        int createdBy FK
+        string createdAt
+        int lastEditedBy FK
+        string lastEditedAt
         string status
         int score
     }
@@ -75,7 +88,12 @@ erDiagram
 | Relationship | Cardinality | Foreign Key |
 |--------------|-------------|-------------|
 | RuleSet → Project | One-to-Many | `project.ruleSetId` |
+| User → Project (creator) | One-to-Many | `project.createdBy` |
+| Project → ProjectMember | One-to-Many | `project.members[]` |
+| ProjectMember → User | Many-to-One | `members[].userId` |
 | Project → Document | One-to-Many | `document.projectId` |
+| User → Document (creator) | One-to-Many | `document.createdBy` |
+| User → Document (editor) | One-to-Many | `document.lastEditedBy` |
 | Document → Geometry | One-to-Many | `geometry.documentId` |
 | Document → Result | One-to-Many | `result.documentId` |
 
@@ -106,15 +124,21 @@ Represents a building project containing floor plan documents.
 ```typescript
 interface Project {
   id: number;                      // Simple numeric ID
-  name: string;                    // Project name
-  location: string;                // City/location
+  name: string;                    // Project name (format: "Location, Building Name")
   siaPhase: '31' | '32' | '33' | '41' | '51' | '52' | '53';  // SIA 112 phase code
+  createdBy: number;               // Foreign key to User who created the project
   createdDate: string;             // Display date (DD/MM/YYYY)
   documentCount: number;           // Total documents in project
   resultPercentage: number;        // 0-100, average validation score
   status: 'active' | 'completed';
   ruleSetId: number;               // Foreign key to RuleSet
   imageUrl: string;                // Building photo URL
+  members: ProjectMember[];        // Users with access to this project
+}
+
+interface ProjectMember {
+  userId: number;                  // Foreign key to User
+  role: 'Admin' | 'Editor' | 'Viewer';  // Role within this project
 }
 ```
 
@@ -125,14 +149,19 @@ interface Project {
   {
     "id": 1,
     "name": "Bern, Verwaltungsgebäude Liebefeld",
-    "location": "Bern",
     "siaPhase": "53",
+    "createdBy": 3,
     "createdDate": "14/04/2022",
     "documentCount": 7,
     "resultPercentage": 91,
     "status": "active",
     "ruleSetId": 1,
-    "imageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop"
+    "imageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop",
+    "members": [
+      { "userId": 1, "role": "Admin" },
+      { "userId": 3, "role": "Editor" },
+      { "userId": 5, "role": "Viewer" }
+    ]
   }
 ]
 ```
@@ -164,8 +193,10 @@ interface Document {
   id: number;                      // Simple numeric ID
   projectId: number;               // Foreign key to Project
   name: string;                    // Filename
-  creator: string;                 // Creator info with timestamp
-  lastChange: string;              // Last change info with timestamp
+  createdBy: number;               // Foreign key to User who uploaded the document
+  createdAt: string;               // Upload timestamp (DD/MM/YYYY HH:mm)
+  lastEditedBy: number;            // Foreign key to User who last edited
+  lastEditedAt: string;            // Last edit timestamp (DD/MM/YYYY HH:mm)
   status: 'validated' | 'processing' | 'pending';
   score: number;                   // Validation score 0-100
 }
@@ -179,18 +210,21 @@ interface Document {
     "id": 1,
     "projectId": 1,
     "name": "Erdgeschoss (EG).dwg",
-    "creator": "peter.schmidt@bbl.admin.ch on 10/04/2022 09:30",
-    "lastChange": "peter.schmidt@bbl.admin.ch on 14/04/2022 14:20",
+    "createdBy": 3,
+    "createdAt": "10/04/2022 09:30",
+    "lastEditedBy": 3,
+    "lastEditedAt": "14/04/2022 14:20",
     "status": "validated",
     "score": 94
   }
 ]
 ```
 
-### Relationship
+### Relationships
 
-- `document.projectId` links to `project.id`
-- A project can have many documents
+- `document.projectId` links to `project.id` - A project can have many documents
+- `document.createdBy` links to `user.id` - The user who uploaded the document
+- `document.lastEditedBy` links to `user.id` - The user who last modified the document
 
 ---
 
@@ -510,6 +544,7 @@ Example: Adding data for document ID 2
 | 3.0 | 2025-01-09 | Merged rooms.json and areas.json into geometry.json with type field |
 | 3.1 | 2025-01-09 | Added results.json for validation results, users.json for user management |
 | 3.2 | 2025-01-09 | Updated test data with realistic area values (BGF ~300-550 m², room totals 75-85% of BGF) |
+| 4.0 | 2026-01-09 | Added Project-User relationships: createdBy, members[] on projects; createdBy, createdAt, lastEditedBy, lastEditedAt on documents |
 
 ---
 

@@ -190,6 +190,27 @@ function renderStatusIcon(status) {
 }
 
 /**
+ * Gets a user by ID from the mockUsers array
+ * @param {number} userId - The user ID
+ * @returns {Object|null} The user object or null if not found
+ */
+function getUserById(userId) {
+    return mockUsers.find(u => u.id === userId) || null;
+}
+
+/**
+ * Formats user and timestamp for display (e.g., "peter.schmidt@bbl.admin.ch on 10/04/2022 09:30")
+ * @param {number} userId - The user ID
+ * @param {string} timestamp - The timestamp string (DD/MM/YYYY HH:mm)
+ * @returns {string} Formatted string with email and timestamp
+ */
+function formatUserTimestamp(userId, timestamp) {
+    const user = getUserById(userId);
+    if (!user) return timestamp || '-';
+    return `${user.email} on ${timestamp}`;
+}
+
+/**
  * Sets up tab functionality for a tab group
  * @param {string} tabAttribute - The data attribute name for tabs (e.g., 'data-tab')
  * @param {string} paneIdPrefix - The prefix for pane IDs (e.g., 'tab-')
@@ -479,14 +500,15 @@ function setupNewProjectForm() {
             const newProject = {
                 id: newId,
                 name: escapeHtml(name),
-                location: extractLocation(name),
                 siaPhase: escapeHtml(siaPhase),
+                createdBy: 1,  // TODO: Use actual logged-in user ID
                 createdDate: formatDate(new Date()),
                 documentCount: 0,
                 resultPercentage: 0,
                 status: 'active',
+                ruleSetId: 1,  // Default rule set
                 imageUrl: selectedImageUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop',
-                projectNumber: escapeHtml(projectNumber)
+                members: [{ userId: 1, role: 'Admin' }]  // TODO: Use actual logged-in user ID
             };
 
             // Add to mockProjects array
@@ -508,17 +530,6 @@ function setupNewProjectForm() {
             showToast(`Projekt "${name}" wurde erstellt`, 'success');
         });
     }
-}
-
-/**
- * Extracts location from project name (assumes format "Location, Building Name")
- * @param {string} name - The project name
- * @returns {string} The extracted location or the full name
- */
-function extractLocation(name) {
-    if (!name) return '';
-    const parts = name.split(',');
-    return parts[0].trim();
 }
 
 /**
@@ -1110,8 +1121,8 @@ function renderDocuments() {
                     </label>
                 </td>
                 <td>${escapeHtml(doc.name)}</td>
-                <td>${escapeHtml(doc.creator)}</td>
-                <td>${escapeHtml(doc.lastChange)}</td>
+                <td>${escapeHtml(formatUserTimestamp(doc.createdBy, doc.createdAt))}</td>
+                <td>${escapeHtml(formatUserTimestamp(doc.lastEditedBy, doc.lastEditedAt))}</td>
                 <td class="text-right">${safeParseInt(doc.score)}%</td>
                 <td class="table__status-col">${renderStatusIcon(scoreStatus)}</td>
             </tr>

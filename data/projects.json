@@ -2,61 +2,88 @@
   {
     "id": 1,
     "name": "Bern, Verwaltungsgebäude Liebefeld",
-    "location": "Bern",
     "siaPhase": "53",
+    "createdBy": 3,
     "createdDate": "14/04/2022",
     "documentCount": 7,
     "resultPercentage": 91,
     "status": "active",
     "ruleSetId": 1,
-    "imageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop"
+    "imageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop",
+    "members": [
+      { "userId": 1, "role": "Admin" },
+      { "userId": 2, "role": "Editor" },
+      { "userId": 3, "role": "Editor" },
+      { "userId": 4, "role": "Editor" },
+      { "userId": 5, "role": "Viewer" }
+    ]
   },
   {
     "id": 2,
     "name": "Genf, Dienstleistungszentrum Montbrillant",
-    "location": "Genf",
     "siaPhase": "52",
+    "createdBy": 6,
     "createdDate": "22/03/2022",
     "documentCount": 9,
     "resultPercentage": 75,
     "status": "active",
     "ruleSetId": 1,
-    "imageUrl": "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&auto=format&fit=crop"
+    "imageUrl": "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&auto=format&fit=crop",
+    "members": [
+      { "userId": 1, "role": "Admin" },
+      { "userId": 6, "role": "Editor" },
+      { "userId": 7, "role": "Editor" }
+    ]
   },
   {
     "id": 3,
     "name": "Magglingen, BAZG, Hochschule Hauptgebäude",
-    "location": "Magglingen",
     "siaPhase": "51",
+    "createdBy": 10,
     "createdDate": "10/02/2022",
     "documentCount": 7,
     "resultPercentage": 89,
     "status": "active",
     "ruleSetId": 1,
-    "imageUrl": "https://images.unsplash.com/photo-1502101872923-d48509bff386?w=800&auto=format&fit=crop"
+    "imageUrl": "https://images.unsplash.com/photo-1502101872923-d48509bff386?w=800&auto=format&fit=crop",
+    "members": [
+      { "userId": 1, "role": "Admin" },
+      { "userId": 10, "role": "Editor" },
+      { "userId": 11, "role": "Viewer" }
+    ]
   },
   {
     "id": 4,
     "name": "Zollikofen, Forschung 3",
-    "location": "Zollikofen",
     "siaPhase": "53",
+    "createdBy": 8,
     "createdDate": "18/01/2022",
     "documentCount": 5,
     "resultPercentage": 100,
     "status": "completed",
     "ruleSetId": 1,
-    "imageUrl": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop"
+    "imageUrl": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop",
+    "members": [
+      { "userId": 1, "role": "Admin" },
+      { "userId": 8, "role": "Editor" },
+      { "userId": 9, "role": "Viewer" }
+    ]
   },
   {
     "id": 5,
     "name": "Magglingen, BAZG, Hochschule Neubau",
-    "location": "Magglingen",
     "siaPhase": "52",
+    "createdBy": 10,
     "createdDate": "05/12/2021",
     "documentCount": 4,
     "resultPercentage": 99,
     "status": "completed",
     "ruleSetId": 1,
-    "imageUrl": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop"
+    "imageUrl": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop",
+    "members": [
+      { "userId": 1, "role": "Admin" },
+      { "userId": 10, "role": "Editor" },
+      { "userId": 11, "role": "Viewer" }
+    ]
   }
 ]
