@@ -6,7 +6,7 @@
     <title>BBL Prüfplattform Flächenmanagement</title>
     <link rel="stylesheet" href="css/tokens.css">
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" integrity="sha384-4tstPXwfCpbD90fH8HpMgXjZNJjvLu6xGLnQwJ7cDkVhKnLPPBNiH9PJRp0DnPhl" crossorigin="anonymous"></script>
 </head>
 <body>
     <!-- Skip to Main Content (Accessibility) -->
@@ -47,16 +47,18 @@
 
                     <form class="login__form">
                         <div class="form__field">
+                            <label for="username" class="sr-only">Benutzername oder E-Mail</label>
                             <div class="form__input-group">
                                 <i data-lucide="user" class="form__input-icon icon icon-sm"></i>
-                                <input type="text" class="form__input" placeholder="Benutzername oder E-Mail" id="username" autocomplete="username">
+                                <input type="text" class="form__input" placeholder="Benutzername oder E-Mail" id="username" autocomplete="username" aria-label="Benutzername oder E-Mail">
                             </div>
                         </div>
 
                         <div class="form__field">
+                            <label for="password" class="sr-only">Passwort</label>
                             <div class="form__input-group">
                                 <i data-lucide="lock" class="form__input-icon icon icon-sm"></i>
-                                <input type="password" class="form__input" placeholder="Passwort" id="password" autocomplete="current-password">
+                                <input type="password" class="form__input" placeholder="Passwort" id="password" autocomplete="current-password" aria-label="Passwort">
                             </div>
                         </div>
 
@@ -108,12 +110,12 @@
                         <input type="text" class="search__input" placeholder="Projektname, ID, Auftrag" id="project-search">
                     </div>
                     <div class="page-header__actions">
-                        <div class="view-toggle">
-                            <button class="view-toggle__btn view-toggle__btn--active" data-view="grid" aria-label="Kachelansicht">
-                                <i data-lucide="grid-2x2" class="icon icon-md"></i>
+                        <div class="view-toggle" role="group" aria-label="Ansicht wechseln">
+                            <button class="view-toggle__btn view-toggle__btn--active" data-view="grid" aria-label="Kachelansicht" aria-pressed="true">
+                                <i data-lucide="grid-2x2" class="icon icon-md" aria-hidden="true"></i>
                             </button>
-                            <button class="view-toggle__btn" data-view="list" aria-label="Listenansicht">
-                                <i data-lucide="list" class="icon icon-md"></i>
+                            <button class="view-toggle__btn" data-view="list" aria-label="Listenansicht" aria-pressed="false">
+                                <i data-lucide="list" class="icon icon-md" aria-hidden="true"></i>
                             </button>
                         </div>
                         <button class="btn btn--secondary" id="new-project-btn">
@@ -623,12 +625,14 @@
 
                     <div class="split-view__right">
                         <div class="floorplan floorplan--speckle">
+                            <!-- Speckle viewer URL configured via JavaScript for security -->
                             <iframe
                                 id="speckle-viewer"
                                 class="speckle-viewer__iframe"
-                                src="https://app.speckle.systems/projects/fccae9bd00/models/e65877a4ee?embedToken=1f2376801974fe31263e873ea24d1fdb53d4f0ef56#embed=%7B%22isEnabled%22%3Atrue%2C%22isTransparent%22%3Atrue%2C%22hideControls%22%3Atrue%2C%22hideSelectionInfo%22%3Atrue%2C%22disableModelLink%22%3Atrue%7D&amp;savedView=%7B%22id%22%3A%220a421b6a94%22%7D"
+                                src=""
                                 title="Speckle 3D Floor Plan Viewer"
                                 allow="fullscreen"
+                                sandbox="allow-scripts allow-same-origin"
                                 loading="lazy">
                             </iframe>
                             <div class="speckle-viewer__loading" id="speckle-loading">

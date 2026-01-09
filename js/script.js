@@ -3,6 +3,258 @@
 // Main JavaScript
 // ========================================
 
+// === CONFIGURATION ===
+const CONFIG = {
+    SPECKLE_PROJECT_ID: 'fccae9bd00',
+    SPECKLE_MODEL_ID: 'e65877a4ee',
+    // Token should be loaded from environment/server in production
+    SPECKLE_EMBED_TOKEN: '', // Set via server-side injection or remove for public models
+    TOAST_DURATION_MS: 3000,
+    STEP_COUNT: 4,
+    BYTES_PER_KB: 1024
+};
+
+// === SECURITY UTILITIES ===
+
+/**
+ * Escapes HTML special characters to prevent XSS attacks
+ * @param {string} str - The string to escape
+ * @returns {string} The escaped string
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
+
+/**
+ * Sanitizes a filename for display
+ * @param {string} filename - The filename to sanitize
+ * @returns {string} The sanitized filename
+ */
+function sanitizeFilename(filename) {
+    if (!filename) return '';
+    // Remove path traversal and dangerous characters
+    return escapeHtml(filename.replace(/[<>:"/\\|?*]/g, '_'));
+}
+
+// === ERROR HANDLING UTILITIES ===
+
+/**
+ * Wraps a function with try-catch error handling
+ * @param {Function} fn - The function to wrap
+ * @param {string} context - Context for error logging
+ * @returns {Function} The wrapped function
+ */
+function withErrorHandling(fn, context) {
+    return function(...args) {
+        try {
+            return fn.apply(this, args);
+        } catch (error) {
+            console.error(`[${context}] Error:`, error);
+            showToast(`Ein Fehler ist aufgetreten: ${context}`, 'error');
+        }
+    };
+}
+
+/**
+ * Safely queries a DOM element with error handling
+ * @param {string} selector - The CSS selector
+ * @param {Element} [parent=document] - Parent element to search within
+ * @returns {Element|null} The found element or null
+ */
+function safeQuerySelector(selector, parent = document) {
+    try {
+        return parent.querySelector(selector);
+    } catch (error) {
+        console.error(`[DOM] Invalid selector: ${selector}`, error);
+        return null;
+    }
+}
+
+/**
+ * Safely gets an element by ID with validation
+ * @param {string} id - The element ID
+ * @returns {Element|null} The found element or null
+ */
+function safeGetElementById(id) {
+    if (!id || typeof id !== 'string') {
+        console.warn('[DOM] Invalid element ID provided');
+        return null;
+    }
+    return document.getElementById(id);
+}
+
+/**
+ * Safely parses an integer with fallback
+ * @param {string} value - The string to parse
+ * @param {number} [fallback=0] - Fallback value if parsing fails
+ * @returns {number} The parsed integer or fallback
+ */
+function safeParseInt(value, fallback = 0) {
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? fallback : parsed;
+}
+
+// === UI UTILITIES ===
+
+/**
+ * Renders a status icon pill based on status
+ * @param {string} status - The status ('ok', 'warning', 'error')
+ * @returns {string} HTML string for the status icon
+ */
+function renderStatusIcon(status) {
+    const iconMap = {
+        'ok': { class: 'success', icon: 'check' },
+        'warning': { class: 'warning', icon: 'alert-triangle' },
+        'error': { class: 'error', icon: 'x' }
+    };
+    const config = iconMap[status] || iconMap['error'];
+    return `<span class="status-pill status-pill--${config.class}"><i data-lucide="${config.icon}" class="icon icon-sm" aria-hidden="true"></i></span>`;
+}
+
+/**
+ * Sets up tab functionality for a tab group
+ * @param {string} tabAttribute - The data attribute name for tabs (e.g., 'data-tab')
+ * @param {string} paneIdPrefix - The prefix for pane IDs (e.g., 'tab-')
+ * @param {string[]} [paneIds] - Optional specific pane IDs to target
+ */
+function setupTabGroup(tabAttribute, paneIdPrefix, paneIds = null) {
+    document.querySelectorAll(`.tabs__tab[${tabAttribute}]`).forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tabName = tab.getAttribute(tabAttribute);
+
+            // Update active tab within the same tab list
+            const tabList = tab.closest('.tabs__list');
+            if (tabList) {
+                tabList.querySelectorAll('.tabs__tab').forEach(t => {
+                    t.classList.remove('tabs__tab--active');
+                });
+            }
+            tab.classList.add('tabs__tab--active');
+
+            // Update active pane
+            if (paneIds) {
+                paneIds.forEach(id => {
+                    const pane = safeGetElementById(id);
+                    if (pane) pane.classList.remove('tab-pane--active');
+                });
+            } else {
+                document.querySelectorAll('.tab-pane').forEach(pane => {
+                    pane.classList.remove('tab-pane--active');
+                });
+            }
+
+            const targetPane = safeGetElementById(`${paneIdPrefix}${tabName}`);
+            if (targetPane) {
+                targetPane.classList.add('tab-pane--active');
+            }
+        });
+    });
+}
+
+/**
+ * Generates the Speckle viewer URL
+ * @returns {string} The Speckle viewer URL
+ */
+function getSpeckleViewerUrl() {
+    const baseUrl = `https://app.speckle.systems/projects/${CONFIG.SPECKLE_PROJECT_ID}/models/${CONFIG.SPECKLE_MODEL_ID}`;
+    const embedOptions = encodeURIComponent(JSON.stringify({
+        isEnabled: true,
+        isTransparent: true,
+        hideControls: true,
+        hideSelectionInfo: true,
+        disableModelLink: true
+    }));
+    const savedView = encodeURIComponent(JSON.stringify({ id: '0a421b6a94' }));
+
+    let url = `${baseUrl}?embed=${embedOptions}&savedView=${savedView}`;
+    if (CONFIG.SPECKLE_EMBED_TOKEN) {
+        url = `${baseUrl}?embedToken=${CONFIG.SPECKLE_EMBED_TOKEN}#embed=${embedOptions}&savedView=${savedView}`;
+    }
+    return url;
+}
+
+// === STATE MANAGEMENT ===
+const AppState = {
+    currentView: 'login',
+    currentProject: null,
+    currentDocument: null,
+    currentStep: 1,
+    isNavigatingFromHash: false,
+
+    /**
+     * Updates the current view
+     * @param {string} view - The new view name
+     */
+    setView(view) {
+        this.currentView = view;
+    },
+
+    /**
+     * Updates the current project
+     * @param {Object|null} project - The project object or null
+     */
+    setProject(project) {
+        this.currentProject = project;
+    },
+
+    /**
+     * Updates the current document
+     * @param {Object|null} doc - The document object or null
+     */
+    setDocument(doc) {
+        this.currentDocument = doc;
+    },
+
+    /**
+     * Updates the current step
+     * @param {number} step - The step number (1-4)
+     */
+    setStep(step) {
+        if (step >= 1 && step <= CONFIG.STEP_COUNT) {
+            this.currentStep = step;
+        }
+    },
+
+    /**
+     * Resets the state
+     */
+    reset() {
+        this.currentView = 'login';
+        this.currentProject = null;
+        this.currentDocument = null;
+        this.currentStep = 1;
+    }
+};
+
+// Legacy compatibility - use getters/setters to sync with AppState
+let _navigationTimeoutId = null; // Track pending navigation timeout
+
+// Define getters/setters for legacy global compatibility
+Object.defineProperty(window, 'currentView', {
+    get: () => AppState.currentView,
+    set: (v) => { AppState.currentView = v; }
+});
+Object.defineProperty(window, 'currentProject', {
+    get: () => AppState.currentProject,
+    set: (v) => { AppState.currentProject = v; }
+});
+Object.defineProperty(window, 'currentDocument', {
+    get: () => AppState.currentDocument,
+    set: (v) => { AppState.currentDocument = v; }
+});
+Object.defineProperty(window, 'currentStep', {
+    get: () => AppState.currentStep,
+    set: (v) => { AppState.currentStep = v; }
+});
+Object.defineProperty(window, 'isNavigatingFromHash', {
+    get: () => AppState.isNavigatingFromHash,
+    set: (v) => { AppState.isNavigatingFromHash = v; }
+});
+
 // === MOCK DATA ===
 const mockProjects = [
     {
@@ -344,21 +596,31 @@ function updateUrlHash() {
     }
 }
 
+/**
+ * Parses the URL hash into route components
+ * @returns {{view: string, projectId: number|null, documentId: number|null, isResults: boolean}}
+ * @description Utility function for URL routing. Can be used for deep linking.
+ */
 function parseUrlHash() {
     const hash = window.location.hash || '#/login';
     const parts = hash.replace('#/', '').split('/');
 
     return {
         view: parts[0] || 'login',
-        projectId: parts[1] === 'project' ? null : (parts[0] === 'project' ? parseInt(parts[1]) : null),
-        documentId: parts.includes('document') ? parseInt(parts[parts.indexOf('document') + 1]) : null,
+        projectId: parts[1] === 'project' ? null : (parts[0] === 'project' ? safeParseInt(parts[1]) : null),
+        documentId: parts.includes('document') ? safeParseInt(parts[parts.indexOf('document') + 1]) : null,
         isResults: parts.includes('results')
     };
 }
 
 function navigateFromHash() {
+    // Cancel any pending navigation timeout to prevent race conditions
+    if (_navigationTimeoutId) {
+        clearTimeout(_navigationTimeoutId);
+        _navigationTimeoutId = null;
+    }
+
     isNavigatingFromHash = true;
-    const route = parseUrlHash();
     const hash = window.location.hash || '';
 
     // Parse the hash more directly
@@ -372,14 +634,16 @@ function navigateFromHash() {
     } else if (hash === '#/login') {
         switchView('login');
     } else if (projectMatch) {
-        const projectId = parseInt(projectMatch[1]);
+        const projectId = safeParseInt(projectMatch[1]);
 
         if (documentMatch) {
-            const documentId = parseInt(documentMatch[1]);
+            const documentId = safeParseInt(documentMatch[1]);
             // First open project, then document
             openProjectDetail(projectId, true); // true = skip hash update
 
-            setTimeout(() => {
+            // Use tracked timeout to allow cancellation on rapid navigation
+            _navigationTimeoutId = setTimeout(() => {
+                _navigationTimeoutId = null;
                 openValidationView(documentId, true);
                 if (isResults) {
                     switchView('results');
@@ -456,21 +720,21 @@ function renderProjects() {
             : '';
 
         return `
-            <article class="card" data-project-id="${project.id}">
+            <article class="card" data-project-id="${safeParseInt(project.id)}">
                 <div class="card__image">
-                    <img src="${project.imageUrl}" alt="${project.name}">
+                    <img src="${escapeHtml(project.imageUrl)}" alt="${escapeHtml(project.name)}">
                     ${overlayHtml}
                 </div>
                 <div class="card__content">
-                    <h3 class="card__title">${project.name}</h3>
+                    <h3 class="card__title">${escapeHtml(project.name)}</h3>
                     <dl class="card__meta">
                         <div class="card__meta-left">
-                            <dd>SIA Phase: ${project.siaPhase}</dd>
-                            <dd>${project.createdDate}</dd>
-                            <dd>${project.documentCount} Dokumente</dd>
+                            <dd>SIA Phase: ${escapeHtml(project.siaPhase)}</dd>
+                            <dd>${escapeHtml(project.createdDate)}</dd>
+                            <dd>${safeParseInt(project.documentCount)} Dokumente</dd>
                         </div>
                         <div class="card__meta-right">
-                            <span class="card__percentage card__percentage--${scoreClass}">${project.completionPercentage}%</span>
+                            <span class="card__percentage card__percentage--${scoreClass}">${safeParseInt(project.completionPercentage)}%</span>
                         </div>
                     </dl>
                 </div>
@@ -478,11 +742,13 @@ function renderProjects() {
         `;
     }).join('');
 
-    // Add click handlers
+    // Add click handlers using event delegation would be better, but maintaining compatibility
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('click', () => {
-            const projectId = parseInt(card.dataset.projectId);
-            openProjectDetail(projectId);
+            const projectId = safeParseInt(card.dataset.projectId);
+            if (projectId > 0) {
+                openProjectDetail(projectId);
+            }
         });
     });
 }
@@ -559,11 +825,11 @@ function renderDocuments() {
                           doc.score >= 60 ? 'warning' : 'error';
 
         return `
-            <tr data-document-id="${doc.id}">
-                <td>${doc.name}</td>
-                <td>${doc.creator}</td>
-                <td>${doc.lastChange}</td>
-                <td class="text-right"><span class="card__percentage card__percentage--${scoreClass}">${doc.score}%</span></td>
+            <tr data-document-id="${safeParseInt(doc.id)}">
+                <td>${escapeHtml(doc.name)}</td>
+                <td>${escapeHtml(doc.creator)}</td>
+                <td>${escapeHtml(doc.lastChange)}</td>
+                <td class="text-right"><span class="card__percentage card__percentage--${scoreClass}">${safeParseInt(doc.score)}%</span></td>
             </tr>
         `;
     }).join('');
@@ -571,8 +837,10 @@ function renderDocuments() {
     // Add click handlers
     tbody.querySelectorAll('tr').forEach(row => {
         row.addEventListener('click', () => {
-            const docId = parseInt(row.dataset.documentId);
-            openValidationView(docId);
+            const docId = safeParseInt(row.dataset.documentId);
+            if (docId > 0) {
+                openValidationView(docId);
+            }
         });
     });
 }
@@ -585,10 +853,10 @@ function renderRules() {
     tbody.innerHTML = mockValidationRules.map(rule => {
         return `
             <tr>
-                <td><code>${rule.code}</code></td>
-                <td>${rule.name}</td>
-                <td><span class="badge badge--secondary">${rule.category}</span></td>
-                <td>${rule.description}</td>
+                <td><code>${escapeHtml(rule.code)}</code></td>
+                <td>${escapeHtml(rule.name)}</td>
+                <td><span class="badge badge--secondary">${escapeHtml(rule.category)}</span></td>
+                <td>${escapeHtml(rule.description)}</td>
             </tr>
         `;
     }).join('');
@@ -699,7 +967,6 @@ function updateStepContent() {
         }
         renderStep2Rooms();
         renderStep2Errors();
-        renderStep2FloorPlan();
     }
 }
 
@@ -763,18 +1030,12 @@ function renderRooms() {
     if (!tbody) return;
 
     tbody.innerHTML = mockRooms.map(room => {
-        const statusIcon = room.status === 'ok'
-            ? '<span class="status-pill status-pill--success"><i data-lucide="check" class="icon icon-sm"></i></span>'
-            : room.status === 'warning'
-            ? '<span class="status-pill status-pill--warning"><i data-lucide="alert-triangle" class="icon icon-sm"></i></span>'
-            : '<span class="status-pill status-pill--error"><i data-lucide="x" class="icon icon-sm"></i></span>';
-
         return `
             <tr>
-                <td>${room.aoid}</td>
-                <td class="text-right">${Math.round(room.area)}</td>
-                <td>${room.aofunction}</td>
-                <td class="text-center">${statusIcon}</td>
+                <td>${escapeHtml(room.aoid)}</td>
+                <td class="text-right">${Math.round(room.area || 0)}</td>
+                <td>${escapeHtml(room.aofunction)}</td>
+                <td class="text-center">${renderStatusIcon(room.status)}</td>
             </tr>
         `;
     }).join('');
@@ -790,15 +1051,19 @@ function renderErrors() {
     const errorList = document.getElementById('error-list');
     if (!errorList) return;
 
-    errorList.innerHTML = mockErrors.map(error => `
-        <div class="error-item error-item--${error.severity}">
-            <div class="error-item__header">
-                <span class="error-item__code">${error.code}</span>
-                <span class="error-item__severity error-item__severity--${error.severity}">${error.severity}</span>
+    const validSeverities = ['error', 'warning', 'info'];
+    errorList.innerHTML = mockErrors.map(error => {
+        const severity = validSeverities.includes(error.severity) ? error.severity : 'error';
+        return `
+            <div class="error-item error-item--${severity}">
+                <div class="error-item__header">
+                    <span class="error-item__code">${escapeHtml(error.code)}</span>
+                    <span class="error-item__severity error-item__severity--${severity}">${escapeHtml(error.severity)}</span>
+                </div>
+                <div class="error-item__message">${escapeHtml(error.message)}</div>
             </div>
-            <div class="error-item__message">${error.message}</div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // === AREA POLYGONS RENDERING ===
@@ -816,18 +1081,12 @@ function renderAreaPolygons() {
     ];
 
     tbody.innerHTML = areaPolygons.map(polygon => {
-        const statusIcon = polygon.status === 'ok'
-            ? '<span class="status-pill status-pill--success"><i data-lucide="check" class="icon icon-sm"></i></span>'
-            : polygon.status === 'warning'
-            ? '<span class="status-pill status-pill--warning"><i data-lucide="alert-triangle" class="icon icon-sm"></i></span>'
-            : '<span class="status-pill status-pill--error"><i data-lucide="x" class="icon icon-sm"></i></span>';
-
         return `
             <tr>
-                <td>${polygon.aoid}</td>
-                <td class="text-right">${Math.round(polygon.area).toLocaleString('de-CH')}</td>
-                <td>${polygon.aofunction}</td>
-                <td class="text-center">${statusIcon}</td>
+                <td>${escapeHtml(polygon.aoid)}</td>
+                <td class="text-right">${Math.round(polygon.area || 0).toLocaleString('de-CH')}</td>
+                <td>${escapeHtml(polygon.aofunction)}</td>
+                <td class="text-center">${renderStatusIcon(polygon.status)}</td>
             </tr>
         `;
     }).join('');
@@ -846,17 +1105,15 @@ function renderStep2Rooms() {
     tbody.innerHTML = mockRooms.map((room, index) => {
         // Simulate Excel matching - 3 rooms don't match
         const hasExcelMatch = index < 19; // First 19 match, last 3 don't
-        const statusIcon = hasExcelMatch
-            ? '<span class="status-pill status-pill--success"><i data-lucide="check" class="icon icon-sm"></i></span>'
-            : '<span class="status-pill status-pill--error"><i data-lucide="x" class="icon icon-sm"></i></span>';
+        const matchStatus = hasExcelMatch ? 'ok' : 'error';
 
         return `
             <tr>
-                <td>${room.aoid}</td>
-                <td>Raum ${room.aoid}</td>
-                <td class="text-right">${Math.round(room.area)}</td>
-                <td>${room.aofunction}</td>
-                <td class="text-center">${statusIcon}</td>
+                <td>${escapeHtml(room.aoid)}</td>
+                <td>Raum ${escapeHtml(room.aoid)}</td>
+                <td class="text-right">${Math.round(room.area || 0)}</td>
+                <td>${escapeHtml(room.aofunction)}</td>
+                <td class="text-center">${renderStatusIcon(matchStatus)}</td>
             </tr>
         `;
     }).join('');
@@ -890,55 +1147,50 @@ function renderStep2Errors() {
         }
     ];
 
-    errorList.innerHTML = excelErrors.map(error => `
-        <div class="error-item error-item--${error.severity}">
-            <div class="error-item__header">
-                <span class="error-item__code">${error.code}</span>
-                <span class="error-item__severity error-item__severity--${error.severity}">${error.severity}</span>
+    const validSeverities = ['error', 'warning', 'info'];
+    errorList.innerHTML = excelErrors.map(error => {
+        const severity = validSeverities.includes(error.severity) ? error.severity : 'error';
+        return `
+            <div class="error-item error-item--${severity}">
+                <div class="error-item__header">
+                    <span class="error-item__code">${escapeHtml(error.code)}</span>
+                    <span class="error-item__severity error-item__severity--${severity}">${escapeHtml(error.severity)}</span>
+                </div>
+                <div class="error-item__message">${escapeHtml(error.message)}</div>
             </div>
-            <div class="error-item__message">${error.message}</div>
-        </div>
-    `).join('');
-}
-
-function renderStep2FloorPlan() {
-    const svg = document.getElementById('step2-floorplan-svg');
-    if (!svg) return;
-
-    // Reuse same floor plan structure as Step 1
-    const rooms = [
-        { x: 50, y: 50, width: 150, height: 100, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' },
-        { x: 220, y: 50, width: 120, height: 100, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' },
-        { x: 360, y: 50, width: 180, height: 100, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' },
-        { x: 50, y: 170, width: 100, height: 150, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' },
-        { x: 170, y: 170, width: 170, height: 150, fill: 'rgba(220, 53, 69, 0.3)', stroke: 'var(--color-error-marker)' }, // Non-matching room
-        { x: 360, y: 170, width: 180, height: 150, fill: 'var(--color-room-fill)', stroke: 'var(--color-room-stroke)' }
-    ];
-
-    svg.innerHTML = rooms.map((room, i) => `
-        <rect x="${room.x}" y="${room.y}" width="${room.width}" height="${room.height}"
-              fill="${room.fill}" stroke="${room.stroke}" stroke-width="2" class="floorplan__room"/>
-        <text x="${room.x + room.width/2}" y="${room.y + room.height/2}"
-              text-anchor="middle" font-size="14" fill="#333">EG-${String(i + 1).padStart(3, '0')}</text>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // === SPECKLE VIEWER ===
+let _speckleViewerInitialized = false; // Prevent duplicate event listener attachment
+
 function initSpeckleViewer() {
     const iframe = document.getElementById('speckle-viewer');
     const loading = document.getElementById('speckle-loading');
 
     if (!iframe || !loading) return;
 
-    // Hide loading indicator when iframe loads
-    iframe.addEventListener('load', () => {
-        loading.classList.add('is-hidden');
-    });
+    // Set the Speckle viewer URL dynamically (only once)
+    const viewerUrl = getSpeckleViewerUrl();
+    if (viewerUrl && !iframe.src) {
+        iframe.src = viewerUrl;
+    }
 
-    // Handle iframe load errors
-    iframe.addEventListener('error', () => {
-        loading.innerHTML = '<span>Fehler beim Laden des 3D-Grundrisses</span>';
-    });
+    // Only attach event listeners once to prevent duplicates
+    if (!_speckleViewerInitialized) {
+        _speckleViewerInitialized = true;
+
+        // Hide loading indicator when iframe loads
+        iframe.addEventListener('load', () => {
+            loading.classList.add('is-hidden');
+        });
+
+        // Handle iframe load errors
+        iframe.addEventListener('error', () => {
+            loading.innerHTML = '<span>Fehler beim Laden des 3D-Grundrisses</span>';
+        });
+    }
 }
 
 // Legacy function kept for compatibility - now handled by Speckle iframe
@@ -1007,68 +1259,14 @@ function renderPieChart() {
 
 // === TAB SWITCHING ===
 function setupTabs() {
-    // Project detail tabs
-    document.querySelectorAll('.tabs__tab[data-tab]').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            e.preventDefault();
-            const tabName = tab.dataset.tab;
+    // Project detail tabs (documents, users, rules)
+    setupTabGroup('data-tab', 'tab-', ['tab-documents', 'tab-users', 'tab-rules']);
 
-            // Update active tab
-            tab.parentElement.parentElement.querySelectorAll('.tabs__tab').forEach(t => {
-                t.classList.remove('tabs__tab--active');
-            });
-            tab.classList.add('tabs__tab--active');
+    // Validation view tabs - Step 1 (rooms, areas, errors)
+    setupTabGroup('data-val-tab', 'val-tab-', ['val-tab-rooms', 'val-tab-areas', 'val-tab-errors']);
 
-            // Update active pane
-            document.querySelectorAll('.tab-pane').forEach(pane => {
-                pane.classList.remove('tab-pane--active');
-            });
-            const targetPane = document.getElementById(`tab-${tabName}`);
-            if (targetPane) {
-                targetPane.classList.add('tab-pane--active');
-            }
-        });
-    });
-
-    // Validation view tabs (Step 1)
-    document.querySelectorAll('.tabs__tab[data-val-tab]').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            e.preventDefault();
-            const tabName = tab.dataset.valTab;
-
-            // Update active tab
-            tab.parentElement.parentElement.querySelectorAll('.tabs__tab').forEach(t => {
-                t.classList.remove('tabs__tab--active');
-            });
-            tab.classList.add('tabs__tab--active');
-
-            // Update active pane (val-tab-* panes are now unified to .tab-pane)
-            document.querySelectorAll('#val-tab-rooms, #val-tab-areas, #val-tab-errors').forEach(pane => {
-                pane.classList.remove('tab-pane--active');
-            });
-            document.getElementById(`val-tab-${tabName}`).classList.add('tab-pane--active');
-        });
-    });
-
-    // Step 2 tabs
-    document.querySelectorAll('.tabs__tab[data-step2-tab]').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            e.preventDefault();
-            const tabName = tab.dataset.step2Tab;
-
-            // Update active tab
-            tab.parentElement.parentElement.querySelectorAll('.tabs__tab').forEach(t => {
-                t.classList.remove('tabs__tab--active');
-            });
-            tab.classList.add('tabs__tab--active');
-
-            // Update active pane (step2-tab-* panes are now unified to .tab-pane)
-            document.querySelectorAll('#step2-tab-rooms, #step2-tab-errors').forEach(pane => {
-                pane.classList.remove('tab-pane--active');
-            });
-            document.getElementById(`step2-tab-${tabName}`).classList.add('tab-pane--active');
-        });
-    });
+    // Step 2 tabs (rooms, errors)
+    setupTabGroup('data-step2-tab', 'step2-tab-', ['step2-tab-rooms', 'step2-tab-errors']);
 }
 
 // === PROJECT SEARCH ===
@@ -1184,23 +1382,27 @@ function setupEventListeners() {
         });
     });
 
-    // View toggle
+    // View toggle with accessibility support
     document.querySelectorAll('.view-toggle__btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.view-toggle__btn').forEach(b => {
                 b.classList.remove('view-toggle__btn--active');
+                b.setAttribute('aria-pressed', 'false');
             });
             btn.classList.add('view-toggle__btn--active');
+            btn.setAttribute('aria-pressed', 'true');
 
             const viewType = btn.dataset.view;
             const cardGrid = document.getElementById('project-grid');
 
-            if (viewType === 'list') {
-                cardGrid.classList.add('card-grid--list');
-                showToast('Listenansicht aktiviert', 'info');
-            } else {
-                cardGrid.classList.remove('card-grid--list');
-                showToast('Kachelansicht aktiviert', 'info');
+            if (cardGrid) {
+                if (viewType === 'list') {
+                    cardGrid.classList.add('card-grid--list');
+                    showToast('Listenansicht aktiviert', 'info');
+                } else {
+                    cardGrid.classList.remove('card-grid--list');
+                    showToast('Kachelansicht aktiviert', 'info');
+                }
             }
         });
     });
@@ -1243,92 +1445,120 @@ function handleFileSelect(event, type) {
     if (!file) return;
 
     const fileSize = formatFileSize(file.size);
+    const sanitizedName = sanitizeFilename(file.name);
 
     if (type === 'dwg') {
-        document.getElementById('dwg-file-name').textContent = file.name;
-        document.getElementById('dwg-file-size').textContent = fileSize;
-        document.getElementById('dwg-uploaded-file').style.display = 'block';
-        showToast(`DWG-Datei "${file.name}" ausgewählt`, 'success');
+        const nameEl = document.getElementById('dwg-file-name');
+        const sizeEl = document.getElementById('dwg-file-size');
+        const uploadedEl = document.getElementById('dwg-uploaded-file');
+        if (nameEl) nameEl.textContent = sanitizedName;
+        if (sizeEl) sizeEl.textContent = fileSize;
+        if (uploadedEl) uploadedEl.style.display = 'block';
+        showToast(`DWG-Datei "${sanitizedName}" ausgewählt`, 'success');
     } else if (type === 'excel') {
-        document.getElementById('excel-file-name').textContent = file.name;
-        document.getElementById('excel-file-size').textContent = fileSize;
-        document.getElementById('excel-uploaded-file').style.display = 'block';
-        showToast(`Excel-Datei "${file.name}" ausgewählt`, 'success');
+        const nameEl = document.getElementById('excel-file-name');
+        const sizeEl = document.getElementById('excel-file-size');
+        const uploadedEl = document.getElementById('excel-uploaded-file');
+        if (nameEl) nameEl.textContent = sanitizedName;
+        if (sizeEl) sizeEl.textContent = fileSize;
+        if (uploadedEl) uploadedEl.style.display = 'block';
+        showToast(`Excel-Datei "${sanitizedName}" ausgewählt`, 'success');
     }
 }
 
 function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
+    if (!bytes || bytes <= 0) return '0 Bytes';
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    const i = Math.floor(Math.log(bytes) / Math.log(CONFIG.BYTES_PER_KB));
+    if (i >= sizes.length) return 'File too large';
+    return parseFloat((bytes / Math.pow(CONFIG.BYTES_PER_KB, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 // === TOAST NOTIFICATIONS ===
 function showToast(message, type = 'info') {
+    const validTypes = ['info', 'success', 'warning', 'error'];
+    const toastType = validTypes.includes(type) ? type : 'info';
+
     const toast = document.createElement('div');
-    toast.className = `toast toast--${type}`;
-    toast.textContent = message;
+    toast.className = `toast toast--${toastType}`;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'polite');
+    toast.textContent = message; // textContent is safe from XSS
     document.body.appendChild(toast);
 
     setTimeout(() => {
         toast.style.animation = 'slideOut 0.3s ease forwards';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.remove();
+            }
+        }, 300);
+    }, CONFIG.TOAST_DURATION_MS);
 }
 
 // === ENHANCED INTERACTIONS ===
+let _interactionsInitialized = false;
+
 function enhanceInteractions() {
-    // Add ripple effect to buttons
-    document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
+    // Only initialize once - use event delegation for dynamic content
+    if (_interactionsInitialized) return;
+    _interactionsInitialized = true;
 
-            ripple.style.cssText = `
-                position: absolute;
-                width: ${size}px;
-                height: ${size}px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.5);
-                left: ${x}px;
-                top: ${y}px;
-                pointer-events: none;
-                animation: ripple 0.6s ease-out;
-            `;
+    // Add ripple effect to buttons using event delegation
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn');
+        if (!btn) return;
 
-            this.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
-        });
+        const ripple = document.createElement('span');
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+
+        ripple.style.cssText = `
+            position: absolute;
+            width: ${size}px;
+            height: ${size}px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            left: ${x}px;
+            top: ${y}px;
+            pointer-events: none;
+            animation: ripple 0.6s ease-out;
+        `;
+
+        btn.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
     });
 
-    // Enhanced room table hover
-    document.querySelectorAll('#room-table-body tr').forEach((row, index) => {
-        row.addEventListener('mouseenter', () => {
-            // Highlight corresponding room on floor plan
+    // Room table hover using event delegation (works with dynamically rendered rows)
+    const roomTableBody = document.getElementById('room-table-body');
+    if (roomTableBody) {
+        roomTableBody.addEventListener('mouseenter', (e) => {
+            const row = e.target.closest('tr');
+            if (!row) return;
+            const index = Array.from(roomTableBody.children).indexOf(row);
             const rooms = document.querySelectorAll('.floorplan__room');
             if (rooms[index]) {
                 rooms[index].classList.add('floorplan__room--selected');
             }
-        });
+        }, true); // Use capture phase for delegation
 
-        row.addEventListener('mouseleave', () => {
+        roomTableBody.addEventListener('mouseleave', (e) => {
+            const row = e.target.closest('tr');
+            if (!row) return;
             document.querySelectorAll('.floorplan__room').forEach(r => {
                 r.classList.remove('floorplan__room--selected');
             });
-        });
-    });
+        }, true);
+    }
 
-    // Add smooth scroll to error locations
-    document.querySelectorAll('.error-item').forEach(error => {
-        error.style.cursor = 'pointer';
-        error.addEventListener('click', () => {
+    // Error item clicks using event delegation
+    document.addEventListener('click', (e) => {
+        const errorItem = e.target.closest('.error-item');
+        if (errorItem) {
             showToast('Error location highlighted on floor plan', 'info');
-        });
+        }
     });
 }
 
@@ -1367,22 +1597,19 @@ document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
     }
 
-    // Check if there's a URL hash to navigate to, otherwise start at login
+    // Default to login view if no valid hash
+    // Note: setupRouting() already handles hash-based navigation on page load,
+    // so we only need to set the default view when there's no hash
     const hash = window.location.hash;
-    if (hash && hash !== '#/login' && hash !== '#/' && hash !== '#') {
-        // URL routing will handle navigation
-        navigateFromHash();
-    } else {
-        // Default to login view
+    if (!hash || hash === '#/login' || hash === '#/' || hash === '#') {
         switchView('login');
     }
+    // Navigation for other hashes is handled by setupRouting() to avoid race conditions
 
-    // Add welcome message after brief delay
-    setTimeout(() => {
-        console.log('%c BBL Prüfplattform Flächenmanagement ', 'background: #DC0018; color: white; font-size: 14px; padding: 4px 8px;');
-        console.log('%c Prototype v1.0 - Swiss Federal Design System ', 'background: #006699; color: white; font-size: 12px; padding: 4px 8px;');
-    }, 100);
+    // Add welcome message
+    console.log('%c BBL Prüfplattform Flächenmanagement ', 'background: #DC0018; color: white; font-size: 14px; padding: 4px 8px;');
+    console.log('%c Prototype v1.0 - Swiss Federal Design System ', 'background: #006699; color: white; font-size: 12px; padding: 4px 8px;');
 
-    // Enhance interactions after DOM is ready
-    setTimeout(enhanceInteractions, 500);
+    // Enhance interactions - now uses event delegation so no delay needed
+    enhanceInteractions();
 });
