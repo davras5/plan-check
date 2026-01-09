@@ -36,7 +36,7 @@
 
     --color-text-primary: var(--color-night-rider);   /* #333333 - 12.6:1 contrast */
     --color-text-secondary: var(--color-empress);     /* #757575 - 4.6:1 contrast (WCAG AA) */
-    --color-text-muted: #999999;                      /* #999999 - 3.0:1 contrast (WCAG AA for large text) */
+    --color-text-muted: #767676;                      /* #767676 - 4.5:1 contrast (WCAG AA compliant) */
     --color-text-inverse: var(--color-white);
 
     --color-bg-primary: var(--color-white);
@@ -152,7 +152,7 @@
     --button-padding-y-sm: 0.5rem;            /* 8px - matches 40px height with sm font */
     --button-padding-x-sm: var(--space-4);    /* 16px */
     --button-padding-y: var(--space-2);       /* 8px */
-    --button-padding-x: var(--space-3);       /* 12px */
+    --button-padding-x: var(--space-4);       /* 16px - consistent with small buttons */
     --button-padding-y-lg: var(--space-3);    /* 12px */
     --button-padding-x-lg: var(--space-4);    /* 16px */
 
@@ -179,4 +179,21 @@
     --icon-size-md: 20px;
     --icon-size-lg: 24px;
     --icon-size-xl: 32px;
+
+    /* Border Radius */
+    --radius-none: 0;
+    --radius-sm: 2px;
+    --radius-md: 4px;
+    --radius-lg: 8px;
+    --radius-full: 50%;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.2);
+
+    /* Overlays */
+    --overlay-light: rgba(0, 0, 0, 0.5);
+    --overlay-dark: rgba(0, 0, 0, 0.6);
 }
