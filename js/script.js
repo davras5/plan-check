@@ -508,7 +508,7 @@ function setupNewProjectForm() {
                 status: 'active',
                 ruleSetId: 1,  // Default rule set
                 imageUrl: selectedImageUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop',
-                members: [{ userId: 1, role: 'Admin' }]  // TODO: Use actual logged-in user ID
+                users: [{ userId: 1, role: 'Admin' }]  // TODO: Use actual logged-in user ID
             };
 
             // Add to mockProjects array
@@ -1321,15 +1321,6 @@ const UserSelection = {
 };
 
 // === USER RENDERING ===
-function getRoleClass(role) {
-    const roleClasses = {
-        'Admin': 'info',
-        'Editor': 'secondary',
-        'Viewer': 'muted'
-    };
-    return roleClasses[role] || 'muted';
-}
-
 function renderUsers() {
     const tbody = safeGetElementById('user-table-body');
     if (!tbody) return;
@@ -1338,7 +1329,6 @@ function renderUsers() {
     UserSelection.deselectAll();
 
     tbody.innerHTML = mockUsers.map(user => {
-        const roleClass = getRoleClass(user.role);
         return `
             <tr data-user-id="${safeParseInt(user.id)}">
                 <td class="table__checkbox-col">
@@ -1349,7 +1339,6 @@ function renderUsers() {
                 </td>
                 <td>${escapeHtml(user.name)}</td>
                 <td>${escapeHtml(user.email)}</td>
-                <td><span class="badge badge--${roleClass}">${escapeHtml(user.role)}</span></td>
                 <td>${escapeHtml(user.lastActivity)}</td>
             </tr>
         `;

@@ -12,10 +12,7 @@ This document defines the data model for the BBL Prüfplattform Flächenmanageme
 erDiagram
     RuleSet ||--o{ Project : "applies to"
     Project ||--o{ Document : "contains"
-    Project }o--o{ User : "has members"
-    User ||--o{ Project : "creates"
-    User ||--o{ Document : "creates"
-    User ||--o{ Document : "edits"
+    Project }o--o{ User : "has"
     Document ||--o{ Geometry : "has"
     Document ||--o{ Result : "has"
 
@@ -37,7 +34,7 @@ erDiagram
         string status
         int ruleSetId FK
         string imageUrl
-        json members
+        json users
     }
 
     Document {
@@ -72,7 +69,6 @@ erDiagram
         int id PK
         string name
         string email
-        string role
         string lastActivity
     }
 ```
@@ -82,11 +78,8 @@ erDiagram
 | Relationship | Cardinality | Foreign Key |
 |--------------|-------------|-------------|
 | RuleSet → Project | One-to-Many | `project.ruleSetId` |
-| User → Project (creator) | One-to-Many | `project.createdBy` |
-| Project ↔ User (members) | Many-to-Many | `project.members[].userId` |
+| Project ↔ User | Many-to-Many | `project.users[].userId` |
 | Project → Document | One-to-Many | `document.projectId` |
-| User → Document (creator) | One-to-Many | `document.createdBy` |
-| User → Document (editor) | One-to-Many | `document.lastEditedBy` |
 | Document → Geometry | One-to-Many | `geometry.documentId` |
 | Document → Result | One-to-Many | `result.documentId` |
 
@@ -126,10 +119,10 @@ interface Project {
   status: 'active' | 'completed';
   ruleSetId: number;               // Foreign key to RuleSet
   imageUrl: string;                // Building photo URL
-  members: ProjectMember[];        // Users with access to this project
+  users: ProjectUser[];            // Users with access to this project
 }
 
-interface ProjectMember {
+interface ProjectUser {
   userId: number;                  // Foreign key to User
   role: 'Admin' | 'Editor' | 'Viewer';  // Role within this project
 }
@@ -150,7 +143,7 @@ interface ProjectMember {
     "status": "active",
     "ruleSetId": 1,
     "imageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop",
-    "members": [
+    "users": [
       { "userId": 1, "role": "Admin" },
       { "userId": 3, "role": "Editor" },
       { "userId": 5, "role": "Viewer" }
@@ -402,7 +395,7 @@ interface Result {
 
 ## 6. User (Benutzer)
 
-Represents users with access to the project.
+Represents users who can be assigned to projects.
 
 ### Schema
 
@@ -411,7 +404,6 @@ interface User {
   id: number;                      // Simple numeric ID
   name: string;                    // Display name
   email: string;                   // Email address
-  role: 'Admin' | 'Editor' | 'Viewer';  // User role
   lastActivity: string;            // Last activity timestamp (DD/MM/YYYY HH:mm)
 }
 ```
@@ -420,18 +412,20 @@ interface User {
 
 ```json
 [
-  { "id": 1, "name": "Max Muster", "email": "max.muster@bbl.admin.ch", "role": "Admin", "lastActivity": "27/06/2022 12:30" },
-  { "id": 2, "name": "Anna Müller", "email": "anna.mueller@architekten-zuerich.ch", "role": "Editor", "lastActivity": "27/06/2022 10:45" },
-  { "id": 3, "name": "Peter Schmidt", "email": "p.schmidt@geometer-bern.ch", "role": "Editor", "lastActivity": "14/04/2022 16:30" },
-  { "id": 5, "name": "Maria Keller", "email": "m.keller@elektroplanung-gmbh.ch", "role": "Viewer", "lastActivity": "14/04/2022 10:30" }
+  { "id": 1, "name": "Max Muster", "email": "max.muster@bbl.admin.ch", "lastActivity": "27/06/2022 12:30" },
+  { "id": 2, "name": "Anna Müller", "email": "anna.mueller@architekten-zuerich.ch", "lastActivity": "27/06/2022 10:45" },
+  { "id": 3, "name": "Peter Schmidt", "email": "p.schmidt@geometer-bern.ch", "lastActivity": "14/04/2022 16:30" },
+  { "id": 5, "name": "Maria Keller", "email": "m.keller@elektroplanung-gmbh.ch", "lastActivity": "14/04/2022 10:30" }
 ]
 ```
 
-### User Roles
+### User Roles (per project)
+
+Roles are assigned per project in the `project.users[]` array:
 
 | Role | German | Description |
 |------|--------|-------------|
-| Admin | Administrator | Full access, can manage users |
+| Admin | Administrator | Full access, can manage project users |
 | Editor | Bearbeiter | Can upload and validate documents |
 | Viewer | Betrachter | Read-only access |
 

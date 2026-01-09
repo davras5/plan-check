@@ -10,7 +10,7 @@
     "status": "active",
     "ruleSetId": 1,
     "imageUrl": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop",
-    "members": [
+    "users": [
       { "userId": 1, "role": "Admin" },
       { "userId": 2, "role": "Editor" },
       { "userId": 3, "role": "Editor" },
@@ -29,7 +29,7 @@
     "status": "active",
     "ruleSetId": 1,
     "imageUrl": "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&auto=format&fit=crop",
-    "members": [
+    "users": [
       { "userId": 1, "role": "Admin" },
       { "userId": 6, "role": "Editor" },
       { "userId": 7, "role": "Editor" }
@@ -46,7 +46,7 @@
     "status": "active",
     "ruleSetId": 1,
     "imageUrl": "https://images.unsplash.com/photo-1502101872923-d48509bff386?w=800&auto=format&fit=crop",
-    "members": [
+    "users": [
       { "userId": 1, "role": "Admin" },
       { "userId": 10, "role": "Editor" },
       { "userId": 11, "role": "Viewer" }
@@ -63,7 +63,7 @@
     "status": "completed",
     "ruleSetId": 1,
     "imageUrl": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop",
-    "members": [
+    "users": [
       { "userId": 1, "role": "Admin" },
       { "userId": 8, "role": "Editor" },
       { "userId": 9, "role": "Viewer" }
@@ -80,7 +80,7 @@
     "status": "completed",
     "ruleSetId": 1,
     "imageUrl": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop",
-    "members": [
+    "users": [
       { "userId": 1, "role": "Admin" },
       { "userId": 10, "role": "Editor" },
       { "userId": 11, "role": "Viewer" }
